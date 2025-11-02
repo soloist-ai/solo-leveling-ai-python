@@ -1,0 +1,51 @@
+{
+  "namespace": "com.sleepkqq.sololeveling.avro.task",
+  "type": "record",
+  "name": "GenerateTasksEvent",
+  "fields": [
+    {
+      "name": "transactionId",
+      "type": "string"
+    },
+    {
+      "name": "playerId",
+      "type": "long"
+    },
+    {
+      "name": "inputs",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "GenerateTask",
+          "fields": [
+            {
+              "name": "taskId",
+              "type": "string"
+            },
+            {
+              "name": "version",
+              "type": "int",
+              "default": 0
+            },
+            {
+              "name": "rarity",
+              "type": {
+                "type": "com.sleepkqq.sololeveling.avro.task.TaskRarity"
+              }
+            },
+            {
+              "name": "topics",
+              "type": {
+                "type": "array",
+                "items": {
+                  "type": "com.sleepkqq.sololeveling.avro.task.TaskTopic"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "namespace": "com.sleepkqq.sololeveling.avro.task",
+  "type": "enum",
+  "name": "TaskRarity",
+  "symbols": [
+    "COMMON",
+    "UNCOMMON",
+    "RARE",
+    "EPIC",
+    "LEGENDARY"
+  ]
+}

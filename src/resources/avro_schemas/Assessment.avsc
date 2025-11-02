@@ -1,0 +1,13 @@
+{
+  "namespace": "com.sleepkqq.sololeveling.avro.task",
+  "type": "enum",
+  "name": "Assessment",
+  "symbols": [
+    "S",
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+  ]
+}
