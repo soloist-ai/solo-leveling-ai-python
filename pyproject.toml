@@ -19,6 +19,7 @@ faststream = {extras = ["kafka"], version = "^0.6.2"}
 aiokafka = "0.12.0"
 dishka = "1.7.2"
 pydantic = "^2.12.3"
+dataclasses-avroschema = "^0.66.0"
 
 [tool.poetry.scripts]
 run-service = "src.app.main:main"
