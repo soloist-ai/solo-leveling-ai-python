@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class TaskRarity(Enum):
+class TaskRarity(str, Enum):
     COMMON = "COMMON"
     UNCOMMON = "UNCOMMON"
     RARE = "RARE"

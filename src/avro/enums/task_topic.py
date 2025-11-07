@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class TaskTopic(Enum):
+class TaskTopic(str, Enum):
     PHYSICAL_ACTIVITY = "PHYSICAL_ACTIVITY"
     MENTAL_HEALTH = "MENTAL_HEALTH"
     EDUCATION = "EDUCATION"

@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class Assessment(Enum):
+class Assessment(str, Enum):
     S = "S"
     A = "A"
     B = "B"
