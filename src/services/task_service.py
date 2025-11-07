@@ -5,7 +5,6 @@ from src.avro.enums.task_topic import TaskTopic
 from src.avro.enums.task_rarity import TaskRarity
 
 
-
 class TaskService:
     def __init__(self, chat_client: Runnable):
         self.chat_client = chat_client
