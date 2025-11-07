@@ -5,7 +5,6 @@ from src.avro.enums.task_rarity import TaskRarity
 from src.avro.enums.task_topic import TaskTopic
 
 
-
 @dataclass
 class GenerateTask(AvroModel):
     taskId: str

@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class TaskTopic(Enum):
     PHYSICAL_ACTIVITY = "PHYSICAL_ACTIVITY"
     MENTAL_HEALTH = "MENTAL_HEALTH"

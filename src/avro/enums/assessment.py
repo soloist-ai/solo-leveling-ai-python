@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Assessment(Enum):
     S = "S"
     A = "A"
