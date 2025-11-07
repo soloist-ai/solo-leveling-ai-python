@@ -1,3 +1,6 @@
+from src.avro.enums.task_topic import TaskTopic
+from src.avro.enums.task_rarity import TaskRarity
+
 SYSTEM_PROMPT = """
 Based on the provided topics (TaskTopic) and task rarity (TaskRarity), generate a task (Task) with the following fields:
     title (task name),
@@ -31,5 +34,5 @@ Conditions:
 """
 
 
-def generate_task_user_prompt(topics: list[str], rarity: str) -> str:
+def generate_task_user_prompt(topics: list[TaskTopic], rarity: TaskRarity) -> str:
     return f"TaskTopics: [{', '.join(topics)}], TaskRarity: {rarity}"
