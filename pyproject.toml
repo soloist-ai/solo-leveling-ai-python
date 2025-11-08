@@ -24,6 +24,11 @@ dataclasses-avroschema = "^0.66.0"
 [tool.poetry.scripts]
 run-service = "src.app.main:main"
 
+[tool.mypy]
+[[tool.mypy.overrides]]
+module = ["aiokafka", "aiokafka.*"]
+ignore_missing_imports = true
+
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
