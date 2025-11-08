@@ -9,6 +9,7 @@ from src.services.avro_serialization import avro_deserialize, avro_serialize
 
 logger = logging.getLogger(__name__)
 
+
 def register_consumers(broker: KafkaBroker):
     @broker.subscriber("task.requests")
     @inject
@@ -25,22 +26,10 @@ def register_consumers(broker: KafkaBroker):
             result_task = await asyncio.to_thread(
                 task_service.generate_task,
                 topics=task_data.topics,
-                rarity=task_data.rarity
+                rarity=task_data.rarity,
             )
             logger.info(f"Generated task: {result_task}")
-            save_task = SaveTask(
-                taskId=task_data.taskId,
-                version=task_data.version,
-                rarity=task_data.rarity,
-                topics=task_data.topics,
-                title=result_task.title,
-                description=result_task.description,
-                experience=result_task.experience,
-                currencyReward=result_task.currencyReward,
-                agility=result_task.agility,
-                strength=result_task.strength,
-                intelligence=result_task.intelligence,
-            )
+            save_task = SaveTask.from_generated(task_data, result_task)
             response_schema = SaveTask.avro_schema_to_python()
             response_bytes = avro_serialize(save_task.to_dict(), response_schema)
             await broker.publish(response_bytes, topic="task.responses")

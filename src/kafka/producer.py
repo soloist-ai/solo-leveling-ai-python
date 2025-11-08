@@ -1,8 +1,7 @@
 from aiokafka import AIOKafkaProducer
-from src.avro.enums.task_topic import TaskTopic
-from src.avro.enums.task_rarity import TaskRarity
 from src.avro.events.generate_tasks_event import GenerateTask
 from src.services.avro_serialization import avro_serialize
+
 
 async def send_task_request(task: GenerateTask):
     producer = AIOKafkaProducer(
