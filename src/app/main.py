@@ -1,57 +1,87 @@
 import asyncio
 import logging
-import json
-
+from contextlib import asynccontextmanager
 from faststream import FastStream
-from faststream.kafka import KafkaBroker
 from dishka import make_async_container
 from dishka.integrations.faststream import setup_dishka
+
+from src.config.kafka_config import kafka_broker
 from src.kafka.consumer import register_consumers
+from src.config.logging_config import setup_logging
+from src.config.config_loader import get_environment, is_production, is_feature_enabled
+from src.services.schema_registry_service import schema_registry_service
+from src.avro.events.generate_tasks_event import GenerateTask
+from src.avro.events.save_tasks_event import SaveTask
+
+# Импортируем providers
 from src.di.providers import (
     ConfigProvider,
     LLMProvider,
     TaskServiceProvider,
-    FastStreamProvider,
+    KafkaProvider,
 )
-from src.services.schema_registry import register_schema
-from src.avro.events.generate_tasks_event import GenerateTask
 
-logging.basicConfig(level=logging.INFO)
+setup_logging()
 logger = logging.getLogger(__name__)
 
 
-async def main():
-    logger.info("🚀 Starting Task Generator Microservice...")
+@asynccontextmanager
+async def lifespan():
+    env = get_environment()
+    logger.info(f"Starting Solo Leveling AI in {env} environment")
 
-    # --- Регистрация схемы Avro через REST API Schema Registry (один раз при старте) ---
-    try:
-        avro_schema = json.dumps(GenerateTask.avro_schema_to_python())
-        schema_reg_result = register_schema("task.requests-value", avro_schema)
-        logger.info(f"Avro schema registered: {schema_reg_result}")
-    except Exception as ex:
-        logger.error(f"Failed to register Avro schema: {ex}")
+    # Feature flags
+    logger.info("Feature flags:")
+    logger.info(f"  - Schema Registry: {is_feature_enabled('use_schema_registry')}")
+    logger.info(f"  - Task Caching: {is_feature_enabled('enable_task_caching')}")
+    logger.info(f"  - Metrics: {is_feature_enabled('enable_metrics')}")
+    logger.info(f"  - Debug Logging: {is_feature_enabled('debug_logging')}")
 
-    container_factory = make_async_container(
-        ConfigProvider(),
-        LLMProvider(),
-        TaskServiceProvider(),
-        FastStreamProvider(),
-    )
-    async with container_factory() as container:
-        broker = await container.get(KafkaBroker)
-        logger.info("Kafka broker obtained from DI")
+    if is_production():
+        logger.info("⚡ Running in PRODUCTION mode")
 
-        setup_dishka(container=container, broker=broker, auto_inject=True)
-        logger.info("Dishka integration configured")
+    if is_feature_enabled("use_schema_registry"):
+        logger.info("Registering Avro schemas...")
+        try:
+            request_schema = GenerateTask.avro_schema_to_python()
+            request_id = schema_registry_service.register_schema(
+                "task.requests-value", request_schema
+            )
+            logger.info(f"GenerateTask schema registered (ID: {request_id})")
 
-        register_consumers(broker)
-        logger.info("Consumers registered")
+            response_schema = SaveTask.avro_schema_to_python()
+            response_id = schema_registry_service.register_schema(
+                "task.responses-value", response_schema
+            )
+            logger.info(f"SaveTask schema registered (ID: {response_id})")
 
-        app = FastStream(broker)
-        logger.info("Microservice ready! Listening for task requests...")
+        except Exception as e:
+            logger.error(f"Failed to register schemas: {e}")
+            if is_production():
+                raise
 
-        await app.run()
+    await kafka_broker.start()
+    logger.info("Kafka broker connected")
 
+    yield
+
+    await kafka_broker.close()
+    logger.info("Application shutdown complete")
+
+
+container = make_async_container(
+    ConfigProvider(),
+    LLMProvider(),
+    TaskServiceProvider(),
+    KafkaProvider(),
+)
+
+app = FastStream(kafka_broker, lifespan=lifespan)
+
+setup_dishka(container, app)
+
+register_consumers(kafka_broker)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    logger.info("Consumer is running. Waiting for messages...")
+    asyncio.run(app.run())

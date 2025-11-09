@@ -24,7 +24,7 @@ class TaskServiceProvider(Provider):
         return TaskService(chat_client)
 
 
-class FastStreamProvider(Provider):
+class KafkaProvider(Provider):
     @provide(scope=Scope.APP)
     def get_kafka_broker(self) -> KafkaBroker:
         return KafkaBroker("localhost:29092")
