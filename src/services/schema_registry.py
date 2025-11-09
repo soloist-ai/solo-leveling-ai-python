@@ -1,16 +1,34 @@
-import requests
+from src.services.schema_registry_service import schema_registry_service
 from src.avro.events.generate_tasks_event import GenerateTask
-import json
+from src.avro.events.save_tasks_event import SaveTask
+import logging
+
+logger = logging.getLogger(__name__)
 
 
-def register_schema(subject, schema_str, registry_url="http://localhost:8081"):
-    headers = {"Content-Type": "application/vnd.schemaregistry.v1+json"}
-    payload = {"schema": schema_str}
-    response = requests.post(
-        f"{registry_url}/subjects/{subject}/versions", headers=headers, json=payload
+def register_all_schemas():
+    generate_schema = GenerateTask.avro_schema_to_python()
+    schema_id_request = schema_registry_service.register_schema(
+        "task.requests-value", generate_schema
     )
-    return response.json()
+    if schema_id_request:
+        logger.info(f"Registered GenerateTask schema with ID: {schema_id_request}")
+
+    save_schema = SaveTask.avro_schema_to_python()
+    schema_id_response = schema_registry_service.register_schema(
+        "task.responses-value", save_schema
+    )
+    if schema_id_response:
+        logger.info(f"Registered SaveTask schema with ID: {schema_id_response}")
+
+    return {
+        "request_schema_id": schema_id_request,
+        "response_schema_id": schema_id_response,
+    }
 
 
-avro_schema = json.dumps(GenerateTask.avro_schema_to_python())
-register_schema("task.requests-value", avro_schema)
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    logger.info("Registering schemas...")
+    result = register_all_schemas()
+    logger.info(f"Registration complete: {result}")
