@@ -4,7 +4,7 @@ from src.config.config_loader import config
 from faststream.kafka import KafkaBroker
 from src.services.task_service import TaskService
 from langchain_core.runnables import Runnable
-
+from src.config.kafka_config import kafka_broker
 
 class ConfigProvider(Provider):
     @provide(scope=Scope.APP)
@@ -27,4 +27,4 @@ class TaskServiceProvider(Provider):
 class KafkaProvider(Provider):
     @provide(scope=Scope.APP)
     def get_kafka_broker(self) -> KafkaBroker:
-        return KafkaBroker("localhost:29092")
+        return kafka_broker

@@ -38,7 +38,7 @@ async def lifespan():
     logger.info(f"  - Debug Logging: {is_feature_enabled('debug_logging')}")
 
     if is_production():
-        logger.info("⚡ Running in PRODUCTION mode")
+        logger.info("Running in PRODUCTION mode")
 
     if is_feature_enabled("use_schema_registry"):
         logger.info("Registering Avro schemas...")
