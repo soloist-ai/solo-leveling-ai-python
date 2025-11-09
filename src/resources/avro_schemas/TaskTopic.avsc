@@ -1,0 +1,17 @@
+{
+  "namespace": "com.sleepkqq.sololeveling.avro.task",
+  "type": "enum",
+  "name": "TaskTopic",
+  "symbols": [
+    "PHYSICAL_ACTIVITY",
+    "MENTAL_HEALTH",
+    "EDUCATION",
+    "CREATIVITY",
+    "SOCIAL_SKILLS",
+    "HEALTHY_EATING",
+    "PRODUCTIVITY",
+    "EXPERIMENTS",
+    "ECOLOGY",
+    "TEAMWORK"
+  ]
+}

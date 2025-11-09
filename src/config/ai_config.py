@@ -1,25 +1,27 @@
-import os
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnableLambda, Runnable
 from langchain.output_parsers import PydanticOutputParser
+from pydantic import SecretStr
 from src.prompt.task_prompt import SYSTEM_PROMPT
-from dotenv import load_dotenv
 from src.models.generate_task_response import Task
 from src.config.config_loader import config
-from pydantic import SecretStr
-
-
-load_dotenv()
-api_key = os.getenv("OPENAI_ROUTER_KEY")
-api_key_secret = SecretStr(api_key) if api_key else None
 
 
 def create_chat_client() -> Runnable:
     parser = PydanticOutputParser(pydantic_object=Task)
 
-    model_config = config["ai"]["gemini"]
+    model_config = config["ai"]
+
+    api_key = model_config.get("api_key")
+    api_key_secret = SecretStr(api_key) if api_key else None
+
+    if not api_key_secret:
+        raise ValueError(
+            "API key not found in configuration. Please set OPENROUTER_API_KEY in .env file"
+        )
+
     llm = ChatOpenAI(
         model=model_config["name"],
         base_url=model_config["api_base"],

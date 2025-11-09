@@ -15,13 +15,19 @@ langchain-openai = "^0.3.24"
 python-dotenv = "~1.1.1"
 langchain = "^0.3.27"
 pyyaml = "~6.0.2"
-faststream = "0.6.2"
+faststream = {extras = ["kafka"], version = "^0.6.2"}
 aiokafka = "0.12.0"
 dishka = "1.7.2"
 pydantic = "^2.12.3"
+dataclasses-avroschema = "^0.66.0"
 
 [tool.poetry.scripts]
 run-service = "src.app.main:main"
+
+[tool.mypy]
+[[tool.mypy.overrides]]
+module = ["aiokafka", "aiokafka.*"]
+ignore_missing_imports = true
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
@@ -33,5 +39,6 @@ dev = [
     "ruff (>=0.14.1,<0.15.0)",
     "mypy (>=1.18.2,<2.0.0)",
     "pytest (>=8.4.2,<9.0.0)",
-    "types-pyyaml (>=6.0.0,<7.0.0)"
+    "types-pyyaml (>=6.0.0,<7.0.0)",
+    "types-requests (>=2.32.4.20250913,<3.0.0.0)"
 ]

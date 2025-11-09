@@ -1,0 +1,80 @@
+{
+  "namespace": "com.sleepkqq.sololeveling.avro.task",
+  "type": "record",
+  "name": "SaveTasksEvent",
+  "fields": [
+    {
+      "name": "transactionId",
+      "type": "string"
+    },
+    {
+      "name": "playerId",
+      "type": "long"
+    },
+    {
+      "name": "tasks",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "SaveTask",
+          "fields": [
+            {
+              "name": "taskId",
+              "type": "string"
+            },
+            {
+              "name": "version",
+              "type": "int",
+              "default": 0
+            },
+            {
+              "name": "title",
+              "type": "string"
+            },
+            {
+              "name": "description",
+              "type": "string"
+            },
+            {
+              "name": "experience",
+              "type": "int"
+            },
+            {
+              "name": "currencyReward",
+              "type": "int",
+              "default": 0
+            },
+            {
+              "name": "rarity",
+              "type": {
+                "type": "com.sleepkqq.sololeveling.avro.task.TaskRarity"
+              }
+            },
+            {
+              "name": "topics",
+              "type": {
+                "type": "array",
+                "items": {
+                  "type": "com.sleepkqq.sololeveling.avro.task.TaskTopic"
+                }
+              }
+            },
+            {
+              "name": "agility",
+              "type": "int"
+            },
+            {
+              "name": "strength",
+              "type": "int"
+            },
+            {
+              "name": "intelligence",
+              "type": "int"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
