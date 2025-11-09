@@ -1,6 +1,84 @@
+# =============================================================================
+# Solo Leveling AI - Application Configuration
+# =============================================================================
+
+app:
+  name: "solo-leveling-ai"
+  version: "1.0.0"
+  environment: ${APP_ENV:development}
+  debug: ${DEBUG:true}
+
+# Feature flags
+features:
+  use_schema_registry: true
+  enable_task_caching: true
+  enable_metrics: false
+  debug_logging: false
+  async_processing: true
+
+kafka:
+  bootstrap_servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
+  topics:
+    task_requests: "task.requests"
+    task_responses: "task.responses"
+    task_errors: "task.errors"
+  consumer:
+    group_id: "task-consumer-group"
+    auto_offset_reset: "earliest"
+    enable_auto_commit: true
+    max_poll_records: 100
+    session_timeout_ms: 30000
+  producer:
+    acks: "all"
+    retries: 3
+    compression_type: "gzip"
+    max_in_flight_requests_per_connection: 5
+
+# Schema Registry
+schema_registry:
+  url: ${SCHEMA_REGISTRY_URL:http://localhost:8081}
+  timeout: 30
+
+# AI/LLM Configuration
 ai:
-  gemini:
-    name: google/gemini-2.0-flash-lite-001
-    temperature: 1.0
-    api_base: https://openrouter.ai/api/v1
-    timeout: 30
+  name: "google/gemini-2.0-flash-lite-001"
+  temperature: 1.0
+  api_base: "https://openrouter.ai/api/v1"
+  api_key: ${OPENROUTER_API_KEY}
+  max_tokens: 1024
+  timeout: 30
+  max_retries: 3
+
+# Logging configuration
+logging:
+  level: ${LOG_LEVEL:WARNING}
+  format: "text"
+  handlers:
+    console:
+      enabled: true
+    file:
+      enabled: false
+  loggers:
+    kafka: "ERROR"
+    httpx: "ERROR"
+    uvicorn: "WARNING"
+    faststream: "WARNING"
+    aiokafka: "ERROR"
+    aiokafka.consumer: "ERROR"
+    aiokafka.consumer.group_coordinator: "ERROR"
+
+
+
+# Timeouts
+timeouts:
+  http_request: 30
+  kafka_producer: 10
+  kafka_consumer: 300
+  ai_request: 60
+
+
+
+# Avro schemas configuration
+avro:
+  namespace: "com.sleepkqq.sololeveling.avro"
+  compatibility: "BACKWARD"
