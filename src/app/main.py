@@ -1,10 +1,10 @@
-import asyncio
+import uvicorn
 import logging
 from contextlib import asynccontextmanager
 from faststream import FastStream
 from dishka import make_async_container
 from dishka.integrations.faststream import setup_dishka
-
+from faststream.asgi import AsgiFastStream, make_ping_asgi
 from src.config.kafka_config import kafka_broker
 from src.kafka.consumer import register_consumers
 from src.config.logging_config import setup_logging
@@ -76,12 +76,28 @@ container = make_async_container(
     KafkaProvider(),
 )
 
-app = FastStream(kafka_broker, lifespan=lifespan)
+faststream_app = FastStream(kafka_broker, lifespan=lifespan)
 
-setup_dishka(container, app)
+setup_dishka(container, faststream_app)
 
 register_consumers(kafka_broker)
 
+app = AsgiFastStream(
+    kafka_broker,
+    lifespan=lifespan,
+    asgi_routes=[
+        (
+            "/health",
+            make_ping_asgi(kafka_broker, timeout=5.0),
+        ),
+    ],
+)
+
 if __name__ == "__main__":
-    logger.info("Consumer is running. Waiting for messages...")
-    asyncio.run(app.run())
+    logger.info("✅ Starting application with health check endpoint...")
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=8080,
+        log_level="info",
+    )
