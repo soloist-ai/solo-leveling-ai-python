@@ -6,16 +6,18 @@ app:
   environment: production
   debug: false
 
+features:
+  use_schema_registry: false
+
 kafka:
-  bootstrap_servers: kafka-cluster.production.svc.cluster.local:9092
+  bootstrap_servers: kafka-service:9092
   consumer:
-    group_id: "task-consumer-group-prod"
     session_timeout_ms: 45000
   producer:
     retries: 5
 
 schema_registry:
-  url: http://schema-registry.production.svc.cluster.local:8081
+  url: http://schema-registry-service:8081
 
 logging:
   level: ERROR

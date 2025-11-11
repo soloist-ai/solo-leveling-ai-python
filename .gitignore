@@ -10,7 +10,6 @@ ENV/
 .venv/
 env/
 ENV/
-.env.production
 
 # IDE and Editor
 .idea/

@@ -12,3 +12,6 @@ class TaskTopic(str, Enum):
     EXPERIMENTS = "EXPERIMENTS"
     ECOLOGY = "ECOLOGY"
     TEAMWORK = "TEAMWORK"
+
+    class Meta:
+        namespace = "com.sleepkqq.sololeveling.avro.task"

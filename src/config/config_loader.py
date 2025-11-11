@@ -2,7 +2,6 @@ import os
 import re
 import yaml
 from pathlib import Path
-from dotenv import load_dotenv
 from typing import Optional, Any, Dict
 
 
@@ -21,9 +20,6 @@ def load_config(env: Optional[str] = None) -> dict:
     """Загружает конфигурацию из application.yml и application-{profile}.yml"""
     if env is None:
         env = os.getenv("APP_ENV", "development")
-
-    # Загружаем .env только с секретами (без .env.production)
-    load_dotenv(".env", override=True)
 
     base_path = Path(__file__).parent.parent
     resources_path = base_path / "resources"

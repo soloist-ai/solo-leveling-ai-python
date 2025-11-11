@@ -1,21 +1,26 @@
 from dataclasses import dataclass, field
 from typing import List
 from dataclasses_avroschema import AvroModel
-from src.avro.enums.task_rarity import TaskRarity
+from src.avro.enums.rarity import Rarity
 from src.avro.enums.task_topic import TaskTopic
 from src.avro.events.generate_tasks_event import GenerateTask
 from src.models.generate_task_response import Task as PydanticTask
+from src.avro.enums.localization_item import LocalizationItem
 
 
 @dataclass
 class SaveTask(AvroModel):
     taskId: str = ""
     version: int = 0
-    title: str = ""
-    description: str = ""
+    title: LocalizationItem = field(
+        default_factory=lambda: LocalizationItem(en="", ru="")
+    )
+    description: LocalizationItem = field(
+        default_factory=lambda: LocalizationItem(en="", ru="")
+    )
     experience: int = 0
     currencyReward: int = 0
-    rarity: TaskRarity = field(default=TaskRarity.COMMON)
+    rarity: Rarity = field(default=Rarity.COMMON)
     topics: List[TaskTopic] = field(default_factory=list)
     agility: int = 0
     strength: int = 0
@@ -45,7 +50,7 @@ class SaveTask(AvroModel):
 
 @dataclass
 class SaveTasksEvent(AvroModel):
-    transactionId: str
+    txId: str
     playerId: int
     tasks: List[SaveTask]
 

@@ -18,9 +18,7 @@ def create_chat_client() -> Runnable:
     api_key_secret = SecretStr(api_key) if api_key else None
 
     if not api_key_secret:
-        raise ValueError(
-            "API key not found in configuration. Please set OPENROUTER_API_KEY in .env file"
-        )
+        raise ValueError("API key not found in configuration")
 
     llm = ChatOpenAI(
         model=model_config["name"],
