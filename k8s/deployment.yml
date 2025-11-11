@@ -24,13 +24,13 @@ spec:
               value: "${OPENROUTER_API_KEY}"
           livenessProbe:
             httpGet:
-              path: /actuator/health
+              path: /health
               port: 8080
             initialDelaySeconds: 20
             periodSeconds: 10
           readinessProbe:
             httpGet:
-              path: /actuator/health
+              path: /health
               port: 8080
             initialDelaySeconds: 5
             periodSeconds: 5
