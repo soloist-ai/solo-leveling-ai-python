@@ -2,7 +2,6 @@ import os
 import re
 import yaml
 from pathlib import Path
-from dotenv import load_dotenv
 from typing import Optional, Any, Dict
 
 
@@ -44,6 +43,7 @@ def load_config(env: Optional[str] = None) -> dict:
                 config = deep_update(config, profile_config)
 
     return config
+
 
 def _substitute_env_vars(content: str) -> str:
     """Заменяет ${VAR_NAME:default} на значения из environment variables"""
