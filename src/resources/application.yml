@@ -41,7 +41,7 @@ schema_registry:
 
 # AI/LLM Configuration
 ai:
-  name: "google/gemini-2.0-flash-lite-001"
+  name: "google/gemini-2.5-flash-lite"
   temperature: 1.0
   api_base: "https://openrouter.ai/api/v1"
   api_key: ${OPENROUTER_API_KEY}
