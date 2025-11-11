@@ -4,7 +4,7 @@
   "name": "SaveTasksEvent",
   "fields": [
     {
-      "name": "transactionId",
+      "name": "txId",
       "type": "string"
     },
     {
@@ -30,11 +30,11 @@
             },
             {
               "name": "title",
-              "type": "string"
+              "type": "com.sleepkqq.sololeveling.avro.localization.LocalizationItem""
             },
             {
               "name": "description",
-              "type": "string"
+              "type": "com.sleepkqq.sololeveling.avro.localization.LocalizationItem""
             },
             {
               "name": "experience",
@@ -48,7 +48,7 @@
             {
               "name": "rarity",
               "type": {
-                "type": "com.sleepkqq.sololeveling.avro.task.TaskRarity"
+                "type": "com.sleepkqq.sololeveling.avro.player.Rarity"
               }
             },
             {

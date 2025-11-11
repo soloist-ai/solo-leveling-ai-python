@@ -1,0 +1,15 @@
+{
+  "namespace": "com.sleepkqq.sololeveling.avro.localization",
+  "type": "record",
+  "name": "LocalizationItem",
+  "fields": [
+    {
+      "name": "en",
+      "type": "string"
+    },
+    {
+      "name": "ru",
+      "type": "string"
+    }
+  ]
+}

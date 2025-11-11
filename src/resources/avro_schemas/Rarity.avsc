@@ -1,7 +1,7 @@
 {
-  "namespace": "com.sleepkqq.sololeveling.avro.task",
+  "namespace": "com.sleepkqq.sololeveling.avro.player",
   "type": "enum",
-  "name": "TaskRarity",
+  "name": "Rarity",
   "symbols": [
     "COMMON",
     "UNCOMMON",
