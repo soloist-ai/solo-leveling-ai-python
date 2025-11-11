@@ -12,8 +12,12 @@ from src.avro.enums.localization_item import LocalizationItem
 class SaveTask(AvroModel):
     taskId: str = ""
     version: int = 0
-    title: LocalizationItem = field(default_factory=lambda: LocalizationItem(en="", ru=""))
-    description: LocalizationItem = field(default_factory=lambda: LocalizationItem(en="", ru=""))
+    title: LocalizationItem = field(
+        default_factory=lambda: LocalizationItem(en="", ru="")
+    )
+    description: LocalizationItem = field(
+        default_factory=lambda: LocalizationItem(en="", ru="")
+    )
     experience: int = 0
     currencyReward: int = 0
     rarity: Rarity = field(default=Rarity.COMMON)
