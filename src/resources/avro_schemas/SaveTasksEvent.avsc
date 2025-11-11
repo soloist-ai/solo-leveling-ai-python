@@ -30,11 +30,11 @@
             },
             {
               "name": "title",
-              "type": "com.sleepkqq.sololeveling.avro.localization.LocalizationItem""
+              "type": "com.sleepkqq.sololeveling.avro.localization.LocalizationItem"
             },
             {
               "name": "description",
-              "type": "com.sleepkqq.sololeveling.avro.localization.LocalizationItem""
+              "type": "com.sleepkqq.sololeveling.avro.localization.LocalizationItem"
             },
             {
               "name": "experience",

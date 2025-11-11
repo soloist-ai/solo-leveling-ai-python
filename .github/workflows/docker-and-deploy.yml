@@ -137,5 +137,7 @@ jobs:
       # Очистка
       # ----------------------------------------------------------------------
       - name: Clean up temporary files (security)
+        if: always()
         run: |
+          rm -f ~/.kube/config
           rm -f k8s/deployment-rendered.yml
