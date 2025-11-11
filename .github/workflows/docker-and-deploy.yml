@@ -66,7 +66,7 @@ jobs:
         run: |
           echo "GIT_COMMIT_SHA=${{ github.sha }}" >> $GITHUB_ENV
           echo "DOCKERHUB_USER=${{ secrets.DOCKERHUB_USER }}" >> $GITHUB_ENV
-          echo "OPENROUTER_API_KEY=${{ secrets.OPENROUTER_API_KEY }}" >> $GITHUB_ENV
+          echo "OPENROUTER_API_KEY=${{ secrets.OPENROUTER_TOKEN }}" >> $GITHUB_ENV
           echo "REPLICAS=${{ inputs.replicas || 1 }}" >> $GITHUB_ENV
 
       - name: Setup kubeconfig
