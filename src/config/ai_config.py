@@ -3,6 +3,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnableLambda, Runnable
 from langchain.output_parsers import PydanticOutputParser
+from openai import api_key
 from pydantic import SecretStr
 from src.prompt.task_prompt import SYSTEM_PROMPT
 from src.models.generate_task_response import Task
@@ -17,9 +18,10 @@ def create_chat_client() -> Runnable:
     api_key = model_config.get("api_key")
     api_key_secret = SecretStr(api_key) if api_key else None
 
+
     if not api_key_secret:
         raise ValueError(
-            "API key not found in configuration. Please set OPENROUTER_API_KEY in .env file"
+            "API key not found in configuration"
         )
 
     llm = ChatOpenAI(

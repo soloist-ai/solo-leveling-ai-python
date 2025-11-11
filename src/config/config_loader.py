@@ -22,9 +22,6 @@ def load_config(env: Optional[str] = None) -> dict:
     if env is None:
         env = os.getenv("APP_ENV", "development")
 
-    # Загружаем .env только с секретами (без .env.production)
-    load_dotenv(".env", override=True)
-
     base_path = Path(__file__).parent.parent
     resources_path = base_path / "resources"
 
@@ -47,7 +44,6 @@ def load_config(env: Optional[str] = None) -> dict:
                 config = deep_update(config, profile_config)
 
     return config
-
 
 def _substitute_env_vars(content: str) -> str:
     """Заменяет ${VAR_NAME:default} на значения из environment variables"""

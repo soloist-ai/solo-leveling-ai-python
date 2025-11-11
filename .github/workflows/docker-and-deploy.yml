@@ -90,17 +90,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Extract Docker metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=branch
-            type=sha,prefix={{branch}}-
-            type=semver,pattern={{version}}
-            type=raw,value=latest,enable={{is_default_branch}}
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
@@ -121,17 +110,14 @@ jobs:
           echo "GIT_COMMIT_SHA=${{ github.sha }}" >> $GITHUB_ENV
           echo "DOCKERHUB_USER=${{ secrets.DOCKERHUB_USER }}" >> $GITHUB_ENV
           echo "OPENROUTER_API_KEY=${{ secrets.OPENROUTER_API_KEY }}" >> $GITHUB_ENV
-          echo "KAFKA_BOOTSTRAP_SERVERS=${{ secrets.KAFKA_BOOTSTRAP_SERVERS }}" >> $GITHUB_ENV
-          echo "SCHEMA_REGISTRY_URL=${{ secrets.SCHEMA_REGISTRY_URL }}" >> $GITHUB_ENV
           echo "REPLICAS=${{ inputs.replicas || 1 }}" >> $GITHUB_ENV
 
       - name: Setup kubeconfig
         env:
-          KUBECONFIG_CONTENT: ${{ secrets.KUBECONFIG }}
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
         run: |
           mkdir -p ~/.kube
-          echo "$KUBECONFIG_CONTENT" > ~/.kube/config
-          chmod 600 ~/.kube/config
+          echo "$KUBECONFIG" > ~/.kube/config
 
       - name: Generate final deployment.yml with env vars
         run: |
@@ -147,16 +133,9 @@ jobs:
         run: |
           kubectl rollout status deployment/solo-leveling-ai-python --timeout=120s
 
-      - name: Verify deployment
-        run: |
-          kubectl get pods -l app=solo-leveling-ai-python
-          kubectl get svc solo-leveling-ai-python
-
       # ----------------------------------------------------------------------
       # Очистка
       # ----------------------------------------------------------------------
       - name: Clean up temporary files (security)
-        if: always()
         run: |
-          rm -f ~/.kube/config
           rm -f k8s/deployment-rendered.yml
