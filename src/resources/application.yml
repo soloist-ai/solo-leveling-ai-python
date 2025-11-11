@@ -19,11 +19,11 @@ features:
 kafka:
   bootstrap_servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
   topics:
-    task_requests: "task.requests"
-    task_responses: "task.responses"
+    task_requests: "save-tasks"
+    task_responses: "generate-tasks"
     task_errors: "task.errors"
   consumer:
-    group_id: "task-consumer-group"
+    group_id: "ai-group"
     auto_offset_reset: "earliest"
     enable_auto_commit: true
     max_poll_records: 100

@@ -60,10 +60,10 @@ def register_consumers(broker: KafkaBroker):
                 "status": "failed",
             }
 
-            await broker.publish(
-                str(error_response).encode(), topic=topics["task_errors"]
-            )
-            logger.error(f"Sent error to {topics['task_errors']}")
+  #          await broker.publish(
+   #             str(error_response).encode(), topic=topics["task_errors"]
+    #        )
+     #       logger.error(f"Sent error to {topics['task_errors']}")
 
     logger.info(f"Consumer registered for topic: {topics['task_requests']}")
     logger.info(f"Group ID: {kafka_config['consumer']['group_id']}")
