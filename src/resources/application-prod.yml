@@ -4,7 +4,7 @@
 
 app:
   environment: production
-  debug: false
+  debug: true
 
 features:
   use_schema_registry: true
