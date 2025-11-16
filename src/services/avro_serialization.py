@@ -62,7 +62,7 @@ def avro_deserialize(avro_bytes: bytes, subject: str) -> dict:
         buffer = io.BytesIO(avro_bytes)
         fastavro_named_schemas: dict[str, Any] = {}
 
-        # Определите порядок: Rarity перед TaskTopic (предполагая, что TaskTopic не зависит от Rarity)
+        # Фиксированный порядок: Rarity (enum) перед TaskTopic
         ref_order = [
             "com.sleepkqq.sololeveling.avro.player.Rarity",
             "com.sleepkqq.sololeveling.avro.task.TaskTopic",
@@ -71,15 +71,20 @@ def avro_deserialize(avro_bytes: bytes, subject: str) -> dict:
             if name in named_schemas:
                 ref_schema = named_schemas[name]
                 logger.info(f"[DEBUG] Parsing named schema: {name}")
+                # Убрали write_hint, добавили expand для референсов (если нужно)
                 parsed_ref = parse_schema(
-                    ref_schema, fastavro_named_schemas, write_hint=False
+                    ref_schema, named_schemas=fastavro_named_schemas, expand=False
                 )
                 fastavro_named_schemas[name] = parsed_ref
+                logger.debug(f"[DEBUG] Parsed {name}: {parsed_ref}")  # Для отладки
 
-        # Парсинг основной схемы с expand=True для разрешения ссылок
-        parsed_main_schema = parse_schema(schema, fastavro_named_schemas, expand=True)
+        # Основная схема: expand=True для полного разрешения ссылок (Rarity в полях)
+        parsed_main_schema = parse_schema(
+            schema, named_schemas=fastavro_named_schemas, expand=True
+        )
+        logger.debug(f"[DEBUG] Main schema resolved: {parsed_main_schema}")
+
         data = schemaless_reader(buffer, parsed_main_schema)
-
         logger.debug(f"Deserialized {len(avro_bytes)} bytes for {subject}")
         return data
     except Exception as e:
