@@ -52,6 +52,9 @@ def avro_serialize(data: dict, subject: str) -> bytes:
 
 
 def avro_deserialize(avro_bytes: bytes, subject: str) -> dict:
+    """
+    Десериализует Avro binary в dict, используя схему из Schema Registry.
+    """
     try:
         schema, named_schemas = schema_registry_service.get_schema_with_references(
             subject
@@ -62,20 +65,26 @@ def avro_deserialize(avro_bytes: bytes, subject: str) -> dict:
 
         buffer = io.BytesIO(avro_bytes)
 
-        # отдельный словарь для fastavro
+        # ВАЖНО: отдельный словарь для fastavro
         fastavro_named_schemas: dict[str, Any] = {}
 
-        # сначала парсим все reference-схемы в fastavro_named_schemas
+        # 1. Парсим все reference-схемы в fastavro_named_schemas
         for name, ref_schema in named_schemas.items():
             logger.info(f"[DEBUG] Parsing named schema: {name}")
             parse_schema(ref_schema, fastavro_named_schemas, _write_hint=False)
 
-        # теперь парсим основную схему с уже заполненным fastavro_named_schemas
+        logger.info(
+            f"[DEBUG] fastavro_named_schemas keys: {list(fastavro_named_schemas.keys())}"
+        )
+
+        # 2. Парсим основную схему с уже заполненным fastavro_named_schemas
         parsed_main_schema = parse_schema(
             schema, fastavro_named_schemas, _write_hint=False
         )
 
+        # 3. Читаем данные
         data = schemaless_reader(buffer, parsed_main_schema)
+
         logger.debug(f"Deserialized {len(avro_bytes)} bytes for {subject}")
         return data
 
