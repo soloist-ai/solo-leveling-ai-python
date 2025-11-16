@@ -3,14 +3,13 @@ import logging
 from typing import List
 from faststream.kafka import KafkaBroker
 from dishka.integrations.faststream import inject, FromDishka
-
 from src.services.task_service import TaskService
-from src.services.avro_serialization import avro_deserialize, serialize_dataclass
+from src.services.avro_serialization import ConfluentAvroService
 from src.avro.events.save_tasks_event import SaveTask, SaveTasksEvent
 from src.avro.events.generate_tasks_event import GenerateTask, GenerateTasksEvent
 from src.avro.enums.rarity import Rarity
 from src.config.kafka_config import topics
-from src.config.config_loader import config, is_feature_enabled
+from src.config.config_loader import config, is_feature_enabled, get_schema_registry_url
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +18,8 @@ SUBJECTS = {
     "generate_tasks_event": "com.sleepkqq.sololeveling.avro.task.GenerateTasksEvent",
     "save_tasks_event": "com.sleepkqq.sololeveling.avro.task.SaveTasksEvent",
 }
+
+confluent_avro = ConfluentAvroService(schema_registry_url=get_schema_registry_url())
 
 
 def register_consumers(broker: KafkaBroker):
@@ -31,14 +32,13 @@ def register_consumers(broker: KafkaBroker):
     )
     @inject
     async def handle_task_request(
-        message: bytes,
-        task_service: FromDishka[TaskService],
+        message: bytes, task_service: FromDishka[TaskService]
     ):
         try:
-            # Десериализуем в dict через Schema Registry
-            event_dict = avro_deserialize(message, SUBJECTS["generate_tasks_event"])
-
-            # Конвертируем dict в dataclass
+            # Десериализация через Confluent Avro
+            event_dict = confluent_avro.deserialize(
+                message, SUBJECTS["generate_tasks_event"]
+            )
             event = GenerateTasksEvent.from_dict(event_dict)
 
             if not event.inputs:
@@ -93,11 +93,9 @@ def register_consumers(broker: KafkaBroker):
             )
 
             # Сериализуем через Schema Registry
-            response_bytes = serialize_dataclass(
-                save_event, SUBJECTS["save_tasks_event"]
+            response_bytes = confluent_avro.serialize(
+                save_event.to_dict(), SUBJECTS["save_tasks_event"]
             )
-
-            # Отправляем в Kafka
             await broker.publish(response_bytes, topic=topics["task_responses"])
 
             logger.info(

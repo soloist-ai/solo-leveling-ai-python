@@ -20,6 +20,7 @@ dishka = "1.7.2"
 pydantic = "^2.12.3"
 dataclasses-avroschema = "^0.66.0"
 uvicorn = "^0.38.0"
+confluent-kafka = {extras = ["schema-registry"], version = "^2.12.2"}
 
 [tool.poetry.scripts]
 run-service = "src.app.main:main"

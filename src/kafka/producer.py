@@ -1,5 +1,6 @@
 from aiokafka import AIOKafkaProducer
-from src.services.avro_serialization import serialize_dataclass
+
+from src.kafka.consumer import confluent_avro
 from src.avro.events.save_tasks_event import SaveTasksEvent
 from src.config.kafka_config import topics
 import logging
@@ -19,7 +20,7 @@ async def send_save_tasks_event(producer: AIOKafkaProducer, event: SaveTasksEven
     """
     try:
         # Сериализуем dataclass через Schema Registry
-        avro_bytes = serialize_dataclass(event, SAVE_TASKS_EVENT_SUBJECT)
+        avro_bytes = confluent_avro.serialize(event.to_dict(), SAVE_TASKS_EVENT_SUBJECT)
 
         # Отправляем в Kafka
         await producer.send_and_wait(
