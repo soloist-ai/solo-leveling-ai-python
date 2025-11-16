@@ -19,8 +19,8 @@ features:
 kafka:
   bootstrap_servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
   topics:
-    task_requests: "save-tasks"
-    task_responses: "generate-tasks"
+    task_requests: "generate-tasks"
+    task_responses: "save-tasks"
     task_errors: "task.errors"
   consumer:
     group_id: "ai-group"
