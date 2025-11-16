@@ -1,6 +1,6 @@
 from typing import Any
 from confluent_kafka.serialization import SerializationContext, MessageField
-from confluent_kafka.schema_registry import SchemaRegistryClient
+from confluent_kafka.schema_registry import SchemaRegistryClient, Schema
 from confluent_kafka.schema_registry.avro import AvroDeserializer, AvroSerializer
 
 
@@ -14,7 +14,7 @@ class ConfluentAvroService:
         if subject not in self.deserializer_cache:
             self.deserializer_cache[subject] = AvroDeserializer(
                 schema_registry_client=self.schema_registry_client,
-                schema_str=None,  # type: ignore[arg-type]
+                schema_str=None,  # Writer schema будет автоматически получена
                 from_dict=None,
                 return_record_name=False,
             )
@@ -22,12 +22,21 @@ class ConfluentAvroService:
 
     def get_serializer(self, subject: str) -> AvroSerializer:
         if subject not in self.serializer_cache:
-            schema = self.schema_registry_client.get_latest_version(subject)
+            # Получаем RegisteredSchema, который содержит Schema с references
+            latest_version = self.schema_registry_client.get_latest_version(subject)
+
+            # Создаем объект Schema (не строку!), который содержит references
+            schema = Schema(
+                schema_str=latest_version.schema.schema_str,
+                schema_type=latest_version.schema.schema_type,
+                references=latest_version.schema.references,  # ✅ Передаем references
+            )
 
             self.serializer_cache[subject] = AvroSerializer(
                 schema_registry_client=self.schema_registry_client,
-                schema_str=schema.schema.schema_str,  # ✅ Используем схему из Registry
+                schema_str=schema,  # ✅ Передаем Schema объект, не строку
                 to_dict=None,
+                conf={"auto.register.schemas": False},
             )
         return self.serializer_cache[subject]
 
@@ -35,10 +44,9 @@ class ConfluentAvroService:
         deserializer = self.get_deserializer(subject)
         ctx = SerializationContext(subject, MessageField.VALUE)
         result = deserializer(avro_bytes, ctx)
-        # deserializer может вернуть разные типы, но мы ожидаем dict
         if not isinstance(result, dict):
             raise TypeError(f"Expected dict, got {type(result)}")
-        return result  # type: ignore[return-value]
+        return result
 
     def serialize(self, data: dict[str, Any], subject: str) -> bytes:
         serializer = self.get_serializer(subject)
