@@ -2216,6 +2216,19 @@ slack = ["slack-sdk"]
 telegram = ["requests"]
 
 [[package]]
+name = "types-confluent-kafka"
+version = "1.4.0"
+description = "Types for Confluent Kafka"
+optional = false
+python-versions = "<3.15,>=3.9"
+groups = ["dev"]
+markers = "python_version < \"3.15\""
+files = [
+    {file = "types_confluent_kafka-1.4.0-py3-none-any.whl", hash = "sha256:9db22207778bb1a05cb80faf3f364086aa2c7ee9a2cf3b89e1df1f56951105c1"},
+    {file = "types_confluent_kafka-1.4.0.tar.gz", hash = "sha256:95c1e1325be480950e0f0dc6616ef7a72094b1f4947608343a17b14ce8b972b5"},
+]
+
+[[package]]
 name = "types-pyyaml"
 version = "6.0.12.20250915"
 description = "Typing stubs for PyYAML"
