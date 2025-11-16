@@ -1,34 +1,27 @@
 import io
 import logging
-from typing import TypeVar, Protocol, Type
+from typing import Any, TypeVar, Type, cast, Protocol
 
-from fastavro import schemaless_writer, schemaless_reader
+from fastavro import schemaless_writer, schemaless_reader, parse_schema
 
 from src.services.schema_registry_service import schema_registry_service
 
 logger = logging.getLogger(__name__)
 
-T = TypeVar("T", bound="DataclassProtocol")
 
-
-# Протокол для dataclass с методами to_dict() и from_dict()
-class DataclassProtocol(Protocol):
-    def to_dict(self) -> dict: ...
+class FromDictProtocol(Protocol):
+    """Протокол для классов, у которых есть classmethod from_dict()."""
 
     @classmethod
-    def from_dict(cls: Type[T], data: dict) -> T: ...
+    def from_dict(cls, data: dict) -> "FromDictProtocol": ...
+
+
+T = TypeVar("T", bound=FromDictProtocol)
 
 
 def avro_serialize(data: dict, subject: str) -> bytes:
     """
     Сериализует dict в Avro binary используя схему из Schema Registry
-
-    Args:
-        data: Данные для сериализации (dict)
-        subject: Subject схемы в Schema Registry
-
-    Returns:
-        Avro binary data
     """
     try:
         # Получаем схему и references из Schema Registry
@@ -43,7 +36,6 @@ def avro_serialize(data: dict, subject: str) -> bytes:
 
         logger.debug(f"Serialized {len(avro_bytes)} bytes for {subject}")
         return avro_bytes
-
     except Exception as e:
         logger.error(f"Failed to serialize data for {subject}: {e}")
         logger.debug(f"Data: {data}")
@@ -53,13 +45,6 @@ def avro_serialize(data: dict, subject: str) -> bytes:
 def avro_deserialize(avro_bytes: bytes, subject: str) -> dict:
     """
     Десериализует Avro binary в dict используя схему из Schema Registry
-
-    Args:
-        avro_bytes: Avro binary data
-        subject: Subject схемы в Schema Registry
-
-    Returns:
-        Десериализованные данные (dict)
     """
     try:
         # Получаем схему и references из Schema Registry
@@ -67,29 +52,32 @@ def avro_deserialize(avro_bytes: bytes, subject: str) -> dict:
             subject
         )
 
+        logger.debug(
+            f"Deserializing {subject} with named_schemas: {list(named_schemas.keys())}"
+        )
+
+        # Явно парсим схему с учётом named_schemas через публичный API fastavro
+        parsed_schema = parse_schema(schema, named_schemas)
+
         # Десериализуем через fastavro
         buffer = io.BytesIO(avro_bytes)
-        data = schemaless_reader(buffer, schema, named_schemas)
+        data = schemaless_reader(buffer, parsed_schema, named_schemas)
 
         logger.debug(f"Deserialized {len(avro_bytes)} bytes for {subject}")
         return data
-
     except Exception as e:
         logger.error(f"Failed to deserialize data for {subject}: {e}")
         raise
 
 
-# Convenience функции для прямой работы с dataclasses
-def serialize_dataclass(obj: DataclassProtocol, subject: str) -> bytes:
+def serialize_dataclass(obj: Any, subject: str) -> bytes:
     """
     Сериализует dataclass в Avro
 
-    Args:
-        obj: Dataclass instance с методом to_dict()
-        subject: Subject схемы в Schema Registry
+    obj: dataclass с методом to_dict()
     """
-    if not hasattr(obj, "to_dict"):
-        raise TypeError(f"{type(obj).__name__} must have to_dict() method")
+    if not hasattr(obj, "to_dict") or not callable(getattr(obj, "to_dict")):
+        raise TypeError(f"{type(obj).__name__} must have callable to_dict() method")
 
     data_dict = obj.to_dict()
     return avro_serialize(data_dict, subject)
@@ -101,13 +89,15 @@ def deserialize_to_dataclass(
     """
     Десериализует Avro в dataclass
 
-    Args:
-        avro_bytes: Avro binary data
-        subject: Subject схемы в Schema Registry
-        dataclass_type: Тип dataclass с методом from_dict()
+    dataclass_type: класс с classmethod from_dict()
     """
-    if not hasattr(dataclass_type, "from_dict"):
-        raise TypeError(f"{dataclass_type.__name__} must have from_dict() class method")
+    if not hasattr(dataclass_type, "from_dict") or not callable(
+        getattr(dataclass_type, "from_dict")
+    ):
+        raise TypeError(
+            f"{dataclass_type.__name__} must have callable from_dict() class method"
+        )
 
     data_dict = avro_deserialize(avro_bytes, subject)
-    return dataclass_type.from_dict(data_dict)
+    result = dataclass_type.from_dict(data_dict)
+    return cast(T, result)
