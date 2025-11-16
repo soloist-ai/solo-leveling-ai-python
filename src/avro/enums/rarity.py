@@ -8,5 +8,9 @@ class Rarity(str, Enum):
     EPIC = "EPIC"
     LEGENDARY = "LEGENDARY"
 
-    class Meta:
-        namespace = "com.sleepkqq.sololeveling.avro.player"
+    def to_dict(self) -> str:
+        return self.value
+
+    @classmethod
+    def from_dict(cls, data: str) -> "Rarity":
+        return cls(data)

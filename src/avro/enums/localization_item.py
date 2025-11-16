@@ -1,11 +1,14 @@
-from dataclasses import dataclass
-from dataclasses_avroschema import AvroModel
+from dataclasses import dataclass, asdict
 
 
 @dataclass
-class LocalizationItem(AvroModel):
+class LocalizationItem:
     en: str
     ru: str
 
-    class Meta:
-        namespace = "com.sleepkqq.sololeveling.avro.localization"
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "LocalizationItem":
+        return cls(en=data["en"], ru=data["ru"])
