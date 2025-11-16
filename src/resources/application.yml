@@ -59,7 +59,7 @@ logging:
     file:
       enabled: false
   loggers:
-    kafka: "ERROR"
+    kafka: "INFO"
     httpx: "ERROR"
     uvicorn: "WARNING"
     faststream: "WARNING"

@@ -20,10 +20,10 @@ schema_registry:
   url: http://schema-registry-service:8081
 
 logging:
-  level: ERROR
+  level: INFO
   handlers:
     console:
-      level: ERROR
+      level: INFO
     file:
       enabled: true
-      level: ERROR
+      level: INFO
