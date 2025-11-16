@@ -2,7 +2,7 @@ import io
 import logging
 from typing import Any, TypeVar, Type, Protocol, cast
 
-from fastavro import schemaless_writer, schemaless_reader
+from fastavro import schemaless_writer, schemaless_reader, parse_schema
 
 from src.services.schema_registry_service import schema_registry_service
 
@@ -42,7 +42,8 @@ def avro_serialize(data: dict, subject: str) -> bytes:
 
 def avro_deserialize(avro_bytes: bytes, subject: str) -> dict:
     """
-    Десериализует Avro binary в dict, используя сырую схему из Schema Registry.
+    Десериализует Avro binary в dict, используя схему из Schema Registry.
+    Явно парсим named_schemas через parse_schema, чтобы fastavro зарегистрировал их.
     """
     try:
         schema, named_schemas = schema_registry_service.get_schema_with_references(
@@ -52,8 +53,18 @@ def avro_deserialize(avro_bytes: bytes, subject: str) -> dict:
         logger.info(f"[DEBUG] Deserializing {subject}")
         logger.info(f"[DEBUG] named_schemas keys: {list(named_schemas.keys())}")
 
+        # ШАГ 1: Регистрируем все named schemas через parse_schema
+        # Это заставляет fastavro положить их в internal registry
+        for name, ref_schema in named_schemas.items():
+            logger.info(f"[DEBUG] Parsing named schema: {name}")
+            parse_schema(ref_schema, _write_hint=False)
+
+        # ШАГ 2: Парсим основную схему с учётом уже зарегистрированных named schemas
+        parsed_main_schema = parse_schema(schema, _write_hint=False)
+
+        # ШАГ 3: Десериализуем с распарсенной схемой
         buffer = io.BytesIO(avro_bytes)
-        data = schemaless_reader(buffer, schema, named_schemas)
+        data = schemaless_reader(buffer, parsed_main_schema)
 
         logger.debug(f"Deserialized {len(avro_bytes)} bytes for {subject}")
         return data
