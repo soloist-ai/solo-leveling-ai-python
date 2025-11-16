@@ -28,12 +28,23 @@ def avro_serialize(data: dict, subject: str) -> bytes:
             subject
         )
 
+        # Создаём общий словарь для fastavro
+        fastavro_named_schemas: dict[str, Any] = {}
+
+        # Парсим все reference-схемы
+        for name, ref_schema in named_schemas.items():
+            parse_schema(ref_schema, fastavro_named_schemas, _write_hint=False)
+
+        # Парсим основную схему
+        parsed_schema = parse_schema(schema, fastavro_named_schemas, _write_hint=False)
+
         buffer = io.BytesIO()
-        schemaless_writer(buffer, schema, data, named_schemas)
+        schemaless_writer(buffer, parsed_schema, data)
         avro_bytes = buffer.getvalue()
 
         logger.debug(f"Serialized {len(avro_bytes)} bytes for {subject}")
         return avro_bytes
+
     except Exception as e:
         logger.error(f"Failed to serialize data for {subject}: {e}")
         logger.debug(f"Data: {data}")
@@ -53,14 +64,19 @@ def avro_deserialize(avro_bytes: bytes, subject: str) -> dict:
         logger.info(f"[DEBUG] Deserializing {subject}")
         logger.info(f"[DEBUG] named_schemas keys: {list(named_schemas.keys())}")
 
+        # Создаём общий словарь для fastavro
+        fastavro_named_schemas: dict[str, Any] = {}
+
         # ШАГ 1: Регистрируем все named schemas через parse_schema
-        # Это заставляет fastavro положить их в internal registry
+        # ВАЖНО: передаём один и тот же словарь fastavro_named_schemas
         for name, ref_schema in named_schemas.items():
             logger.info(f"[DEBUG] Parsing named schema: {name}")
-            parse_schema(ref_schema, _write_hint=False)
+            parse_schema(ref_schema, fastavro_named_schemas, _write_hint=False)
 
-        # ШАГ 2: Парсим основную схему с учётом уже зарегистрированных named schemas
-        parsed_main_schema = parse_schema(schema, _write_hint=False)
+        # ШАГ 2: Парсим основную схему с тем же словарём
+        parsed_main_schema = parse_schema(
+            schema, fastavro_named_schemas, _write_hint=False
+        )
 
         # ШАГ 3: Десериализуем с распарсенной схемой
         buffer = io.BytesIO(avro_bytes)
@@ -68,6 +84,7 @@ def avro_deserialize(avro_bytes: bytes, subject: str) -> dict:
 
         logger.debug(f"Deserialized {len(avro_bytes)} bytes for {subject}")
         return data
+
     except Exception as e:
         logger.error(f"Failed to deserialize data for {subject}: {e}")
         raise
