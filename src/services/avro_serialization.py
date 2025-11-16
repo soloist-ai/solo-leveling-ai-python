@@ -22,9 +22,11 @@ class ConfluentAvroService:
 
     def get_serializer(self, subject: str) -> AvroSerializer:
         if subject not in self.serializer_cache:
+            schema = self.schema_registry_client.get_latest_version(subject)
+
             self.serializer_cache[subject] = AvroSerializer(
                 schema_registry_client=self.schema_registry_client,
-                schema_str=None,  # type: ignore[arg-type]
+                schema_str=schema.schema.schema_str,  # ✅ Используем схему из Registry
                 to_dict=None,
             )
         return self.serializer_cache[subject]
