@@ -7,7 +7,7 @@ app:
   debug: false
 
 features:
-  use_schema_registry: false
+  use_schema_registry: true
 
 kafka:
   bootstrap_servers: kafka-service:9092
