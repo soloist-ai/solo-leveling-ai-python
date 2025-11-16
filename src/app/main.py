@@ -23,8 +23,7 @@ setup_logging()
 logger = logging.getLogger(__name__)
 
 SCHEMA_SUBJECTS = [
-    "com.sleepkqq.sololeveling.avro.task.GenerateTaskEvent",
-    "com.sleepkqq.sololeveling.avro.task.SaveTask",
+    "com.sleepkqq.sololeveling.avro.task.GenerateTasksEvent",
     "com.sleepkqq.sololeveling.avro.task.SaveTasksEvent",
 ]
 
