@@ -1,8 +1,8 @@
 import io
 import logging
-from typing import Any, TypeVar, Type, cast, Protocol
+from typing import Any, TypeVar, Type, Protocol, cast
 
-from fastavro import schemaless_writer, schemaless_reader, parse_schema
+from fastavro import schemaless_writer, schemaless_reader
 
 from src.services.schema_registry_service import schema_registry_service
 
@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class FromDictProtocol(Protocol):
-    """Протокол для классов, у которых есть classmethod from_dict()."""
+    """Протокол для классов с classmethod from_dict()."""
 
     @classmethod
     def from_dict(cls, data: dict) -> "FromDictProtocol": ...
@@ -24,12 +24,10 @@ def avro_serialize(data: dict, subject: str) -> bytes:
     Сериализует dict в Avro binary используя схему из Schema Registry
     """
     try:
-        # Получаем схему и references из Schema Registry
         schema, named_schemas = schema_registry_service.get_schema_with_references(
             subject
         )
 
-        # Сериализуем через fastavro
         buffer = io.BytesIO()
         schemaless_writer(buffer, schema, data, named_schemas)
         avro_bytes = buffer.getvalue()
@@ -43,21 +41,16 @@ def avro_serialize(data: dict, subject: str) -> bytes:
 
 
 def avro_deserialize(avro_bytes: bytes, subject: str) -> dict:
+    """
+    Десериализует Avro binary в dict, используя сырую схему из Schema Registry.
+    """
     try:
-        schema, named_schemas = schema_registry_service.get_schema_with_references(subject)
-
-        logger.debug(f"Main schema for {subject}: {schema}")
-        for key, val in named_schemas.items():
-            logger.debug(f"Named schema {key}: {val}")
-
-        logger.debug(
-            f"Deserializing {subject} with named_schemas: {list(named_schemas.keys())}"
+        schema, named_schemas = schema_registry_service.get_schema_with_references(
+            subject
         )
 
-        parsed_schema = parse_schema(schema, named_schemas)
-
         buffer = io.BytesIO(avro_bytes)
-        data = schemaless_reader(buffer, parsed_schema, named_schemas)
+        data = schemaless_reader(buffer, schema, named_schemas)
 
         logger.debug(f"Deserialized {len(avro_bytes)} bytes for {subject}")
         return data
@@ -69,8 +62,6 @@ def avro_deserialize(avro_bytes: bytes, subject: str) -> dict:
 def serialize_dataclass(obj: Any, subject: str) -> bytes:
     """
     Сериализует dataclass в Avro
-
-    obj: dataclass с методом to_dict()
     """
     if not hasattr(obj, "to_dict") or not callable(getattr(obj, "to_dict")):
         raise TypeError(f"{type(obj).__name__} must have callable to_dict() method")
@@ -84,8 +75,6 @@ def deserialize_to_dataclass(
 ) -> T:
     """
     Десериализует Avro в dataclass
-
-    dataclass_type: класс с classmethod from_dict()
     """
     if not hasattr(dataclass_type, "from_dict") or not callable(
         getattr(dataclass_type, "from_dict")
