@@ -49,6 +49,9 @@ def avro_deserialize(avro_bytes: bytes, subject: str) -> dict:
             subject
         )
 
+        logger.info(f"[DEBUG] Deserializing {subject}")
+        logger.info(f"[DEBUG] named_schemas keys: {list(named_schemas.keys())}")
+
         buffer = io.BytesIO(avro_bytes)
         data = schemaless_reader(buffer, schema, named_schemas)
 
