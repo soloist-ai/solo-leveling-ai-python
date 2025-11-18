@@ -2,7 +2,6 @@ from typing import Any
 from confluent_kafka.serialization import SerializationContext, MessageField
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroDeserializer, AvroSerializer
-from confluent_kafka.schema_registry import record_subject_name_strategy
 
 
 class ConfluentAvroService:
