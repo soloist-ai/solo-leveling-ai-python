@@ -1,6 +1,6 @@
 from typing import Any
 from confluent_kafka.serialization import SerializationContext, MessageField
-from confluent_kafka.schema_registry import SchemaRegistryClient, Schema
+from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroDeserializer, AvroSerializer
 from confluent_kafka.schema_registry import record_subject_name_strategy
 
@@ -23,19 +23,10 @@ class ConfluentAvroService:
 
     def get_serializer(self, subject: str) -> AvroSerializer:
         if subject not in self.serializer_cache:
-            # Получаем RegisteredSchema, который содержит Schema с references
             latest_version = self.schema_registry_client.get_latest_version(subject)
-
-            # Создаем объект Schema (не строку!), который содержит references
-            schema = Schema(
-                schema_str=latest_version.schema.schema_str,
-                schema_type=latest_version.schema.schema_type,
-                references=latest_version.schema.references,  # ✅ Передаем references
-            )
-
             self.serializer_cache[subject] = AvroSerializer(
                 schema_registry_client=self.schema_registry_client,
-                schema_str=schema,  # ✅ Передаем Schema объект, не строку
+                schema_str=latest_version.schema,  # ✅ Передаём Schema объект напрямую
                 to_dict=None,
                 conf={
                     "auto.register.schemas": False,

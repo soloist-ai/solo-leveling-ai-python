@@ -27,7 +27,7 @@ class GenerateTask:
             taskId=data["taskId"],
             version=data.get("version", 0),
             rarity=Rarity(data["rarity"]) if data.get("rarity") else None,
-            topics=[TaskTopic(t) for t in data.get("topics", [])]
+            topics=[TaskTopic(t) for t in data.get("topics", [])],
         )
 
 
