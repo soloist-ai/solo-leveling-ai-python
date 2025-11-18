@@ -40,7 +40,7 @@ class ConfluentAvroService:
                 conf={
                     "auto.register.schemas": False,
                     "use.latest.version": True,
-                    "subject_name.strategy": record_subject_name_strategy,
+                    "subject.name.strategy": record_subject_name_strategy,
                 },
             )
         return self.serializer_cache[subject]
