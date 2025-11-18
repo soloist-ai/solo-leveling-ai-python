@@ -17,7 +17,7 @@ class GenerateTask:
             "taskId": self.taskId,
             "version": self.version,
             "rarity": self.rarity.value if self.rarity else None,
-            "topics": [t.value for t in self.topics] if self.topics else [],
+            "topics": [t.value for t in self.topics] if self.topics is not None else [],
         }
         return result
 
@@ -27,7 +27,7 @@ class GenerateTask:
             taskId=data["taskId"],
             version=data.get("version", 0),
             rarity=Rarity(data["rarity"]) if data.get("rarity") else None,
-            topics=[TaskTopic(t) for t in data["topics"]] if data.get("topics") else [],
+            topics=[TaskTopic(t) for t in data.get("topics", [])]
         )
 
 
