@@ -61,3 +61,6 @@ dist/
 
 # PyCharm project settings
 .idea/
+
+/tests.test_consumer.py
+/test.test_producer.py
