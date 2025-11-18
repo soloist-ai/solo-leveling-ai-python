@@ -12,13 +12,7 @@ SAVE_TASKS_EVENT_SUBJECT = "com.sleepkqq.sololeveling.avro.task.SaveTasksEvent"
 
 
 async def send_save_tasks_event(producer: AIOKafkaProducer, event: SaveTasksEvent):
-    """
-    Отправляет событие SaveTasksEvent в Kafka
 
-    Args:
-        producer: Kafka producer
-        event: SaveTasksEvent dataclass
-    """
     try:
         # Сериализуем dataclass через Schema Registry
         avro_bytes = confluent_avro.serialize(event.to_dict(), SAVE_TASKS_EVENT_SUBJECT)
