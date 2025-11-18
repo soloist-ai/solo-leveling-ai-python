@@ -5,7 +5,7 @@ from faststream import FastStream
 from faststream.kafka import KafkaBroker
 
 from src.avro.events.save_tasks_event import SaveTask
-from src.services.avro_serialization import get_deserializer
+from src.services.avro_serialization import ConfluentAvroService
 from src.config.config_loader import get_kafka_topics
 from src.config.config_loader import get_kafka_bootstrap_servers, config
 topics = get_kafka_topics()
@@ -37,7 +37,7 @@ async def handle_task_response(message: bytes):
     """Получает сгенерированные задачи"""
     try:
         schema = SaveTask.avro_schema_to_python()
-        obj = avro_deserialize(message, schema)
+        obj = ConfluentAvroService.deserialize(message, schema)
         task = SaveTask(**obj)
 
         logger.info(f"Generated task: {task}")
