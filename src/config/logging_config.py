@@ -1,13 +1,16 @@
 import logging
 import sys
 from src.config.config_loader import config
+from src.config.logging_filters import HealthCheckRateLimitFilter
 
 
 def setup_logging():
     logging_config = config["logging"]
     log_level = logging_config["level"]
     log_format = logging_config["format"]
-
+    logging.getLogger("uvicorn.access").addFilter(
+        HealthCheckRateLimitFilter(period_seconds=60, show_suppressed=True)
+    )
     if log_format == "json":
         formatter = logging.Formatter(
             '{"time":"%(asctime)s", "level":"%(levelname)s", "name":"%(name)s", "message":"%(message)s"}'
