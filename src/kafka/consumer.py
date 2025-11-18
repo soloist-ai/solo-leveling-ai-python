@@ -8,12 +8,16 @@ from src.services.avro_serialization import ConfluentAvroService
 from src.avro.events.save_tasks_event import SaveTask, SaveTasksEvent
 from src.avro.events.generate_tasks_event import GenerateTask, GenerateTasksEvent
 from src.avro.enums.rarity import Rarity
-from src.config.kafka_config import topics
-from src.config.config_loader import config, is_feature_enabled, get_schema_registry_url
+from src.config.config_loader import (
+    config,
+    is_feature_enabled,
+    get_schema_registry_url,
+    get_kafka_topics,
+)
 
 logger = logging.getLogger(__name__)
 
-# Subjects для Schema Registry
+topics = get_kafka_topics()
 SUBJECTS = {
     "generate_tasks_event": "com.sleepkqq.sololeveling.avro.task.GenerateTasksEvent",
     "save_tasks_event": "com.sleepkqq.sololeveling.avro.task.SaveTasksEvent",
@@ -99,7 +103,7 @@ def register_consumers(broker: KafkaBroker):
             await broker.publish(response_bytes, topic=topics["task_responses"])
 
             logger.info(
-                f"✅ Published SaveTasksEvent: playerId={event.playerId}, "
+                f"Published SaveTasksEvent: playerId={event.playerId}, "
                 f"txId={event.txId}, tasks_count={len(save_tasks)}"
             )
 

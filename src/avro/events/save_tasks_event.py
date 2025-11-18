@@ -64,7 +64,6 @@ class SaveTask:
     def from_generated(
         cls, task_data: GenerateTask, result_task: PydanticTask
     ) -> "SaveTask":
-        """Создаёт SaveTask из GenerateTask dataclass и результата LLM"""
         return cls(
             taskId=task_data.taskId,
             version=task_data.version,

@@ -2,9 +2,10 @@ from aiokafka import AIOKafkaProducer
 
 from src.kafka.consumer import confluent_avro
 from src.avro.events.save_tasks_event import SaveTasksEvent
-from src.config.kafka_config import topics
+from src.config.config_loader import get_kafka_topics
 import logging
 
+topics = get_kafka_topics()
 logger = logging.getLogger(__name__)
 
 SAVE_TASKS_EVENT_SUBJECT = "com.sleepkqq.sololeveling.avro.task.SaveTasksEvent"

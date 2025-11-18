@@ -5,10 +5,10 @@ from faststream import FastStream
 from faststream.kafka import KafkaBroker
 
 from src.avro.events.save_tasks_event import SaveTask
-from src.services.avro_serialization import avro_deserialize
-from src.config.kafka_config import topics
+from src.services.avro_serialization import get_deserializer
+from src.config.config_loader import get_kafka_topics
 from src.config.config_loader import get_kafka_bootstrap_servers, config
-
+topics = get_kafka_topics()
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )

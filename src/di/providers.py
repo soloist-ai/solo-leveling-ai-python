@@ -1,10 +1,9 @@
 from dishka import Provider, provide, Scope
 from src.config.ai_config import create_chat_client
-from src.config.config_loader import config
+from src.config.config_loader import config, get_kafka_bootstrap_servers
 from faststream.kafka import KafkaBroker
 from src.services.task_service import TaskService
 from langchain_core.runnables import Runnable
-from src.config.kafka_config import kafka_broker
 
 
 class ConfigProvider(Provider):
@@ -28,4 +27,5 @@ class TaskServiceProvider(Provider):
 class KafkaProvider(Provider):
     @provide(scope=Scope.APP)
     def get_kafka_broker(self) -> KafkaBroker:
-        return kafka_broker
+        bootstrap_servers = get_kafka_bootstrap_servers()
+        return KafkaBroker(bootstrap_servers)

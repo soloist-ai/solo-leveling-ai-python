@@ -1,16 +1,19 @@
 import uvicorn
 import logging
 from contextlib import asynccontextmanager
-
 from faststream import FastStream
 from dishka import make_async_container
 from dishka.integrations.faststream import setup_dishka
 from faststream.asgi import AsgiFastStream, make_ping_asgi
-
-from src.config.kafka_config import kafka_broker
+from faststream.kafka import KafkaBroker
 from src.kafka.consumer import register_consumers
 from src.config.logging_config import setup_logging
-from src.config.config_loader import get_environment, is_production, is_feature_enabled
+from src.config.config_loader import (
+    get_environment,
+    is_production,
+    is_feature_enabled,
+    get_kafka_bootstrap_servers,
+)
 from src.services.schema_registry_service import schema_registry_service
 from src.di.providers import (
     ConfigProvider,
@@ -19,9 +22,9 @@ from src.di.providers import (
     KafkaProvider,
 )
 
+kafka_broker = KafkaBroker(get_kafka_bootstrap_servers())
 setup_logging()
 logger = logging.getLogger(__name__)
-
 SCHEMA_SUBJECTS = [
     "com.sleepkqq.sololeveling.avro.task.GenerateTasksEvent",
     "com.sleepkqq.sololeveling.avro.task.SaveTasksEvent",
@@ -60,7 +63,7 @@ async def lifespan():
 
     yield
 
-    await kafka_broker.close()
+    await kafka_broker.stop()
     logger.info("Application shutdown complete")
 
 
