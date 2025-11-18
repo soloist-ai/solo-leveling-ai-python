@@ -15,7 +15,7 @@ class ConfluentAvroService:
         if subject not in self.deserializer_cache:
             self.deserializer_cache[subject] = AvroDeserializer(
                 schema_registry_client=self.schema_registry_client,
-                schema_str=None,  # Writer schema будет автоматически получена
+                schema_str=None,
                 from_dict=None,
                 return_record_name=False,
             )
@@ -24,9 +24,18 @@ class ConfluentAvroService:
     def get_serializer(self, subject: str) -> AvroSerializer:
         if subject not in self.serializer_cache:
             latest_version = self.schema_registry_client.get_latest_version(subject)
+            schema_str = (
+                latest_version.get("schema")
+                if isinstance(latest_version, dict)
+                else getattr(latest_version, "schema", None)
+            )
+            if not schema_str:
+                raise ValueError(
+                    f"Failed to obtain schema string for subject '{subject}'"
+                )
             self.serializer_cache[subject] = AvroSerializer(
                 schema_registry_client=self.schema_registry_client,
-                schema_str=latest_version.schema,  # ✅ Передаём Schema объект напрямую
+                schema_str=schema_str,
                 to_dict=None,
                 conf={
                     "auto.register.schemas": False,
