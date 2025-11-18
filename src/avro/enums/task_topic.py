@@ -13,5 +13,9 @@ class TaskTopic(str, Enum):
     ECOLOGY = "ECOLOGY"
     TEAMWORK = "TEAMWORK"
 
-    class Meta:
-        namespace = "com.sleepkqq.sololeveling.avro.task"
+    def to_dict(self) -> str:
+        return self.value
+
+    @classmethod
+    def from_dict(cls, data: str) -> "TaskTopic":
+        return cls(data)

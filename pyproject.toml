@@ -20,14 +20,18 @@ dishka = "1.7.2"
 pydantic = "^2.12.3"
 dataclasses-avroschema = "^0.66.0"
 uvicorn = "^0.38.0"
+confluent-kafka = {extras = ["schema-registry"], version = "^2.12.2"}
+cachetools = "^6.2.2"
+types-cachetools = "^6.2.0.20251022"
 
 [tool.poetry.scripts]
 run-service = "src.app.main:main"
 
 [tool.mypy]
 [[tool.mypy.overrides]]
-module = ["aiokafka", "aiokafka.*"]
+module = ["aiokafka", "aiokafka.*", "confluent_kafka.*"]
 ignore_missing_imports = true
+ignore_errors = true
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
@@ -40,5 +44,6 @@ dev = [
     "mypy (>=1.18.2,<2.0.0)",
     "pytest (>=8.4.2,<9.0.0)",
     "types-pyyaml (>=6.0.0,<7.0.0)",
-    "types-requests (>=2.32.4.20250913,<3.0.0.0)"
+    "types-requests (>=2.32.4.20250913,<3.0.0.0)",
+    "types-confluent-kafka (>=1.4.0,<2.0.0) ; python_version >= \"3.11\" and python_version < \"3.15\""
 ]

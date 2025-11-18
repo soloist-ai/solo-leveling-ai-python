@@ -1,16 +1,29 @@
 import asyncio
 import logging
+from typing import List
 from faststream.kafka import KafkaBroker
 from dishka.integrations.faststream import inject, FromDishka
-
 from src.services.task_service import TaskService
-from src.avro.events.generate_tasks_event import GenerateTask
-from src.avro.events.save_tasks_event import SaveTask
-from src.services.avro_serialization import avro_deserialize, avro_serialize
-from src.config.kafka_config import topics
-from src.config.config_loader import config, is_feature_enabled
+from src.services.avro_serialization import ConfluentAvroService
+from src.avro.events.save_tasks_event import SaveTask, SaveTasksEvent
+from src.avro.events.generate_tasks_event import GenerateTask, GenerateTasksEvent
+from src.avro.enums.rarity import Rarity
+from src.config.config_loader import (
+    config,
+    is_feature_enabled,
+    get_schema_registry_url,
+    get_kafka_topics,
+)
 
 logger = logging.getLogger(__name__)
+
+topics = get_kafka_topics()
+SUBJECTS = {
+    "generate_tasks_event": "com.sleepkqq.sololeveling.avro.task.GenerateTasksEvent",
+    "save_tasks_event": "com.sleepkqq.sololeveling.avro.task.SaveTasksEvent",
+}
+
+confluent_avro = ConfluentAvroService(schema_registry_url=get_schema_registry_url())
 
 
 def register_consumers(broker: KafkaBroker):
@@ -23,47 +36,78 @@ def register_consumers(broker: KafkaBroker):
     )
     @inject
     async def handle_task_request(
-        message: bytes,
-        task_service: FromDishka[TaskService],
+        message: bytes, task_service: FromDishka[TaskService]
     ):
         try:
-            schema = GenerateTask.avro_schema_to_python()
-            obj = avro_deserialize(message, schema)
-            task_data = GenerateTask(**obj)
+            # Десериализация через Confluent Avro
+            event_dict = confluent_avro.deserialize(
+                message, SUBJECTS["generate_tasks_event"]
+            )
+            event = GenerateTasksEvent.from_dict(event_dict)
 
-            logger.info(f"Received task request: taskId={task_data.taskId}")
+            if not event.inputs:
+                logger.warning(
+                    f"Received empty task list for player {event.playerId}, txId={event.txId}"
+                )
+                return
 
-            if is_feature_enabled("debug_logging"):
-                logger.debug(f"Full task data: {task_data}")
-
-            result_task = await asyncio.to_thread(
-                task_service.generate_task,
-                topics=task_data.topics,
-                rarity=task_data.rarity,
+            logger.info(
+                f"Received GenerateTasksEvent: playerId={event.playerId}, "
+                f"txId={event.txId}, tasks_count={len(event.inputs)}"
             )
 
-            logger.info(f"Generated task: {result_task}")
+            if is_feature_enabled("debug_logging"):
+                logger.debug(f"Full event data: {event}")
 
-            save_task = SaveTask.from_generated(task_data, result_task)
-            response_schema = SaveTask.avro_schema_to_python()
-            response_bytes = avro_serialize(save_task.to_dict(), response_schema)
+            # Генерируем задачи параллельно через asyncio.gather
+            async def process_single_task(task_input: GenerateTask) -> SaveTask:
+                """Обрабатывает одну задачу через LLM"""
+                logger.info(f"Processing task: taskId={task_input.taskId}")
 
+                # Ternary operator для явного определения типа
+                task_rarity = (
+                    task_input.rarity
+                    if task_input.rarity is not None
+                    else Rarity.COMMON
+                )
+
+                result_task = await asyncio.to_thread(
+                    task_service.generate_task,
+                    topics=task_input.topics if task_input.topics else [],
+                    rarity=task_rarity,
+                )
+
+                logger.info(
+                    f"Generated task: {result_task.title.en} (taskId={task_input.taskId})"
+                )
+
+                # Создаём SaveTask из результата LLM
+                return SaveTask.from_generated(task_input, result_task)
+
+            # Обрабатываем все задачи параллельно
+            save_tasks: List[SaveTask] = await asyncio.gather(
+                *[process_single_task(task) for task in event.inputs]
+            )
+
+            logger.info(f"Successfully generated {len(save_tasks)} tasks")
+
+            # Создаём событие SaveTasksEvent со списком задач
+            save_event = SaveTasksEvent(
+                txId=event.txId, playerId=event.playerId, tasks=save_tasks
+            )
+
+            # Сериализуем через Schema Registry
+            response_bytes = confluent_avro.serialize(
+                save_event.to_dict(), SUBJECTS["save_tasks_event"]
+            )
             await broker.publish(response_bytes, topic=topics["task_responses"])
-            logger.info(f"Published response to {topics['task_responses']}")
+
+            logger.info(
+                f"Published SaveTasksEvent: playerId={event.playerId}, "
+                f"txId={event.txId}, tasks_count={len(save_tasks)}"
+            )
 
         except Exception as e:
             logger.error(f"Error processing task request: {e}", exc_info=True)
 
-            error_response = {
-                "error": str(e),
-                "original_request": str(obj) if "obj" in locals() else "N/A",
-                "status": "failed",
-            }
-
-    #          await broker.publish(
-    #             str(error_response).encode(), topic=topics["task_errors"]
-    #        )
-    #       logger.error(f"Sent error to {topics['task_errors']}")
-
     logger.info(f"Consumer registered for topic: {topics['task_requests']}")
-    logger.info(f"Group ID: {kafka_config['consumer']['group_id']}")

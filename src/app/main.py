@@ -5,15 +5,16 @@ from faststream import FastStream
 from dishka import make_async_container
 from dishka.integrations.faststream import setup_dishka
 from faststream.asgi import AsgiFastStream, make_ping_asgi
-from src.config.kafka_config import kafka_broker
+from faststream.kafka import KafkaBroker
 from src.kafka.consumer import register_consumers
 from src.config.logging_config import setup_logging
-from src.config.config_loader import get_environment, is_production, is_feature_enabled
+from src.config.config_loader import (
+    get_environment,
+    is_production,
+    is_feature_enabled,
+    get_kafka_bootstrap_servers,
+)
 from src.services.schema_registry_service import schema_registry_service
-from src.avro.events.generate_tasks_event import GenerateTask
-from src.avro.events.save_tasks_event import SaveTask
-
-# Импортируем providers
 from src.di.providers import (
     ConfigProvider,
     LLMProvider,
@@ -21,16 +22,19 @@ from src.di.providers import (
     KafkaProvider,
 )
 
+kafka_broker = KafkaBroker(get_kafka_bootstrap_servers())
 setup_logging()
 logger = logging.getLogger(__name__)
+SCHEMA_SUBJECTS = [
+    "com.sleepkqq.sololeveling.avro.task.GenerateTasksEvent",
+    "com.sleepkqq.sololeveling.avro.task.SaveTasksEvent",
+]
 
 
 @asynccontextmanager
 async def lifespan():
     env = get_environment()
     logger.info(f"Starting Solo Leveling AI in {env} environment")
-
-    # Feature flags
     logger.info("Feature flags:")
     logger.info(f"  - Schema Registry: {is_feature_enabled('use_schema_registry')}")
     logger.info(f"  - Task Caching: {is_feature_enabled('enable_task_caching')}")
@@ -41,31 +45,25 @@ async def lifespan():
         logger.info("Running in PRODUCTION mode")
 
     if is_feature_enabled("use_schema_registry"):
-        logger.info("Registering Avro schemas...")
+        logger.info("Loading schemas from Schema Registry...")
         try:
-            request_schema = GenerateTask.avro_schema_to_python()
-            request_id = schema_registry_service.register_schema(
-                "task.requests-value", request_schema
-            )
-            logger.info(f"GenerateTask schema registered (ID: {request_id})")
-
-            response_schema = SaveTask.avro_schema_to_python()
-            response_id = schema_registry_service.register_schema(
-                "task.responses-value", response_schema
-            )
-            logger.info(f"SaveTask schema registered (ID: {response_id})")
-
+            for subject in SCHEMA_SUBJECTS:
+                schema_data = schema_registry_service.get_schema_metadata(subject)
+                logger.info(
+                    f"{subject}: version={schema_data['version']}, id={schema_data['id']}"
+                )
         except Exception as e:
-            logger.error(f"Failed to register schemas: {e}")
+            logger.error(f"Failed to load schemas from Schema Registry: {e}")
             if is_production():
                 raise
+            logger.warning("Continuing without Schema Registry validation")
 
     await kafka_broker.start()
     logger.info("Kafka broker connected")
 
     yield
 
-    await kafka_broker.close()
+    await kafka_broker.stop()
     logger.info("Application shutdown complete")
 
 
@@ -77,9 +75,7 @@ container = make_async_container(
 )
 
 faststream_app = FastStream(kafka_broker, lifespan=lifespan)
-
 setup_dishka(container, faststream_app)
-
 register_consumers(kafka_broker)
 
 app = AsgiFastStream(
@@ -94,7 +90,7 @@ app = AsgiFastStream(
 )
 
 if __name__ == "__main__":
-    logger.info("✅ Starting application with health check endpoint...")
+    logger.info("Starting application with health check endpoint...")
     uvicorn.run(
         app,
         host="0.0.0.0",
