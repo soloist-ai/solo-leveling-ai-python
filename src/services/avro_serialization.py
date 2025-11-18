@@ -37,11 +37,7 @@ class ConfluentAvroService:
                 schema_registry_client=self.schema_registry_client,
                 schema_str=schema_str,
                 to_dict=None,
-                conf={
-                    "auto.register.schemas": False,
-                    "use.latest.version": True,
-                    "subject.name.strategy": record_subject_name_strategy,
-                },
+                conf={"auto.register.schemas": False, "use.latest.version": True},
             )
         return self.serializer_cache[subject]
 
