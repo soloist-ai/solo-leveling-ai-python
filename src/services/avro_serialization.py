@@ -2,6 +2,7 @@ from typing import Any
 from confluent_kafka.serialization import SerializationContext, MessageField
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroDeserializer, AvroSerializer
+from confluent_kafka.schema_registry import record_subject_name_strategy
 
 
 class ConfluentAvroService:
@@ -36,7 +37,11 @@ class ConfluentAvroService:
                 schema_registry_client=self.schema_registry_client,
                 schema_str=schema_str,
                 to_dict=None,
-                conf={"auto.register.schemas": False, "use.latest.version": True},
+                conf={
+                    "auto.register.schemas": False,
+                    "use.latest.version": True,
+                    "subject_name.strategy": record_subject_name_strategy,
+                },
             )
         return self.serializer_cache[subject]
 
