@@ -5,7 +5,7 @@ from typing import DefaultDict
 
 
 class HealthCheckRateLimitFilter(logging.Filter):
-    def __init__(self, period_seconds: int = 60, show_suppressed: bool = True):
+    def __init__(self, period_seconds: int = 90, show_suppressed: bool = True):
         super().__init__()
         self.period_seconds = period_seconds
         self.show_suppressed = show_suppressed
