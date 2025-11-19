@@ -20,6 +20,7 @@ from src.di.providers import (
     LLMProvider,
     TaskServiceProvider,
     KafkaProvider,
+    ProducerProvider,
 )
 
 kafka_broker = KafkaBroker(get_kafka_bootstrap_servers())
@@ -72,6 +73,7 @@ container = make_async_container(
     LLMProvider(),
     TaskServiceProvider(),
     KafkaProvider(),
+    ProducerProvider(),
 )
 
 faststream_app = FastStream(kafka_broker, lifespan=lifespan)
