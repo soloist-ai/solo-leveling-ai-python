@@ -12,14 +12,16 @@ SAVE_TASKS_EVENT_SUBJECT = "com.sleepkqq.sololeveling.avro.task.SaveTasksEvent"
 
 async def send_save_tasks_event(producer: AIOKafkaProducer, save_event: SaveTasksEvent):
     try:
-        response_bytes = confluent_avro.serialize(save_event.to_dict(), SAVE_TASKS_EVENT_SUBJECT)
+        response_bytes = confluent_avro.serialize(
+            save_event.to_dict(), SAVE_TASKS_EVENT_SUBJECT
+        )
         await producer.send_and_wait(
-            topics["task_save"],
+            topics["task_responses"],
             value=response_bytes,
             key=str(save_event.playerId).encode() if save_event.playerId else None,
         )
 
-        logger.info(f"✅ Published SaveTasksEvent for player {save_event.playerId}")
+        logger.info(f"Published SaveTasksEvent for player {save_event.playerId}")
 
     except Exception as e:
         logger.error(f"Failed to publish SaveTasksEvent: {e}")
