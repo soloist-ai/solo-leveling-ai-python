@@ -1,6 +1,6 @@
 from src.avro.enums.task_topic import TaskTopic
 from src.avro.enums.rarity import Rarity
-
+#test
 SYSTEM_PROMPT = """
 Based on the provided topics (TaskTopic) and task rarity (TaskRarity), generate a task (Task) with the following fields:
     title (task name),
