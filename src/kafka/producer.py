@@ -1,13 +1,14 @@
-from aiokafka import AIOKafkaProducer
-from src.kafka.consumer import confluent_avro
-from src.avro.events.save_tasks_event import SaveTasksEvent
-from src.config.config_loader import get_kafka_topics
 import logging
+from aiokafka import AIOKafkaProducer
+from src.avro.events.save_tasks_event import SaveTasksEvent
+from src.config.config_loader import get_kafka_topics, get_schema_registry_url
+from src.services.avro_serialization import ConfluentAvroService
 
 topics = get_kafka_topics()
 logger = logging.getLogger(__name__)
 
 SAVE_TASKS_EVENT_SUBJECT = "com.sleepkqq.sololeveling.avro.task.SaveTasksEvent"
+confluent_avro = ConfluentAvroService(schema_registry_url=get_schema_registry_url())
 
 
 async def send_save_tasks_event(producer: AIOKafkaProducer, save_event: SaveTasksEvent):
