@@ -1,3 +1,4 @@
+from aiokafka import AIOKafkaProducer
 from dishka import Provider, provide, Scope
 from src.config.ai_config import create_chat_client
 from src.config.config_loader import config, get_kafka_bootstrap_servers
@@ -29,3 +30,11 @@ class KafkaProvider(Provider):
     def get_kafka_broker(self) -> KafkaBroker:
         bootstrap_servers = get_kafka_bootstrap_servers()
         return KafkaBroker(bootstrap_servers)
+
+
+class ProducerProvider(Provider):
+    @provide(scope=Scope.APP)
+    async def get_kafka_producer(self) -> AIOKafkaProducer:
+        producer = AIOKafkaProducer(bootstrap_servers=get_kafka_bootstrap_servers())
+        await producer.start()
+        return producer

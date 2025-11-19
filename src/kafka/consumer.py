@@ -1,8 +1,14 @@
 import asyncio
 import logging
 from typing import List
+
+from aiokafka import AIOKafkaProducer
+from confluent_kafka import Producer
 from faststream.kafka import KafkaBroker
 from dishka.integrations.faststream import inject, FromDishka
+
+from src.di.providers import ProducerProvider
+from src.kafka.producer import send_save_tasks_event
 from src.services.task_service import TaskService
 from src.services.avro_serialization import ConfluentAvroService
 from src.avro.events.save_tasks_event import SaveTask, SaveTasksEvent
@@ -36,7 +42,9 @@ def register_consumers(broker: KafkaBroker):
     )
     @inject
     async def handle_task_request(
-        message: bytes, task_service: FromDishka[TaskService]
+            message: bytes,
+            task_service: TaskService = FromDishka(),
+            producer: AIOKafkaProducer = FromDishka(),
     ):
         try:
             # Десериализация через Confluent Avro
@@ -88,19 +96,12 @@ def register_consumers(broker: KafkaBroker):
             save_tasks: List[SaveTask] = await asyncio.gather(
                 *[process_single_task(task) for task in event.inputs]
             )
-
             logger.info(f"Successfully generated {len(save_tasks)} tasks")
-
-            # Создаём событие SaveTasksEvent со списком задач
             save_event = SaveTasksEvent(
                 txId=event.txId, playerId=event.playerId, tasks=save_tasks
             )
 
-            # Сериализуем через Schema Registry
-            response_bytes = confluent_avro.serialize(
-                save_event.to_dict(), SUBJECTS["save_tasks_event"]
-            )
-            await broker.publish(response_bytes, topic=topics["task_responses"])
+            await send_save_tasks_event(producer, save_event)
 
             logger.info(
                 f"Published SaveTasksEvent: playerId={event.playerId}, "
