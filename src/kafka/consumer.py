@@ -1,8 +1,9 @@
 import asyncio
 import logging
-from typing import List
+from typing import List, Annotated
 
 from aiokafka import AIOKafkaProducer
+from dishka import FromDishka
 from faststream.kafka import KafkaBroker
 from dishka.integrations.faststream import inject
 
@@ -40,7 +41,9 @@ def register_consumers(broker: KafkaBroker):
     )
     @inject
     async def handle_task_request(
-        message: bytes, task_service: TaskService, producer: AIOKafkaProducer
+        message: bytes,
+        task_service: Annotated[TaskService, FromDishka()],
+        producer: Annotated[AIOKafkaProducer, FromDishka()],
     ):
         try:
             event_dict = confluent_avro.deserialize(
