@@ -1,0 +1,75 @@
+from src.models.generate_task_response import Task
+from src.avro.enums.rarity import Rarity
+from typing import Optional, TypedDict
+
+
+class TaskValidationError(Exception):
+    pass
+
+
+class RarityRule(TypedDict):
+    experience_range: tuple[int, int]
+    max_attributes: int
+
+
+class TaskValidator:
+    RARITY_RULES: dict[Rarity, RarityRule] = {
+        Rarity.COMMON: {"experience_range": (10, 20), "max_attributes": 2},
+        Rarity.UNCOMMON: {"experience_range": (30, 40), "max_attributes": 4},
+        Rarity.RARE: {"experience_range": (50, 60), "max_attributes": 6},
+        Rarity.EPIC: {"experience_range": (70, 80), "max_attributes": 8},
+        Rarity.LEGENDARY: {"experience_range": (90, 100), "max_attributes": 10},
+    }
+
+    @classmethod
+    def validate_task(cls, task: Task, rarity: Rarity) -> Optional[str]:
+        rules = cls.RARITY_RULES.get(rarity)
+        if not rules:
+            return f"Unknown rarity: {rarity}"
+
+        exp_min, exp_max = rules["experience_range"]
+        if not (exp_min <= task.experience <= exp_max):
+            return (
+                f"Experience {task.experience} out of range for {rarity}: "
+                f"expected {exp_min}-{exp_max}"
+            )
+
+        if task.experience % 10 != 0:
+            return f"Experience {task.experience} is not a multiple of 10"
+
+        expected_reward = task.experience // 2
+        if task.currencyReward != expected_reward:
+            return (
+                f"Currency reward {task.currencyReward} incorrect: "
+                f"expected {expected_reward} (experience / 2)"
+            )
+
+        total_attributes = task.agility + task.strength + task.intelligence
+        max_attributes = rules["max_attributes"]
+        if total_attributes > max_attributes:
+            return (
+                f"Total attributes {total_attributes} exceeds maximum "
+                f"{max_attributes} for {rarity}"
+            )
+
+        for attr_name, attr_value in [
+            ("agility", task.agility),
+            ("strength", task.strength),
+            ("intelligence", task.intelligence),
+        ]:
+            if not (0 <= attr_value <= 10):
+                return f"{attr_name.capitalize()} {attr_value} out of range 0-10"
+
+        if not task.title or not task.title.ru or not task.title.en:
+            return "Title missing Russian or English localization"
+
+        if not task.description or not task.description.ru or not task.description.en:
+            return "Description missing Russian or English localization"
+
+        return None
+
+    @classmethod
+    def validate_or_raise(cls, task: Task, rarity: Rarity) -> None:
+        error = cls.validate_task(task, rarity)
+        if error:
+            raise TaskValidationError(error)
