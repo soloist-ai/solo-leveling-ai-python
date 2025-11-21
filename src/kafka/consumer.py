@@ -38,6 +38,7 @@ def register_consumers(broker: KafkaBroker):
         topics["task_requests"],
         group_id=kafka_config["consumer"]["group_id"],
         auto_offset_reset=kafka_config["consumer"]["auto_offset_reset"],
+        max_workers=kafka_config["consumer"]["max_workers"],
     )
     @inject
     async def handle_task_request(

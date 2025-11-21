@@ -28,6 +28,7 @@ kafka:
     enable_auto_commit: true
     max_poll_records: 100
     session_timeout_ms: 30000
+    max_workers: 5
   producer:
     acks: "all"
     retries: 3
