@@ -1,5 +1,33 @@
+import random
+
 from src.avro.enums.task_topic import TaskTopic
 from src.avro.enums.rarity import Rarity
+
+SCENARIOS = [
+    "Morning Kick-start (Бодрое начало дня)",
+    "Midday Reset (Обеденный сброс/перезагрузка)",
+    "Evening Wind-down (Вечернее расслабление)",
+    "Late Night Ritual (Поздний вечер перед сном)",
+    "Quick 5-15 min Break (Быстрый перерыв)",
+    "Deep Focus / Dedicated Session (Глубокое погружение)",
+    "Low Energy / Recovery Mode (Восстановление / Спокойный режим)",
+    "High Energy Challenge (Прилив сил / Амбициозная цель)",
+    "At Home / Indoors (Дома / В помещении)",
+    "Outdoor Activity (На свежем воздухе)",
+    "Work/Study Environment (Рабочая/учебная обстановка)",
+    "Solo Time (Время наедине с собой)",
+    "With Others / Social Context (В компании / Социальный момент)",
+    "Weekend / Free Time (Выходной / Свободное время)",
+]
+
+RARITY_DURATION_MAP = {
+    Rarity.COMMON: "5-10 minutes",
+    Rarity.UNCOMMON: "20-30 minutes",
+    Rarity.RARE: "45-60 minutes",
+    Rarity.EPIC: "1-2 hours",
+    Rarity.LEGENDARY: "3-4 hours",
+}
+
 
 SYSTEM_PROMPT = """
 You are a task generator for a self-improvement game. Generate realistic, practical tasks that an average person can complete in their daily life.
@@ -49,11 +77,10 @@ TASK GENERATION REQUIREMENTS:
    - NO impossible requirements
    - Tasks must fit into daily life of a regular person
 
-6. DIVERSITY - Each task must be COMPLETELY DIFFERENT:
-   - DO NOT repeat the same activity patterns
-   - Explore different approaches, methods, techniques
-   - Vary intensity, duration, location, tools used
-   - AVOID generic combinations like "running + meditation" repeatedly
+6. CONTEXT ADAPTATION (CRITICAL):
+   - You will be given a 'Scenario'. You MUST adapt the task to fit this scenario.
+   - If Scenario is "Office", do NOT suggest running a marathon. Suggest stretching in a chair or organizing files.
+   - If Scenario is "Late Night", do NOT suggest loud activities. Suggest reading or planning.
 
 7. USEFULNESS - Tasks must genuinely improve skills:
    - Physical tasks → real fitness (strength, endurance, flexibility, coordination)
@@ -61,16 +88,18 @@ TASK GENERATION REQUIREMENTS:
    - Social tasks → communication skills
    - Creative tasks → tangible results
 
-8. DIFFICULTY SCALING - Match rarity level:
-   - COMMON: Simple, quick, beginner (5-30 min)
-   - UNCOMMON: Moderate effort, some skill (30-60 min)
-   - RARE: Challenging, dedication needed (1-2 hours)
-   - EPIC: Very demanding, significant effort (2-4 hours)
-   - LEGENDARY: Extremely challenging, peak performance (several hours)
-
-9. SPECIFICITY - Be concrete and measurable:
-   - BAD: "Do some exercises"
-   - GOOD: "Complete 3 sets of 15 push-ups and 3 sets of 20 squats"
+8. STRICT DIFFICULTY SCALING (TIME & EFFORT):
+   - COMMON: VERY EASY. 5-10 minutes. Minimal effort.
+   - UNCOMMON: MODERATE. 20-30 minutes. Requires setup.
+   - RARE: HARD. 45-60 minutes. Requires planning.
+   - EPIC: VERY HARD. 1-2 hours. Significant commitment.
+   - LEGENDARY: HEROIC. 3-4 hours. Peak performance.
+   
+9. QUANTITATIVE SPECIFICITY (MANDATORY):
+   - EVERY task Description MUST contain at least one specific NUMBER (quantity, duration, counts).
+   - VAGUE: "Read a book", "Do pushups", "Clean the room".
+   - SPECIFIC: "Read 10 pages", "Do 20 pushups", "Clean 1 shelf".
+   - You MUST specify: How many? How long? How many times
 
 10. VARIETY IN MECHANICS - Use different types:
     - Quantitative (do X reps, read Y pages)
@@ -89,4 +118,12 @@ TASK GENERATION REQUIREMENTS:
 
 
 def generate_task_user_prompt(topics: list[TaskTopic], rarity: Rarity) -> str:
-    return f"TaskTopics: [{', '.join(topics)}], TaskRarity: {rarity}"
+    scenario = random.choice(SCENARIOS)
+    strict_duration = RARITY_DURATION_MAP.get(rarity, "variable duration")
+    return (
+        f"TaskTopics: [{', '.join(topics)}]\n"
+        f"TaskRarity: {rarity}\n"
+        f"Target Context/Scenario: {scenario}\n"
+        f"MANDATORY DURATION: {strict_duration}\n"
+        f"Instruction: Generate a unique task that takes EXACTLY {strict_duration} fitting this specific scenario. "
+    )
