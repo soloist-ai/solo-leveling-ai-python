@@ -43,7 +43,6 @@ def register_consumers(broker: KafkaBroker):
     @inject
     async def handle_task_request(
         msg: KafkaMessage,
-        *,
         task_service: Annotated[TaskService, FromDishka],
         producer: Annotated[AIOKafkaProducer, FromDishka],
     ):
