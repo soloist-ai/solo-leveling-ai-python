@@ -3,6 +3,7 @@ import logging
 from typing import List
 from aiokafka import AIOKafkaProducer
 from dishka import FromDishka
+from faststream import Context
 from faststream.kafka import KafkaBroker
 from faststream.kafka.message import KafkaMessage
 from src.kafka.interceptors import ConsumerLocaleInterceptor
@@ -40,13 +41,12 @@ def register_consumers(broker: KafkaBroker):
         max_workers=kafka_config["consumer"]["max_workers"],
     )
     async def handle_task_request(
-        body: bytes,
-        msg: KafkaMessage,
         task_service: FromDishka[TaskService],
         producer: FromDishka[AIOKafkaProducer],
+        msg: KafkaMessage = Context("message"),
     ):
         try:
-            message = body
+            message = msg.body
             ConsumerLocaleInterceptor.process_message(msg)
             event_dict = confluent_avro.deserialize(
                 message, SUBJECTS["generate_tasks_event"]
