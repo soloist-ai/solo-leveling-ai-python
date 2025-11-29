@@ -1,7 +1,7 @@
 import logging
 from typing import Optional, List, Tuple, Dict, Any
 from faststream.kafka.message import KafkaMessage
-from src.kafka.context import set_locale, clear_locale, get_locale
+from src.kafka.context import set_locale, get_locale
 
 logger = logging.getLogger(__name__)
 
