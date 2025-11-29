@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import List, Annotated
+from typing import List
 from aiokafka import AIOKafkaProducer
 from dishka import FromDishka
 from dishka.integrations.faststream import inject
@@ -43,8 +43,8 @@ def register_consumers(broker: KafkaBroker):
     @inject
     async def handle_task_request(
         msg: KafkaMessage,
-        task_service: Annotated[TaskService, FromDishka],
-        producer: Annotated[AIOKafkaProducer, FromDishka],
+        task_service: FromDishka[TaskService],
+        producer: FromDishka[AIOKafkaProducer],
     ):
         try:
             message = msg.body
