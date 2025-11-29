@@ -42,12 +42,13 @@ def register_consumers(broker: KafkaBroker):
     )
     @inject
     async def handle_task_request(
+        body: bytes,
         msg: KafkaMessage,
         task_service: FromDishka[TaskService],
         producer: FromDishka[AIOKafkaProducer],
     ):
         try:
-            message = msg.body
+            message = body
             ConsumerLocaleInterceptor.process_message(msg)
             event_dict = confluent_avro.deserialize(
                 message, SUBJECTS["generate_tasks_event"]
