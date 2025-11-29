@@ -77,7 +77,7 @@ container = make_async_container(
 )
 
 faststream_app = FastStream(kafka_broker, lifespan=lifespan)
-setup_dishka(container, faststream_app)
+setup_dishka(container, faststream_app, auto_inject=True)
 register_consumers(kafka_broker)
 
 app = AsgiFastStream(
