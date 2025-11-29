@@ -19,7 +19,6 @@ from src.di.providers import (
     ConfigProvider,
     LLMProvider,
     TaskServiceProvider,
-    KafkaProvider,
     ProducerProvider,
 )
 
@@ -72,7 +71,6 @@ container = make_async_container(
     ConfigProvider(),
     LLMProvider(),
     TaskServiceProvider(),
-    KafkaProvider(),
     ProducerProvider(),
 )
 
