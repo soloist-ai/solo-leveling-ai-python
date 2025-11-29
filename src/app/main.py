@@ -19,7 +19,6 @@ from src.di.providers import (
     ConfigProvider,
     LLMProvider,
     TaskServiceProvider,
-    KafkaProvider,
     ProducerProvider,
 )
 
@@ -72,13 +71,12 @@ container = make_async_container(
     ConfigProvider(),
     LLMProvider(),
     TaskServiceProvider(),
-    KafkaProvider(),
     ProducerProvider(),
 )
 
 faststream_app = FastStream(kafka_broker, lifespan=lifespan)
-setup_dishka(container, faststream_app)
 register_consumers(kafka_broker)
+setup_dishka(container, faststream_app, auto_inject=True)
 
 app = AsgiFastStream(
     kafka_broker,

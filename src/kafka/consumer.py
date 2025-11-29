@@ -1,12 +1,12 @@
 import asyncio
 import logging
-from typing import List, Annotated
-
+from typing import List
 from aiokafka import AIOKafkaProducer
 from dishka import FromDishka
+from faststream import Context
 from faststream.kafka import KafkaBroker
-from dishka.integrations.faststream import inject
-
+from faststream.kafka.message import KafkaMessage
+from src.kafka.interceptors import ConsumerLocaleInterceptor
 from src.kafka.producer import send_save_tasks_event
 from src.services.task_service import TaskService
 from src.services.avro_serialization import ConfluentAvroService
@@ -40,13 +40,14 @@ def register_consumers(broker: KafkaBroker):
         auto_offset_reset=kafka_config["consumer"]["auto_offset_reset"],
         max_workers=kafka_config["consumer"]["max_workers"],
     )
-    @inject
     async def handle_task_request(
-        message: bytes,
-        task_service: Annotated[TaskService, FromDishka()],
-        producer: Annotated[AIOKafkaProducer, FromDishka()],
+        task_service: FromDishka[TaskService],
+        producer: FromDishka[AIOKafkaProducer],
+        msg: KafkaMessage = Context("message"),
     ):
         try:
+            message = msg.body
+            ConsumerLocaleInterceptor.process_message(msg)
             event_dict = confluent_avro.deserialize(
                 message, SUBJECTS["generate_tasks_event"]
             )
