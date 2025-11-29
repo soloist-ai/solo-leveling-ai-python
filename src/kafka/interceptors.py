@@ -38,7 +38,6 @@ class ConsumerLocaleInterceptor:
             set_locale(locale)
             logger.debug(f"Set locale context to: {locale}")
         else:
-            clear_locale()
             logger.debug("No locale header found, using default: en")
 
 
