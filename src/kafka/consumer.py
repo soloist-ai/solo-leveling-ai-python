@@ -6,7 +6,7 @@ from aiokafka import AIOKafkaProducer
 from dishka import FromDishka
 from faststream.kafka import KafkaBroker
 from faststream.kafka.message import KafkaMessage
-
+from faststream import Context
 from src.kafka.interceptors import ConsumerLocaleInterceptor
 from src.kafka.producer import send_save_tasks_event
 from src.services.task_service import TaskService
@@ -42,7 +42,8 @@ def register_consumers(broker: KafkaBroker):
         max_workers=kafka_config["consumer"]["max_workers"],
     )
     async def handle_task_request(
-        msg: KafkaMessage,
+        msg: Annotated[KafkaMessage, Context()],
+        *,
         task_service: Annotated[TaskService, FromDishka],
         producer: Annotated[AIOKafkaProducer, FromDishka],
     ):
