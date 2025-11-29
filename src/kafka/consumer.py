@@ -1,9 +1,9 @@
 import asyncio
 import logging
 from typing import List, Annotated
-
 from aiokafka import AIOKafkaProducer
 from dishka import FromDishka
+from dishka.integrations.faststream import inject
 from faststream.kafka import KafkaBroker
 from faststream.kafka.message import KafkaMessage
 from src.kafka.interceptors import ConsumerLocaleInterceptor
@@ -40,6 +40,7 @@ def register_consumers(broker: KafkaBroker):
         auto_offset_reset=kafka_config["consumer"]["auto_offset_reset"],
         max_workers=kafka_config["consumer"]["max_workers"],
     )
+    @inject
     async def handle_task_request(
         msg: KafkaMessage,
         *,
