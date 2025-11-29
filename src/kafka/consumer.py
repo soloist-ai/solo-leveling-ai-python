@@ -40,7 +40,6 @@ def register_consumers(broker: KafkaBroker):
         auto_offset_reset=kafka_config["consumer"]["auto_offset_reset"],
         max_workers=kafka_config["consumer"]["max_workers"],
     )
-    @inject
     async def handle_task_request(
         body: bytes,
         msg: KafkaMessage,
