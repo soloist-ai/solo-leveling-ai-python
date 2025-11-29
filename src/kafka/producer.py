@@ -24,7 +24,7 @@ async def send_save_tasks_event(
             topics["task_responses"],
             value=response_bytes,
             key=str(save_event.playerId).encode() if save_event.playerId else None,
-            headers=headers
+            headers=headers,
         )
 
         logger.info(f"Published SaveTasksEvent for player {save_event.playerId}")
