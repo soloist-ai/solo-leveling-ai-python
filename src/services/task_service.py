@@ -2,18 +2,16 @@ import logging
 from tenacity import (
     retry,
     stop_after_attempt,
-    retry_if_exception_type,
     before_sleep_log,
     after_log,
     wait_exponential,
 )
 from src.prompt.task_prompt import generate_task_user_prompt
 from src.models.generate_task_response import Task
-from src.services.task_validator import TaskValidator, TaskValidationError
+from src.services.task_validator import TaskValidator
 from langchain_core.runnables import Runnable
 from src.avro.enums.task_topic import TaskTopic
 from src.avro.enums.rarity import Rarity
-from pydantic import ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +23,6 @@ class TaskService:
 
     @retry(
         stop=stop_after_attempt(3),
-        retry=retry_if_exception_type((TaskValidationError, ValidationError)),
         wait=wait_exponential(multiplier=1, min=1, max=10),
         before_sleep=before_sleep_log(logger, logging.WARNING),
         after=after_log(logger, logging.INFO),
