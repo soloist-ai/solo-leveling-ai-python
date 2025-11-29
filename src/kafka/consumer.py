@@ -6,7 +6,9 @@ from aiokafka import AIOKafkaProducer
 from dishka import FromDishka
 from faststream.kafka import KafkaBroker
 from dishka.integrations.faststream import inject
+from faststream.kafka.message import KafkaMessage
 
+from src.kafka.interceptors import ConsumerLocaleInterceptor
 from src.kafka.producer import send_save_tasks_event
 from src.services.task_service import TaskService
 from src.services.avro_serialization import ConfluentAvroService
@@ -43,10 +45,12 @@ def register_consumers(broker: KafkaBroker):
     @inject
     async def handle_task_request(
         message: bytes,
+        msg: KafkaMessage,
         task_service: Annotated[TaskService, FromDishka()],
         producer: Annotated[AIOKafkaProducer, FromDishka()],
     ):
         try:
+            ConsumerLocaleInterceptor.process_message(msg)
             event_dict = confluent_avro.deserialize(
                 message, SUBJECTS["generate_tasks_event"]
             )

@@ -2,6 +2,7 @@ import logging
 from aiokafka import AIOKafkaProducer
 from src.avro.events.save_tasks_event import SaveTasksEvent
 from src.config.config_loader import get_kafka_topics, get_schema_registry_url
+from src.kafka.interceptors import ProducerLocaleInterceptor
 from src.services.avro_serialization import ConfluentAvroService
 
 topics = get_kafka_topics()
@@ -18,10 +19,12 @@ async def send_save_tasks_event(
         response_bytes = confluent_avro.serialize(
             save_event.to_dict(), SAVE_TASKS_EVENT_SUBJECT
         )
+        headers = ProducerLocaleInterceptor.inject_locale_header()
         await producer.send_and_wait(
             topics["task_responses"],
             value=response_bytes,
             key=str(save_event.playerId).encode() if save_event.playerId else None,
+            headers=headers
         )
 
         logger.info(f"Published SaveTasksEvent for player {save_event.playerId}")
