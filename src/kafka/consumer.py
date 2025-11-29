@@ -46,8 +46,8 @@ def register_consumers(broker: KafkaBroker):
     async def handle_task_request(
         message: bytes,
         msg: KafkaMessage,
-        task_service: Annotated[TaskService, FromDishka()],
-        producer: Annotated[AIOKafkaProducer, FromDishka()],
+        task_service: Annotated[TaskService, FromDishka],
+        producer: Annotated[AIOKafkaProducer, FromDishka],
     ):
         try:
             ConsumerLocaleInterceptor.process_message(msg)
