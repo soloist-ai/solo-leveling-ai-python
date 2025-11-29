@@ -3,7 +3,6 @@ import logging
 from typing import List
 from aiokafka import AIOKafkaProducer
 from dishka import FromDishka
-from dishka.integrations.faststream import inject
 from faststream.kafka import KafkaBroker
 from faststream.kafka.message import KafkaMessage
 from src.kafka.interceptors import ConsumerLocaleInterceptor
