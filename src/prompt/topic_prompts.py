@@ -1,7 +1,6 @@
 from src.avro.enums.task_topic import TaskTopic
 
 TOPIC_PROMPT_MAP: dict[TaskTopic, str] = {
-
     TaskTopic.PHYSICAL_ACTIVITY: """
 **Focus:** Sports, bodyweight exercises, cardio, flexibility, outdoor activities.
 **Equipment:** Minimal (bodyweight, resistance bands, jump rope, public spaces).
@@ -38,7 +37,6 @@ TOPIC_PROMPT_MAP: dict[TaskTopic, str] = {
 
 Always generate tasks that are unexpected, varied, and not similar to the provided examples in text or numbers.
 """,
-
     TaskTopic.CREATIVITY: """
 **Focus:** Generate something new, interesting, unusual. Creative projects, art, writing, design, crafts, brainstorming.
 **Outputs:** Drawings, stories, poems, designs, DIY projects, innovative ideas, prototypes.
@@ -75,7 +73,6 @@ Always generate tasks that are unexpected, varied, and not similar to the provid
 
 Always generate tasks that are unexpected, varied, and not similar to the provided examples in text or numbers.
 """,
-
     TaskTopic.SOCIAL_SKILLS: """
 **Focus:** Communication, conversations, networking, active listening, public speaking, building relationships.
 **Settings:** Face-to-face interactions (café, phone calls, workplace, public spaces, events).
@@ -112,7 +109,6 @@ Always generate tasks that are unexpected, varied, and not similar to the provid
 
 Always generate tasks that are unexpected, varied, and not similar to the provided examples in text or numbers.
 """,
-
     TaskTopic.NUTRITION: """
 **Focus:** Healthy eating habits, meal preparation, nutrition planning, hydration, mindful eating.
 **Activities:** Cooking, meal prep, nutrition tracking, grocery planning, hydration discipline.
@@ -149,7 +145,6 @@ Always generate tasks that are unexpected, varied, and not similar to the provid
 
 Always generate tasks that are unexpected, varied, and not similar to the provided examples in text or numbers.
 """,
-
     TaskTopic.PRODUCTIVITY: """
 **Focus:** Deep work, task completion, time management, organization, focus techniques, planning.
 **Methods:** Pomodoro, to-do lists, calendars, prioritization, workspace organization, batch processing.
@@ -186,7 +181,6 @@ Always generate tasks that are unexpected, varied, and not similar to the provid
 
 Always generate tasks that are unexpected, varied, and not similar to the provided examples in text or numbers.
 """,
-
     TaskTopic.ADVENTURE: """
 **Focus:** Exploration, visiting new places, micro-trips, local tourism, discovering experiences, outdoor activities.
 **Activities:** Walking new routes, visiting landmarks/museums, urban exploration, day trips, photography walks.
@@ -223,7 +217,6 @@ Always generate tasks that are unexpected, varied, and not similar to the provid
 
 Always generate tasks that are unexpected, varied, and not similar to the provided examples in text or numbers.
 """,
-
     TaskTopic.MUSIC: """
     **Focus:** Discover and listen to cult, classic, landmark or genre-defining albums, tracks, or composers for musical and cultural expansion.
     **Goal:** Each task suggests a concrete album, artist, or set of tracks recognized as an iconic work in music history.
@@ -272,8 +265,13 @@ Always generate tasks that are unexpected, varied, and not similar to the provid
      Always try to recommend new landmark albums and tracks from a wide range of genres, eras, and cultures.
     Diversify recommendations: use world music, jazz, rock, hip-hop, experimental music, classical, and iconic works from non-English-speaking countries.
     Each time generate new, unexpected, but canonical (historically significant or critically acclaimed) works. You can invent reasonable, realistic recommendations. Focus on unique albums and songs known for their innovation or cultural impact.
+    MANDATORY DIVERSITY RULE FOR THIS GENERATION:
+    - Pick albums/artists you have NOT used in previous generations
+    - Vary the musical era (50s, 60s, 70s, 80s, 90s, 2000s, 2010s, 2020s)
+    - Rotate genres: jazz → rock → electronic → hip-hop → world → classical → experimental
+    - Prefer underrepresented artists and non-English albums
+    - **Think: "What would surprise the user?"**
     """,
-
     TaskTopic.BRAIN: """
 **Focus:** Mental exercises, logic puzzles, memory training, riddles, crosswords, brain teasers, attention training.
 **Activities:** Sudoku, chess, math problems, memory games, pattern recognition, critical thinking challenges.
@@ -310,7 +308,6 @@ Always generate tasks that are unexpected, varied, and not similar to the provid
 
 Always generate tasks that are unexpected, varied, and not similar to the provided examples in text or numbers.
 """,
-
     TaskTopic.CYBERSPORT: """
 **Focus:** Improve competitive gaming skills: aim, strategy, game sense, teamwork, replay analysis, mechanics.
 **Games:** FPS (CS:GO, Valorant), MOBA (Dota, LoL), strategy, aim trainers, competitive titles.
@@ -347,7 +344,6 @@ Always generate tasks that are unexpected, varied, and not similar to the provid
 
 Always generate tasks that are unexpected, varied, and not similar to the provided examples in text or numbers.
 """,
-
     TaskTopic.DEVELOPMENT: """
 **Focus:** Coding, software engineering, algorithms, system design, debugging, testing, clean code, refactoring.
 **Activities:** LeetCode, refactoring, documentation, unit tests, code review, architecture, mini-projects.
@@ -384,7 +380,6 @@ Always generate tasks that are unexpected, varied, and not similar to the provid
 
 Always generate tasks that are unexpected, varied, and not similar to the provided examples in text or numbers.
 """,
-
     TaskTopic.READING: """
 **Focus:** Books, articles, essays, technical documentation, research papers, educational content.
 **Genres:** Fiction, non-fiction, technical docs, news analysis, academic papers, philosophy.
@@ -421,7 +416,6 @@ Always generate tasks that are unexpected, varied, and not similar to the provid
 
 Always generate tasks that are unexpected, varied, and not similar to the provided examples in text or numbers.
 """,
-
     TaskTopic.LANGUAGE_LEARNING: """
 **Focus:** Vocabulary, grammar, pronunciation, conversation practice, writing, listening comprehension, cultural immersion.
 **Methods:** Flashcards, apps, speaking practice, writing exercises, watching content, reading native materials.

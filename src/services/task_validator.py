@@ -14,11 +14,11 @@ class RarityRule(TypedDict):
 
 class TaskValidator:
     RARITY_RULES: dict[Rarity, RarityRule] = {
-        Rarity.COMMON: {"experience_range": (10, 20), "max_attributes": 2},
-        Rarity.UNCOMMON: {"experience_range": (30, 40), "max_attributes": 4},
-        Rarity.RARE: {"experience_range": (50, 60), "max_attributes": 6},
-        Rarity.EPIC: {"experience_range": (70, 80), "max_attributes": 8},
-        Rarity.LEGENDARY: {"experience_range": (90, 100), "max_attributes": 10},
+        Rarity.COMMON: {"experience_range": (11, 20), "max_attributes": 2},
+        Rarity.UNCOMMON: {"experience_range": (41, 50), "max_attributes": 5},
+        Rarity.RARE: {"experience_range": (91, 100), "max_attributes": 10},
+        Rarity.EPIC: {"experience_range": (141, 160), "max_attributes": 15},
+        Rarity.LEGENDARY: {"experience_range": (221, 250), "max_attributes": 20},
     }
 
     @classmethod
@@ -33,9 +33,6 @@ class TaskValidator:
                 f"Experience {task.experience} out of range for {rarity}: "
                 f"expected {exp_min}-{exp_max}"
             )
-
-        if task.experience % 10 != 0:
-            return f"Experience {task.experience} is not a multiple of 10"
 
         expected_reward = task.experience // 2
         if task.currencyReward != expected_reward:
@@ -57,8 +54,8 @@ class TaskValidator:
             ("strength", task.strength),
             ("intelligence", task.intelligence),
         ]:
-            if not (0 <= attr_value <= 10):
-                return f"{attr_name.capitalize()} {attr_value} out of range 0-10"
+            if not (0 <= attr_value <= 20):
+                return f"{attr_name.capitalize()} {attr_value} out of range 0-20"
 
         if not task.title or not task.title.ru or not task.title.en:
             return "Title missing Russian or English localization"
@@ -67,4 +64,3 @@ class TaskValidator:
             return "Description missing Russian or English localization"
 
         return None
-

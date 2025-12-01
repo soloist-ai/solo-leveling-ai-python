@@ -17,9 +17,8 @@ SCENARIO_CONTEXT_MAP = {
             TaskTopic.DEVELOPMENT: "Tackle hardest coding problem first, system design, architecture planning.",
             TaskTopic.READING: "Educational reading, technical docs, motivational content.",
             TaskTopic.LANGUAGE_LEARNING: "Vocabulary review, grammar exercises, morning language practice.",
-        }
+        },
     },
-
     "Midday Reset (Обеденный сброс/перезагрузка)": {
         "description": "Lunch break (12-2 PM), recharge between work sessions, break from routine",
         "intensity": "MEDIUM - refreshing, resetting, re-energizing",
@@ -36,9 +35,8 @@ SCENARIO_CONTEXT_MAP = {
             TaskTopic.DEVELOPMENT: "Code review, refactoring, documentation work.",
             TaskTopic.READING: "Articles, blog posts, industry news during lunch break.",
             TaskTopic.LANGUAGE_LEARNING: "Quick language app session, flashcards, podcast listening.",
-        }
+        },
     },
-
     "Evening Wind-down (Вечернее расслабление)": {
         "description": "After work/dinner (7-10 PM), transitioning to rest, lowering energy",
         "intensity": "LOW - calming, gentle, relaxing, preparing for sleep",
@@ -55,9 +53,8 @@ SCENARIO_CONTEXT_MAP = {
             TaskTopic.DEVELOPMENT: "Light coding, reading documentation, learning new concepts. No debugging.",
             TaskTopic.READING: "Fiction, relaxing non-fiction, leisurely reading.",
             TaskTopic.LANGUAGE_LEARNING: "Passive learning (watching shows), easy reading, review of learned material.",
-        }
+        },
     },
-
     "Late Night Ritual (Поздний вечер перед сном)": {
         "description": "Before bed (10 PM-midnight), winding down, preparing for sleep",
         "intensity": "VERY LOW - minimal effort, meditative, calming, sleep-friendly",
@@ -69,9 +66,8 @@ SCENARIO_CONTEXT_MAP = {
             TaskTopic.DEVELOPMENT: "Reading documentation, learning theory, planning tomorrow's work. No coding.",
             TaskTopic.READING: "Light fiction, calming books, bedtime reading.",
             TaskTopic.LANGUAGE_LEARNING: "Passive listening, meditation in target language, light review.",
-        }
+        },
     },
-
     "Deep Focus / Dedicated Session (Глубокое погружение)": {
         "description": "Extended focused time, no interruptions, maximum concentration",
         "intensity": "HIGH - intensive, sustained effort, flow state",
@@ -83,9 +79,8 @@ SCENARIO_CONTEXT_MAP = {
             TaskTopic.DEVELOPMENT: "Complex feature implementation, system design, hard algorithm problems.",
             TaskTopic.READING: "Deep reading with notes, analyzing complex texts, extensive study.",
             TaskTopic.LANGUAGE_LEARNING: "Intensive grammar study, extensive conversation practice, immersion session.",
-        }
+        },
     },
-
     "Low Energy / Recovery Mode (Восстановление / Спокойный режим)": {
         "description": "Tired, low motivation, gentle activities only, self-care",
         "intensity": "VERY LOW - minimal effort, restorative, gentle",
@@ -95,9 +90,8 @@ SCENARIO_CONTEXT_MAP = {
             TaskTopic.BRAIN: "Easy puzzles, simple games, light mental activity. Nothing challenging.",
             TaskTopic.READING: "Light fiction, easy reading, no dense material.",
             TaskTopic.LANGUAGE_LEARNING: "Passive listening, watching shows with subtitles, easy review.",
-        }
+        },
     },
-
     "High Energy Challenge (Прилив сил / Амбициозная цель)": {
         "description": "Peak energy, motivated, ready for intense challenge",
         "intensity": "VERY HIGH - vigorous, demanding, maximum effort",
@@ -106,9 +100,8 @@ SCENARIO_CONTEXT_MAP = {
             TaskTopic.SOCIAL_SKILLS: "Public speaking, leading groups, networking events, bold interactions.",
             TaskTopic.PRODUCTIVITY: "Tackle biggest project, complete major milestone, extensive task clearing.",
             TaskTopic.ADVENTURE: "Long hikes, challenging exploration, full-day adventure.",
-        }
+        },
     },
-
     "At Home / Indoors (Дома / В помещении)": {
         "description": "Indoor setting, home environment, controlled space",
         "intensity": "VARIABLE - depends on activity",
@@ -125,9 +118,8 @@ SCENARIO_CONTEXT_MAP = {
             TaskTopic.DEVELOPMENT: "Coding at home setup, personal projects, learning.",
             TaskTopic.READING: "Comfortable reading at home, library browsing.",
             TaskTopic.LANGUAGE_LEARNING: "Home study, app practice, online lessons.",
-        }
+        },
     },
-
     "Outdoor Activity (На свежем воздухе)": {
         "description": "Outside environment, fresh air, nature or urban setting",
         "intensity": "MEDIUM-HIGH - active, exploring, movement-focused",
@@ -135,9 +127,8 @@ SCENARIO_CONTEXT_MAP = {
             TaskTopic.PHYSICAL_ACTIVITY: "Running, hiking, outdoor sports, park workouts. Use outdoor space.",
             TaskTopic.SOCIAL_SKILLS: "Meeting people outdoors, park conversations, street interactions.",
             TaskTopic.ADVENTURE: "Exploring nature/city, hiking trails, urban discovery, photography walks.",
-        }
+        },
     },
-
     "Work/Study Environment (Рабочая/учебная обстановка)": {
         "description": "Professional/academic setting, desk work, focused environment",
         "intensity": "MEDIUM - productive, focused, goal-oriented",
@@ -151,9 +142,8 @@ SCENARIO_CONTEXT_MAP = {
             TaskTopic.DEVELOPMENT: "Professional coding, work projects, technical tasks.",
             TaskTopic.READING: "Industry reading, technical documentation, professional learning.",
             TaskTopic.LANGUAGE_LEARNING: "Business language practice, professional vocabulary.",
-        }
+        },
     },
-
     "Solo Time (Время наедине с собой)": {
         "description": "Alone, self-focused, no social interaction required",
         "intensity": "VARIABLE - introspective, personal",
@@ -169,9 +159,8 @@ SCENARIO_CONTEXT_MAP = {
             TaskTopic.DEVELOPMENT: "Personal coding projects, individual learning.",
             TaskTopic.READING: "Personal reading time, solo study.",
             TaskTopic.LANGUAGE_LEARNING: "Self-study, independent practice, solo learning.",
-        }
+        },
     },
-
     "With Others / Social Context (В компании / Социальный момент)": {
         "description": "Group setting, social interaction, collaborative environment",
         "intensity": "MEDIUM-HIGH - social, interactive, collaborative",
@@ -180,21 +169,19 @@ SCENARIO_CONTEXT_MAP = {
             TaskTopic.SOCIAL_SKILLS: "Group conversations, networking, social events. PRIMARY FOCUS.",
             TaskTopic.ADVENTURE: "Group exploration, social outings, discovering places with others.",
             TaskTopic.LANGUAGE_LEARNING: "Conversation practice with others, language exchange, group learning.",
-        }
+        },
     },
-
     "Weekend / Free Time (Выходной / Свободное время)": {
         "description": "Days off, leisure time, flexible schedule, no work pressure",
         "intensity": "VARIABLE - relaxed, exploratory, at your own pace",
         "context": {
             # Применимо ко ВСЕМ топикам - свободное время для любых активностей
             "general": "More time available, flexible scheduling, can do longer/more intensive tasks, leisure mindset, personal projects, hobbies, exploration. No work deadlines or constraints."
-        }
+        },
     },
 }
 
 TOPIC_SCENARIOS_MAP: dict[TaskTopic, list[str]] = {
-
     TaskTopic.PHYSICAL_ACTIVITY: [
         "Morning Kick-start (Бодрое начало дня)",
         "Midday Reset (Обеденный сброс/перезагрузка)",
@@ -205,7 +192,6 @@ TOPIC_SCENARIOS_MAP: dict[TaskTopic, list[str]] = {
         "Solo Time (Время наедине с собой)",
         "Weekend / Free Time (Выходной / Свободное время)",
     ],
-
     TaskTopic.CREATIVITY: [
         "Morning Kick-start (Бодрое начало дня)",
         "Midday Reset (Обеденный сброс/перезагрузка)",
@@ -218,7 +204,6 @@ TOPIC_SCENARIOS_MAP: dict[TaskTopic, list[str]] = {
         "Solo Time (Время наедине с собой)",
         "Weekend / Free Time (Выходной / Свободное время)",
     ],
-
     TaskTopic.SOCIAL_SKILLS: [
         "Morning Kick-start (Бодрое начало дня)",
         "Midday Reset (Обеденный сброс/перезагрузка)",
@@ -230,7 +215,6 @@ TOPIC_SCENARIOS_MAP: dict[TaskTopic, list[str]] = {
         "With Others / Social Context (В компании / Социальный момент)",  # обязательно!
         "Weekend / Free Time (Выходной / Свободное время)",
     ],
-
     TaskTopic.NUTRITION: [
         "Morning Kick-start (Бодрое начало дня)",  # завтрак
         "Midday Reset (Обеденный сброс/перезагрузка)",  # обед
@@ -241,7 +225,6 @@ TOPIC_SCENARIOS_MAP: dict[TaskTopic, list[str]] = {
         "Solo Time (Время наедине с собой)",
         "Weekend / Free Time (Выходной / Свободное время)",
     ],
-
     TaskTopic.PRODUCTIVITY: [
         "Morning Kick-start (Бодрое начало дня)",
         "Midday Reset (Обеденный сброс/перезагрузка)",
@@ -251,7 +234,6 @@ TOPIC_SCENARIOS_MAP: dict[TaskTopic, list[str]] = {
         "Solo Time (Время наедине с собой)",
         "Weekend / Free Time (Выходной / Свободное время)",
     ],
-
     TaskTopic.ADVENTURE: [
         "Morning Kick-start (Бодрое начало дня)",
         "Midday Reset (Обеденный сброс/перезагрузка)",
@@ -261,9 +243,9 @@ TOPIC_SCENARIOS_MAP: dict[TaskTopic, list[str]] = {
         "With Others / Social Context (В компании / Социальный момент)",
         "Weekend / Free Time (Выходной / Свободное время)",  # обязательно!
     ],
-
-    TaskTopic.MUSIC: list(SCENARIO_CONTEXT_MAP.keys()),  # Музыку можно слушать везде и всегда!
-
+    TaskTopic.MUSIC: list(
+        SCENARIO_CONTEXT_MAP.keys()
+    ),  # Музыку можно слушать везде и всегда!
     TaskTopic.BRAIN: [
         "Morning Kick-start (Бодрое начало дня)",
         "Midday Reset (Обеденный сброс/перезагрузка)",
@@ -276,7 +258,6 @@ TOPIC_SCENARIOS_MAP: dict[TaskTopic, list[str]] = {
         "Solo Time (Время наедине с собой)",
         "Weekend / Free Time (Выходной / Свободное время)",
     ],
-
     TaskTopic.CYBERSPORT: [
         "Midday Reset (Обеденный сброс/перезагрузка)",
         "Evening Wind-down (Вечернее расслабление)",
@@ -287,7 +268,6 @@ TOPIC_SCENARIOS_MAP: dict[TaskTopic, list[str]] = {
         "Solo Time (Время наедине с собой)",
         "Weekend / Free Time (Выходной / Свободное время)",
     ],
-
     TaskTopic.DEVELOPMENT: [
         "Morning Kick-start (Бодрое начало дня)",
         "Midday Reset (Обеденный сброс/перезагрузка)",
@@ -299,9 +279,9 @@ TOPIC_SCENARIOS_MAP: dict[TaskTopic, list[str]] = {
         "Solo Time (Время наедине с собой)",
         "Weekend / Free Time (Выходной / Свободное время)",
     ],
-
-    TaskTopic.READING: list(SCENARIO_CONTEXT_MAP.keys()),  # Читать можно везде и всегда!
-
+    TaskTopic.READING: list(
+        SCENARIO_CONTEXT_MAP.keys()
+    ),  # Читать можно везде и всегда!
     TaskTopic.LANGUAGE_LEARNING: [
         "Morning Kick-start (Бодрое начало дня)",
         "Midday Reset (Обеденный сброс/перезагрузка)",
@@ -316,4 +296,3 @@ TOPIC_SCENARIOS_MAP: dict[TaskTopic, list[str]] = {
         "Weekend / Free Time (Выходной / Свободное время)",
     ],
 }
-

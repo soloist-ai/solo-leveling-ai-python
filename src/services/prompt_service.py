@@ -1,4 +1,6 @@
 import random
+from typing import cast
+
 from src.avro.enums.task_topic import TaskTopic
 from src.avro.enums.rarity import Rarity
 from src.prompt.topic_prompts import TOPIC_PROMPT_MAP, DEFAULT_TOPIC_PROMPT
@@ -32,7 +34,9 @@ class PromptService:
             topic_scenarios = set(self._scenario_map.get(topic, ALL_SCENARIOS))
             common_scenarios &= topic_scenarios
 
-        scenarios_to_choose = list(common_scenarios) if common_scenarios else ALL_SCENARIOS
+        scenarios_to_choose = (
+            list(common_scenarios) if common_scenarios else ALL_SCENARIOS
+        )
         return random.choice(scenarios_to_choose)
 
     def _merge_topic_contexts(self, topics: list[TaskTopic]) -> str:
@@ -65,7 +69,7 @@ You must generate a SINGLE task that naturally integrates ALL of these topics:
 {good_examples if good_examples else ""}
 """
 
-        merged_context += f"""
+        merged_context += """
 **CRITICAL RULES FOR COMBINED TASKS:**
 
 1. **Integration, not separation:**
@@ -125,8 +129,8 @@ Always generate unique, creative combined tasks that feel natural and achievable
         else:
             section_text = text[start_idx:next_section_idx].strip()
 
-        lines = section_text.split('\n')
-        return '\n'.join(lines[:8]) if len(lines) > 8 else section_text
+        lines = section_text.split("\n")
+        return "\n".join(lines[:8]) if len(lines) > 8 else section_text
 
     def construct_user_prompt(self, topics: list[TaskTopic], rarity: Rarity) -> str:
         """
@@ -139,12 +143,13 @@ Always generate unique, creative combined tasks that feel natural and achievable
         scenario_info = SCENARIO_CONTEXT_MAP.get(scenario, {})
         scenario_description = scenario_info.get("description", "")
         scenario_intensity = scenario_info.get("intensity", "")
-        scenario_context = scenario_info.get("context", {})
-
-        topic_scenario_hints = []
+        scenario_context = cast(dict[str, str], scenario_info.get("context", {}))
+        topic_scenario_hints: list[str] = []
         for topic in topics:
             if topic in scenario_context:
-                topic_scenario_hints.append(f"  • {topic.value}: {scenario_context[topic]}")
+                topic_scenario_hints.append(
+                    f"  • {topic.value}: {scenario_context[topic]}"
+                )
             elif "general" in scenario_context:
                 topic_scenario_hints.append(f"  • {scenario_context['general']}")
 
@@ -227,7 +232,7 @@ Required intensity/energy: {scenario_intensity}
 
         - Should feel like an extraordinary accomplishment
         - Requires ultimate commitment and stamina
-        """
+        """,
         }
 
         rarity_reminder = rarity_reminders.get(rarity, "")

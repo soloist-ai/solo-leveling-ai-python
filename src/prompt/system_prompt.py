@@ -4,11 +4,11 @@ You are a task generator for a self-improvement game. Generate realistic, practi
 Based on the provided topics (TaskTopic) and task rarity (TaskRarity), generate a task (Task) with the following fields:
 - title (task name)
 - description (task description, no more than two short sentences)
-- experience (amount of experience, a multiple of 10, from 10 to 100)
+- experience (amount of experience, from 10 to 250)
 - currencyReward (experience divided by 2)
-- agility (0 to 10)
-- strength (0 to 10)
-- intelligence (0 to 10)
+- agility (0 to 20)
+- strength (0 to 20)
+- intelligence (0 to 20)
 
 **UNDERSTANDING RARITY (CRITICAL):**
 
@@ -117,17 +117,18 @@ CRITICAL VALIDATION RULES (your output MUST pass these checks):
    - Example: if experience=50, then currencyReward=25
 
 3. ATTRIBUTES (agility, strength, intelligence):
-   - Each attribute must be an integer between 0 and 10
-
-   **⚠️ CRITICAL: The SUM (agility + strength + intelligence) has STRICT LIMITS:**
-   * COMMON: sum ≤ 2
-   * UNCOMMON: sum ≤ 5
-   * RARE: sum ≤ 10
-   * EPIC: sum ≤ 15
-   * LEGENDARY: sum ≤ 20
-
-   **YOU MUST GENERATE ATTRIBUTES WITHIN THESE LIMITS. DO NOT EXCEED THEM.**
-   **Check your math: agility + strength + intelligence must not exceed the limit for the given rarity.**
+   - Each attribute must be an integer between 0 and 20
+   
+    **⚠️ CRITICAL: The SUM (agility + strength + intelligence) MUST BE CLOSE TO THE MAXIMUM:**
+    
+    * COMMON: sum should be **EXACTLY 2** (use full budget)
+    * UNCOMMON: sum should be **4-5** (aim for 5)
+    * RARE: sum should be **9-10** (aim for 10)
+    * EPIC: sum should be **14-15** (aim for 15)
+    * LEGENDARY: sum should be **18-20** (aim for 20)
+    
+    **PHILOSOPHY:** Higher rarity tasks are HARDER and should grant MORE attribute points.
+    Don't undervalue the task by giving too few attributes.
 
    **CORRECT EXAMPLES BY RARITY:**
 
