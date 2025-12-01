@@ -72,60 +72,63 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
             logger.warning(f"Hard validation failed: {hard_error}")
             return {"critique_feedback": f"Technical Error: {hard_error}"}
 
-
         time_requirements_map = {
             TaskTopic.PHYSICAL_ACTIVITY: {
                 Rarity.COMMON: "5-10 minutes",
                 Rarity.UNCOMMON: "20-30 minutes",
                 Rarity.RARE: "45-60 minutes",
                 Rarity.EPIC: "1-2 hours",
-                Rarity.LEGENDARY: "3-4 hours"
+                Rarity.LEGENDARY: "3-4 hours",
             },
             TaskTopic.ADVENTURE: {
-                Rarity.COMMON: "10-20 minutes",
-                Rarity.UNCOMMON: "30-60 minutes",
-                Rarity.RARE: "1-2 hours",
-                Rarity.EPIC: "3-4 hours",
-                Rarity.LEGENDARY: "5+ hours"
+                Rarity.COMMON: "5-10 minutes",
+                Rarity.UNCOMMON: "20-30 minutes",
+                Rarity.RARE: "45-60 minutes",
+                Rarity.EPIC: "1-2 hours",
+                Rarity.LEGENDARY: "3-4 hours",
             },
             TaskTopic.MUSIC: {
                 Rarity.COMMON: "1-2 legendary tracks (not full album)",
                 Rarity.UNCOMMON: "1 mini-album/EP",
                 Rarity.RARE: "1 iconic album (full listen)",
                 Rarity.EPIC: "2-3 cult albums by different artists/genres OR complete a discography of 1 key artist (up to 3 albums)",
-                Rarity.LEGENDARY: "5 iconic albums of different genres or decades"
-            }
+                Rarity.LEGENDARY: "5 iconic albums of different genres or decades",
+            },
         }
 
         topic_requirements = []
         for topic in topics:
             if topic in time_requirements_map:
                 expected = time_requirements_map[topic].get(rarity, "")
-                topic_requirements.append(f"- {topic.value} at {rarity.value} level MUST be: {expected}")
+                topic_requirements.append(
+                    f"- {topic.value} at {rarity.value} level MUST be: {expected}"
+                )
 
-        requirements_text = "\n".join(
-            topic_requirements) if topic_requirements else "No strict time/amount constraints for these topics."
+        requirements_text = (
+            "\n".join(topic_requirements)
+            if topic_requirements
+            else "No strict time/amount constraints for these topics."
+        )
 
         attribute_limits = {
             Rarity.COMMON: 2,
-            Rarity.UNCOMMON: 4,
-            Rarity.RARE: 6,
-            Rarity.EPIC: 8,
-            Rarity.LEGENDARY: 10
+            Rarity.UNCOMMON: 5,
+            Rarity.RARE: 10,
+            Rarity.EPIC: 15,
+            Rarity.LEGENDARY: 20,
         }
 
         experience_ranges = {
-            Rarity.COMMON: (10, 20),
-            Rarity.UNCOMMON: (30, 40),
-            Rarity.RARE: (50, 60),
-            Rarity.EPIC: (70, 80),
-            Rarity.LEGENDARY: (90, 100)
+            Rarity.COMMON: (11, 20),
+            Rarity.UNCOMMON: (41, 50),
+            Rarity.RARE: (91, 100),
+            Rarity.EPIC: (141, 160),
+            Rarity.LEGENDARY: (221, 250),
         }
 
-        max_attrs = attribute_limits.get(rarity, 10)
-        exp_min, exp_max = experience_ranges.get(rarity, (10, 100))
+        max_attrs = attribute_limits.get(rarity, 20)
+        exp_min, exp_max = experience_ranges.get(rarity, (11, 250))
         actual_attr_sum = task.agility + task.strength + task.intelligence
-
 
         critic_prompt = f"""You are a strict Senior Game Designer. Your job is to verify that the generated task EXACTLY matches all requirements.
 **YOUR VALIDATION PHILOSOPHY:**
@@ -152,7 +155,6 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
 
 1. **EXPERIENCE VALIDATION:**
    - MUST be between {exp_min} and {exp_max} for {rarity.value}
-   - MUST be a multiple of 10
    - Current value: {task.experience}
    - ✅ Valid? Check yourself.
 
@@ -161,10 +163,23 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
    - Expected: {task.experience // 2}, Actual: {task.currencyReward}
    - ✅ Valid? Check yourself.
 
-3. **ATTRIBUTES:**
+3. ATTRIBUTES:
    - Sum (agility + strength + intelligence) MUST NOT exceed {max_attrs} for {rarity.value}
    - Current sum: {actual_attr_sum}
-   - ✅ Valid? Check yourself.
+   
+   **CRITICAL: Sum must also be CLOSE TO THE MAXIMUM!**
+   
+   Minimum acceptable sums:
+   - COMMON: exactly 2
+   - UNCOMMON: at least 4 (prefer 5)
+   - RARE: at least 9 (prefer 10)
+   - EPIC: at least 14 (prefer 15)
+   - LEGENDARY: at least 18 (prefer 19-20)
+   
+   ⚠️ If sum is BELOW the minimum → REJECT with message:
+   "Attributes sum to {actual_attr_sum} but should be at least [minimum] for {rarity.value}"
+   
+   ✅ Valid? Check yourself.
 
 4. **DURATION/AMOUNT REQUIREMENTS (CRITICAL!):**
 {requirements_text}
@@ -242,7 +257,9 @@ If ANY violation found: REJECTED: <specific reason>
             return END
 
         if state["attempt_count"] >= 3:
-            logger.error("Max attempts reached (3/3), returning last task despite critique")
+            logger.error(
+                "Max attempts reached (3/3), returning last task despite critique"
+            )
             return END
 
         logger.info(f"Retrying generation (attempt {state['attempt_count'] + 1}/3)")
@@ -256,9 +273,7 @@ If ANY violation found: REJECTED: <specific reason>
     workflow.set_entry_point("generator")
     workflow.add_edge("generator", "critic")
     workflow.add_conditional_edges(
-        "critic",
-        should_continue,
-        {END: END, "generator": "generator"}
+        "critic", should_continue, {END: END, "generator": "generator"}
     )
 
     return workflow.compile()
@@ -298,5 +313,3 @@ def _normalize_attributes(task: Task, rarity: Rarity, validator: TaskValidator) 
 
     logger.info(f"Attributes normalized for {rarity}: {current_sum} -> {max_limit}")
     return task
-
-
