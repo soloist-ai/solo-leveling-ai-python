@@ -10,15 +10,36 @@ class TaskValidationError(Exception):
 class RarityRule(TypedDict):
     experience_range: tuple[int, int]
     max_attributes: int
+    min_attributes: int
 
 
 class TaskValidator:
     RARITY_RULES: dict[Rarity, RarityRule] = {
-        Rarity.COMMON: {"experience_range": (11, 20), "max_attributes": 2},
-        Rarity.UNCOMMON: {"experience_range": (41, 50), "max_attributes": 5},
-        Rarity.RARE: {"experience_range": (91, 100), "max_attributes": 10},
-        Rarity.EPIC: {"experience_range": (141, 160), "max_attributes": 15},
-        Rarity.LEGENDARY: {"experience_range": (221, 250), "max_attributes": 20},
+        Rarity.COMMON: {
+            "experience_range": (10, 20),
+            "max_attributes": 2,
+            "min_attributes": 2,
+        },
+        Rarity.UNCOMMON: {
+            "experience_range": (40, 50),
+            "max_attributes": 5,
+            "min_attributes": 4,
+        },
+        Rarity.RARE: {
+            "experience_range": (90, 100),
+            "max_attributes": 10,
+            "min_attributes": 8,
+        },
+        Rarity.EPIC: {
+            "experience_range": (140, 160),
+            "max_attributes": 15,
+            "min_attributes": 12,
+        },
+        Rarity.LEGENDARY: {
+            "experience_range": (220, 250),
+            "max_attributes": 20,
+            "min_attributes": 18,
+        },
     }
 
     @classmethod
@@ -47,6 +68,14 @@ class TaskValidator:
             return (
                 f"Total attributes {total_attributes} exceeds maximum "
                 f"{max_attributes} for {rarity}"
+            )
+
+        min_attributes = rules["min_attributes"]
+        if total_attributes < min_attributes:
+            return (
+                f"Total attributes {total_attributes} below minimum "
+                f"{min_attributes} for {rarity}. "
+                f"Higher rarity tasks should grant more attribute points."
             )
 
         for attr_name, attr_value in [
