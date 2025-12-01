@@ -2,7 +2,6 @@ from src.avro.enums.task_topic import TaskTopic
 
 TOPIC_PROMPT_MAP: dict[TaskTopic, str] = {
 
-    # ========== PHYSICAL_ACTIVITY (С ВРЕМЕННЫМИ РАМКАМИ) ==========
     TaskTopic.PHYSICAL_ACTIVITY: """
 **Focus:** Sports, bodyweight exercises, cardio, flexibility, outdoor activities.
 **Equipment:** Minimal (bodyweight, resistance bands, jump rope, public spaces).
@@ -40,7 +39,6 @@ TOPIC_PROMPT_MAP: dict[TaskTopic, str] = {
 Always generate tasks that are unexpected, varied, and not similar to the provided examples in text or numbers.
 """,
 
-    # ========== CREATIVITY (СЛОЖНОСТЬ, НЕ ВРЕМЯ) ==========
     TaskTopic.CREATIVITY: """
 **Focus:** Generate something new, interesting, unusual. Creative projects, art, writing, design, crafts, brainstorming.
 **Outputs:** Drawings, stories, poems, designs, DIY projects, innovative ideas, prototypes.
@@ -78,7 +76,6 @@ Always generate tasks that are unexpected, varied, and not similar to the provid
 Always generate tasks that are unexpected, varied, and not similar to the provided examples in text or numbers.
 """,
 
-    # ========== SOCIAL_SKILLS (СЛОЖНОСТЬ, НЕ ВРЕМЯ) ==========
     TaskTopic.SOCIAL_SKILLS: """
 **Focus:** Communication, conversations, networking, active listening, public speaking, building relationships.
 **Settings:** Face-to-face interactions (café, phone calls, workplace, public spaces, events).
@@ -116,7 +113,6 @@ Always generate tasks that are unexpected, varied, and not similar to the provid
 Always generate tasks that are unexpected, varied, and not similar to the provided examples in text or numbers.
 """,
 
-    # ========== NUTRITION (СЛОЖНОСТЬ, НЕ ВРЕМЯ) ==========
     TaskTopic.NUTRITION: """
 **Focus:** Healthy eating habits, meal preparation, nutrition planning, hydration, mindful eating.
 **Activities:** Cooking, meal prep, nutrition tracking, grocery planning, hydration discipline.
@@ -154,7 +150,6 @@ Always generate tasks that are unexpected, varied, and not similar to the provid
 Always generate tasks that are unexpected, varied, and not similar to the provided examples in text or numbers.
 """,
 
-    # ========== PRODUCTIVITY (СЛОЖНОСТЬ, НЕ ВРЕМЯ) ==========
     TaskTopic.PRODUCTIVITY: """
 **Focus:** Deep work, task completion, time management, organization, focus techniques, planning.
 **Methods:** Pomodoro, to-do lists, calendars, prioritization, workspace organization, batch processing.
@@ -192,7 +187,6 @@ Always generate tasks that are unexpected, varied, and not similar to the provid
 Always generate tasks that are unexpected, varied, and not similar to the provided examples in text or numbers.
 """,
 
-    # ========== ADVENTURE (С ВРЕМЕННЫМИ РАМКАМИ) ==========
     TaskTopic.ADVENTURE: """
 **Focus:** Exploration, visiting new places, micro-trips, local tourism, discovering experiences, outdoor activities.
 **Activities:** Walking new routes, visiting landmarks/museums, urban exploration, day trips, photography walks.
@@ -275,12 +269,11 @@ Always generate tasks that are unexpected, varied, and not similar to the provid
     - Counting passive listening or mainstream pop as a result
 
     Always generate tasks that are unexpected, varied, and not similar to the provided examples in text or numbers.
-    Do not repeat any album or artist mentioned in the prompt or examples. Always try to recommend new landmark albums and tracks from a wide range of genres, eras, and cultures.
+     Always try to recommend new landmark albums and tracks from a wide range of genres, eras, and cultures.
     Diversify recommendations: use world music, jazz, rock, hip-hop, experimental music, classical, and iconic works from non-English-speaking countries.
-    ach time generate new, unexpected, but canonical (historically significant or critically acclaimed) works. You can invent reasonable, realistic recommendations. Focus on unique albums and songs known for their innovation or cultural impact.
+    Each time generate new, unexpected, but canonical (historically significant or critically acclaimed) works. You can invent reasonable, realistic recommendations. Focus on unique albums and songs known for their innovation or cultural impact.
     """,
 
-    # ========== BRAIN (СЛОЖНОСТЬ, НЕ ВРЕМЯ) ==========
     TaskTopic.BRAIN: """
 **Focus:** Mental exercises, logic puzzles, memory training, riddles, crosswords, brain teasers, attention training.
 **Activities:** Sudoku, chess, math problems, memory games, pattern recognition, critical thinking challenges.
@@ -318,7 +311,6 @@ Always generate tasks that are unexpected, varied, and not similar to the provid
 Always generate tasks that are unexpected, varied, and not similar to the provided examples in text or numbers.
 """,
 
-    # ========== CYBERSPORT (СЛОЖНОСТЬ, НЕ ВРЕМЯ) ==========
     TaskTopic.CYBERSPORT: """
 **Focus:** Improve competitive gaming skills: aim, strategy, game sense, teamwork, replay analysis, mechanics.
 **Games:** FPS (CS:GO, Valorant), MOBA (Dota, LoL), strategy, aim trainers, competitive titles.
@@ -356,7 +348,6 @@ Always generate tasks that are unexpected, varied, and not similar to the provid
 Always generate tasks that are unexpected, varied, and not similar to the provided examples in text or numbers.
 """,
 
-    # ========== DEVELOPMENT (СЛОЖНОСТЬ, НЕ ВРЕМЯ) ==========
     TaskTopic.DEVELOPMENT: """
 **Focus:** Coding, software engineering, algorithms, system design, debugging, testing, clean code, refactoring.
 **Activities:** LeetCode, refactoring, documentation, unit tests, code review, architecture, mini-projects.
@@ -394,7 +385,6 @@ Always generate tasks that are unexpected, varied, and not similar to the provid
 Always generate tasks that are unexpected, varied, and not similar to the provided examples in text or numbers.
 """,
 
-    # ========== READING (СЛОЖНОСТЬ, НЕ ВРЕМЯ) ==========
     TaskTopic.READING: """
 **Focus:** Books, articles, essays, technical documentation, research papers, educational content.
 **Genres:** Fiction, non-fiction, technical docs, news analysis, academic papers, philosophy.
@@ -432,7 +422,6 @@ Always generate tasks that are unexpected, varied, and not similar to the provid
 Always generate tasks that are unexpected, varied, and not similar to the provided examples in text or numbers.
 """,
 
-    # ========== LANGUAGE_LEARNING (СЛОЖНОСТЬ, НЕ ВРЕМЯ) ==========
     TaskTopic.LANGUAGE_LEARNING: """
 **Focus:** Vocabulary, grammar, pronunciation, conversation practice, writing, listening comprehension, cultural immersion.
 **Methods:** Flashcards, apps, speaking practice, writing exercises, watching content, reading native materials.

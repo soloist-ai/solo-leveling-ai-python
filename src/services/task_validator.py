@@ -68,8 +68,3 @@ class TaskValidator:
 
         return None
 
-    @classmethod
-    def validate_or_raise(cls, task: Task, rarity: Rarity) -> None:
-        error = cls.validate_task(task, rarity)
-        if error:
-            raise TaskValidationError(error)

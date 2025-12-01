@@ -10,7 +10,7 @@ from src.models.generate_task_response import Task
 from src.agent.critique import CritiqueResult
 from src.services.prompt_service import PromptService
 from src.services.task_validator import TaskValidator
-from src.prompt.task_prompt import SYSTEM_PROMPT
+from src.prompt.system_prompt import SYSTEM_PROMPT
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,6 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
         topics = state["topics"]
         rarity = state["rarity"]
 
-        # Создаём user prompt через PromptService
         user_prompt = prompt_service.construct_user_prompt(topics, rarity)
 
         messages = [
@@ -31,17 +30,15 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
             HumanMessage(content=user_prompt),
         ]
 
-        # Если есть feedback от критика — добавляем его
         if state.get("critique_feedback"):
             feedback_msg = (
-                f"⚠️ PREVIOUS ATTEMPT WAS REJECTED.\n"
+                f"PREVIOUS ATTEMPT WAS REJECTED.\n"
                 f"Critic's feedback: {state['critique_feedback']}\n\n"
                 f"Generate a NEW task that fixes these issues. "
                 f"Pay special attention to the rarity requirements and duration/amount constraints."
             )
             messages.append(HumanMessage(content=feedback_msg))
 
-        # Генерируем задачу
         generator_chain = llm.with_structured_output(Task)
         generated_task_raw = generator_chain.invoke(messages)
         generated_task = cast(Task, generated_task_raw)
@@ -50,7 +47,6 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
             f"Generated task (attempt {state['attempt_count'] + 1}): {generated_task.title.en}"
         )
 
-        # Нормализуем атрибуты если они превышают лимит
         normalized_task = _normalize_attributes(generated_task, rarity, validator)
 
         return {
@@ -71,15 +67,12 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
         topics = state["topics"]
         topics_str = ", ".join([t.value for t in topics])
 
-        # 1. Базовая валидация через TaskValidator
         hard_error = validator.validate_task(task, rarity)
         if hard_error:
             logger.warning(f"Hard validation failed: {hard_error}")
             return {"critique_feedback": f"Technical Error: {hard_error}"}
 
-        # 2. Формируем детальные требования для критика
 
-        # Временные требования для TIME-BASED топиков
         time_requirements_map = {
             TaskTopic.PHYSICAL_ACTIVITY: {
                 Rarity.COMMON: "5-10 minutes",
@@ -104,7 +97,6 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
             }
         }
 
-        # Собираем требования по топикам
         topic_requirements = []
         for topic in topics:
             if topic in time_requirements_map:
@@ -114,7 +106,6 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
         requirements_text = "\n".join(
             topic_requirements) if topic_requirements else "No strict time/amount constraints for these topics."
 
-        # Лимиты по rarity
         attribute_limits = {
             Rarity.COMMON: 2,
             Rarity.UNCOMMON: 4,
@@ -135,8 +126,12 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
         exp_min, exp_max = experience_ranges.get(rarity, (10, 100))
         actual_attr_sum = task.agility + task.strength + task.intelligence
 
-        # 3. Формируем промпт для критика
+
         critic_prompt = f"""You are a strict Senior Game Designer. Your job is to verify that the generated task EXACTLY matches all requirements.
+**YOUR VALIDATION PHILOSOPHY:**
+    - Apply COMMON SENSE, not pedantic literal interpretation
+    - Understand IMPLICIT meanings and widely-known facts
+    - Focus on SUBSTANTIAL issues, not minor wording details
 
 **WHAT WAS REQUESTED:**
 - Topics: [{topics_str}]
@@ -181,20 +176,29 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
    - If task says "30 minutes" but {rarity.value} requires "5-10 minutes" → REJECT
    - If task says "full album" but {rarity.value} requires "1-2 tracks" → REJECT
    - If task says "1 hour jog" but {rarity.value} requires "5-10 minutes" → REJECT
+   
+   **DO NOT REJECT** if the task provides a value within the specified range.
+    Only REJECT if the value is BELOW the minimum or ABOVE the maximum.
 
-5. **TOPIC INTEGRATION:**
+5. **COMPLEXITY/OUTPUT REQUIREMENTS FOR NON-TIME-BASED TOPICS:**
+    
+    For topics like NUTRITION, PRODUCTIVITY, CREATIVITY, SOCIAL_SKILLS, BRAIN, DEVELOPMENT, READING:
+    - These scale by OUTPUT/COMPLEXITY, not just time
+    - Check the RARITY SCALING section in topic prompts for required amounts
+
+6. **TOPIC INTEGRATION:**
    - Task must naturally combine ALL topics: [{topics_str}]
    - Should be ONE coherent action, not "do X, then do Y"
    - The combination should feel organic and realistic
    - ✅ Does it integrate topics well? Check yourself.
 
-6. **SPECIFICITY:**
+7. **SPECIFICITY:**
    - Task must include concrete numbers (how many, how long, how much)
    - Should be actionable and measurable
    - Examples: "20 push-ups", "5 pages", "3 conversations", "10 minutes"
    - ✅ Is it specific enough? Check yourself.
 
-7. **LOCALIZATION:**
+8. **LOCALIZATION:**
    - Both title.en and title.ru must be non-empty
    - Both description.en and description.ru must be non-empty
    - Translations should be meaningful (not just literal word-for-word)
@@ -211,14 +215,15 @@ If ANY violation found: REJECTED: <specific reason>
 - "REJECTED: Task says '30 minutes' but COMMON for PHYSICAL_ACTIVITY requires 5-10 minutes"
 - "REJECTED: Attributes sum to 8 but COMMON maximum is 2"
 - "REJECTED: Experience is 25 but must be between 10-20 for COMMON"
-- "REJECTED: Task mentions 'full album' (Led Zeppelin IV) but COMMON for MUSIC requires only 1-2 tracks"
+- "REJECTED: Task mentions 'full album' but COMMON for MUSIC requires only 1-2 tracks"
 - "REJECTED: Currency reward is 15 but should be 10 (experience 20 ÷ 2)"
 - "REJECTED: Task describes two separate actions ('do push-ups, then read') instead of integrated activity"
 
 **Be EXTREMELY strict. Your job is to catch ANY mismatch between requirements and generated content.**
+**BE REASONABLE. Focus on substance, not pedantry.**
+
 """
 
-        # 4. Вызываем LLM для проверки
         critic_chain = llm.with_structured_output(CritiqueResult)
         result_raw = critic_chain.invoke(critic_prompt)
         result: CritiqueResult = cast(CritiqueResult, result_raw)
@@ -268,17 +273,14 @@ def _normalize_attributes(task: Task, rarity: Rarity, validator: TaskValidator) 
     max_limit = rules["max_attributes"]
     current_sum = task.agility + task.strength + task.intelligence
 
-    # Если атрибуты в норме — ничего не делаем
     if current_sum <= max_limit:
         return task
 
-    # Пропорционально уменьшаем атрибуты
     ratio = max_limit / current_sum
     new_agility = int(task.agility * ratio)
     new_strength = int(task.strength * ratio)
     new_intelligence = int(task.intelligence * ratio)
 
-    # Добавляем остаток к наибольшему атрибуту
     new_sum = new_agility + new_strength + new_intelligence
     remainder = max_limit - new_sum
 
