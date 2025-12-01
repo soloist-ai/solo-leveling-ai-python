@@ -1,34 +1,3 @@
-import random
-
-from src.avro.enums.task_topic import TaskTopic
-from src.avro.enums.rarity import Rarity
-
-SCENARIOS = [
-    "Morning Kick-start (Бодрое начало дня)",
-    "Midday Reset (Обеденный сброс/перезагрузка)",
-    "Evening Wind-down (Вечернее расслабление)",
-    "Late Night Ritual (Поздний вечер перед сном)",
-    "Quick 5-15 min Break (Быстрый перерыв)",
-    "Deep Focus / Dedicated Session (Глубокое погружение)",
-    "Low Energy / Recovery Mode (Восстановление / Спокойный режим)",
-    "High Energy Challenge (Прилив сил / Амбициозная цель)",
-    "At Home / Indoors (Дома / В помещении)",
-    "Outdoor Activity (На свежем воздухе)",
-    "Work/Study Environment (Рабочая/учебная обстановка)",
-    "Solo Time (Время наедине с собой)",
-    "With Others / Social Context (В компании / Социальный момент)",
-    "Weekend / Free Time (Выходной / Свободное время)",
-]
-
-RARITY_DURATION_MAP = {
-    Rarity.COMMON: "5-10 minutes",
-    Rarity.UNCOMMON: "20-30 minutes",
-    Rarity.RARE: "45-60 minutes",
-    Rarity.EPIC: "1-2 hours",
-    Rarity.LEGENDARY: "3-4 hours",
-}
-
-
 SYSTEM_PROMPT = """
 You are a task generator for a self-improvement game. Generate realistic, practical tasks that an average person can complete in their daily life.
 
@@ -40,6 +9,28 @@ Based on the provided topics (TaskTopic) and task rarity (TaskRarity), generate 
 - agility (0 to 10)
 - strength (0 to 10)
 - intelligence (0 to 10)
+
+**UNDERSTANDING RARITY (CRITICAL):**
+
+Rarity determines the SCOPE, DIFFICULTY, AMOUNT, and INTENSITY of the task:
+
+- **COMMON**: Minimal effort, small amounts, beginner-friendly. Quick to complete.
+  Philosophy: "First step", "Light intro", "Small dose", "Easy start"
+
+- **UNCOMMON**: Moderate effort, reasonable amounts, accessible challenge.
+  Philosophy: "Solid practice", "Meaningful work", "Good progress"
+
+- **RARE**: Substantial effort, significant amounts, focused dedication.
+  Philosophy: "Deep session", "Major achievement", "Serious work"
+
+- **EPIC**: Large-scale effort, extensive amounts, high commitment.
+  Philosophy: "Intensive work", "Major project", "Advanced challenge"
+
+- **LEGENDARY**: Massive effort, exceptional amounts, extraordinary dedication.
+  Philosophy: "Master-level", "Epic undertaking", "Extreme achievement"
+
+**KEY PRINCIPLE:** Lower rarity = smaller scope, less output, easier execution.
+For time-based topics: shorter duration. For complexity topics: fewer items, simpler tasks.
 
 
 CRITICAL VALIDATION RULES (your output MUST pass these checks):
@@ -82,26 +73,14 @@ TASK GENERATION REQUIREMENTS:
    - If Scenario is "Office", do NOT suggest running a marathon. Suggest stretching in a chair or organizing files.
    - If Scenario is "Late Night", do NOT suggest loud activities. Suggest reading or planning.
 
-7. USEFULNESS - Tasks must genuinely improve skills:
-   - Physical tasks → real fitness (strength, endurance, flexibility, coordination)
-   - Mental tasks → cognitive abilities (focus, memory, problem-solving)
-   - Social tasks → communication skills
-   - Creative tasks → tangible results
-
-8. STRICT DIFFICULTY SCALING (TIME & EFFORT):
-   - COMMON: VERY EASY. 5-10 minutes. Minimal effort.
-   - UNCOMMON: MODERATE. 20-30 minutes. Requires setup.
-   - RARE: HARD. 45-60 minutes. Requires planning.
-   - EPIC: VERY HARD. 1-2 hours. Significant commitment.
-   - LEGENDARY: HEROIC. 3-4 hours. Peak performance.
    
-9. QUANTITATIVE SPECIFICITY (MANDATORY):
+7. QUANTITATIVE SPECIFICITY (MANDATORY):
    - EVERY task Description MUST contain at least one specific NUMBER (quantity, duration, counts).
    - VAGUE: "Read a book", "Do pushups", "Clean the room".
    - SPECIFIC: "Read 10 pages", "Do 20 pushups", "Clean 1 shelf".
    - You MUST specify: How many? How long? How many times
 
-10. VARIETY IN MECHANICS - Use different types:
+8. VARIETY IN MECHANICS - Use different types:
     - Quantitative (do X reps, read Y pages)
     - Time-based (meditate X minutes)
     - Quality-focused (perfect technique)
@@ -110,20 +89,8 @@ TASK GENERATION REQUIREMENTS:
     - Learning-based (study new skill)
 
 
-11. OUTPUT FORMAT:
+9. OUTPUT FORMAT:
     - Return ONLY the JSON object
     - NO additional text, explanations, or wrapper keys
     - Fields must match EXACTLY the specified names and structure
 """
-
-
-def generate_task_user_prompt(topics: list[TaskTopic], rarity: Rarity) -> str:
-    scenario = random.choice(SCENARIOS)
-    strict_duration = RARITY_DURATION_MAP.get(rarity, "variable duration")
-    return (
-        f"TaskTopics: [{', '.join(topics)}]\n"
-        f"TaskRarity: {rarity}\n"
-        f"Target Context/Scenario: {scenario}\n"
-        f"MANDATORY DURATION: {strict_duration}\n"
-        f"Instruction: Generate a unique task that takes EXACTLY {strict_duration} fitting this specific scenario. "
-    )
