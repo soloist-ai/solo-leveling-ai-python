@@ -1,298 +1,287 @@
+import random
+
 from src.avro.enums.task_topic import TaskTopic
 
 SCENARIO_CONTEXT_MAP = {
-    "Morning Kick-start (Бодрое начало дня)": {
-        "description": "Early morning (6-9 AM), fresh energy, setting tone for the day",
-        "intensity": "MEDIUM-HIGH - energizing, activating, invigorating",
+    "MORNING": {
+        "intensity": "High energy",
         "context": {
-            TaskTopic.PHYSICAL_ACTIVITY: "Energizing exercises to wake up the body (jumping jacks, light jog, dynamic stretching). Moderate to high intensity.",
-            TaskTopic.CREATIVITY: "Fresh mind for brainstorming, morning pages, creative writing. High mental clarity.",
-            TaskTopic.SOCIAL_SKILLS: "Morning greetings, networking breakfast, positive interactions to start the day.",
-            TaskTopic.NUTRITION: "Healthy breakfast preparation, morning smoothie, meal planning for the day.",
-            TaskTopic.PRODUCTIVITY: "Most important task first, deep focus work, planning the day. Peak cognitive performance.",
-            TaskTopic.ADVENTURE: "Morning exploration walk, sunrise photography, discovering new routes.",
-            TaskTopic.MUSIC: "Uplifting, energizing music (rock, pop, electronic, upbeat classics).",
-            TaskTopic.BRAIN: "Morning mental exercises, logic puzzles, memory training. Sharp mind.",
-            TaskTopic.CYBERSPORT: "Practice aim drills, warm-up routines, reaction time training.",
-            TaskTopic.DEVELOPMENT: "Tackle hardest coding problem first, system design, architecture planning.",
-            TaskTopic.READING: "Educational reading, technical docs, motivational content.",
-            TaskTopic.LANGUAGE_LEARNING: "Vocabulary review, grammar exercises, morning language practice.",
+            "general": "Start fresh, energizing activities",
+            TaskTopic.PHYSICAL_ACTIVITY: "Light cardio, stretching",
+            TaskTopic.PRODUCTIVITY: "Most important tasks first",
+            TaskTopic.BRAIN: "Mental warm-up puzzles",
         },
     },
-    "Midday Reset (Обеденный сброс/перезагрузка)": {
-        "description": "Lunch break (12-2 PM), recharge between work sessions, break from routine",
-        "intensity": "MEDIUM - refreshing, resetting, re-energizing",
+
+    "OFFICE": {
+        "intensity": "Medium energy, quiet",
         "context": {
-            TaskTopic.PHYSICAL_ACTIVITY: "Midday walk, desk stretches, light cardio to break up sitting. Moderate intensity.",
-            TaskTopic.CREATIVITY: "Creative break from work, doodling, quick artistic exercise.",
-            TaskTopic.SOCIAL_SKILLS: "Lunch conversations, networking during break, team interactions.",
-            TaskTopic.NUTRITION: "Healthy lunch preparation, mindful eating, balanced meal.",
-            TaskTopic.PRODUCTIVITY: "Quick task completion, organizing workspace, short focused work burst.",
-            TaskTopic.ADVENTURE: "Explore nearby area during lunch, visit new café, urban discovery.",
-            TaskTopic.MUSIC: "Background music for lunch, discovering new artists, relaxing listening.",
-            TaskTopic.BRAIN: "Midday mental break with puzzles, crosswords, brain teasers.",
-            TaskTopic.CYBERSPORT: "Quick practice session, reviewing strategies, short competitive match.",
-            TaskTopic.DEVELOPMENT: "Code review, refactoring, documentation work.",
-            TaskTopic.READING: "Articles, blog posts, industry news during lunch break.",
-            TaskTopic.LANGUAGE_LEARNING: "Quick language app session, flashcards, podcast listening.",
+            "general": "Professional, desk-friendly",
+            TaskTopic.DEVELOPMENT: "Code reviews, debugging",
+            TaskTopic.PRODUCTIVITY: "Deep focus work",
+            TaskTopic.BRAIN: "Quick mental breaks",
+            TaskTopic.SOCIAL_SKILLS: "Networking, colleague interactions",
         },
     },
-    "Evening Wind-down (Вечернее расслабление)": {
-        "description": "After work/dinner (7-10 PM), transitioning to rest, lowering energy",
-        "intensity": "LOW - calming, gentle, relaxing, preparing for sleep",
+
+    "EVENING": {
+        "intensity": "Low-medium energy",
         "context": {
-            TaskTopic.PHYSICAL_ACTIVITY: "Gentle yoga, slow stretching, evening walk at relaxed pace, light mobility work. LOW intensity only.",
-            TaskTopic.CREATIVITY: "Relaxing creative hobbies (coloring, gentle crafts), journaling, reflective writing.",
-            TaskTopic.SOCIAL_SKILLS: "Calm conversations with family/friends, reflective discussions, video calls.",
-            TaskTopic.NUTRITION: "Light dinner preparation, evening tea ritual, meal planning for tomorrow.",
-            TaskTopic.PRODUCTIVITY: "Review day accomplishments, light planning, organizing for tomorrow. No intense work.",
-            TaskTopic.ADVENTURE: "Calm evening stroll, neighborhood exploration, sunset photography.",
-            TaskTopic.MUSIC: "Ambient, classical, jazz, chill music. Soothing, calming albums.",
-            TaskTopic.BRAIN: "Relaxing puzzles, easy Sudoku, memory games. Not too mentally taxing.",
-            TaskTopic.CYBERSPORT: "Casual gaming, reviewing replays, strategy analysis (not competitive matches).",
-            TaskTopic.DEVELOPMENT: "Light coding, reading documentation, learning new concepts. No debugging.",
-            TaskTopic.READING: "Fiction, relaxing non-fiction, leisurely reading.",
-            TaskTopic.LANGUAGE_LEARNING: "Passive learning (watching shows), easy reading, review of learned material.",
+            "general": "Wind down, social, creative",
+            TaskTopic.MUSIC: "Active album listening",
+            TaskTopic.CREATIVITY: "Creative projects",
+            TaskTopic.SOCIAL_SKILLS: "Social gatherings",
+            TaskTopic.READING: "Leisure reading",
         },
     },
-    "Late Night Ritual (Поздний вечер перед сном)": {
-        "description": "Before bed (10 PM-midnight), winding down, preparing for sleep",
-        "intensity": "VERY LOW - minimal effort, meditative, calming, sleep-friendly",
+
+    "HOME": {
+        "intensity": "Flexible",
         "context": {
-            TaskTopic.CREATIVITY: "Journaling, gratitude writing, gentle sketching, bedtime reflections.",
-            TaskTopic.NUTRITION: "Planning tomorrow's meals, herbal tea preparation, light prep work.",
-            TaskTopic.BRAIN: "Very light mental activity (easy riddles, calming puzzles). Nothing stimulating.",
-            TaskTopic.CYBERSPORT: "Watching pro streams (not playing), strategy review, planning practice.",
-            TaskTopic.DEVELOPMENT: "Reading documentation, learning theory, planning tomorrow's work. No coding.",
-            TaskTopic.READING: "Light fiction, calming books, bedtime reading.",
-            TaskTopic.LANGUAGE_LEARNING: "Passive listening, meditation in target language, light review.",
+            "general": "Comfortable, all resources available",
+            TaskTopic.NUTRITION: "Meal prep, cooking experiments",
+            TaskTopic.DEVELOPMENT: "Personal projects",
+            TaskTopic.CYBERSPORT: "Training sessions",
         },
     },
-    "Deep Focus / Dedicated Session (Глубокое погружение)": {
-        "description": "Extended focused time, no interruptions, maximum concentration",
-        "intensity": "HIGH - intensive, sustained effort, flow state",
+
+    "GYM": {
+        "intensity": "High energy",
         "context": {
-            TaskTopic.CREATIVITY: "Major creative project, extensive writing, detailed artwork, deep creative work.",
-            TaskTopic.PRODUCTIVITY: "Deep work on critical project, extensive task completion, major deliverables.",
-            TaskTopic.BRAIN: "Complex problem-solving, challenging puzzles, intensive mental training.",
-            TaskTopic.CYBERSPORT: "Extended practice session, competitive grinding, skill mastery work.",
-            TaskTopic.DEVELOPMENT: "Complex feature implementation, system design, hard algorithm problems.",
-            TaskTopic.READING: "Deep reading with notes, analyzing complex texts, extensive study.",
-            TaskTopic.LANGUAGE_LEARNING: "Intensive grammar study, extensive conversation practice, immersion session.",
+            "general": "Intensive physical training",
+            TaskTopic.PHYSICAL_ACTIVITY: "Strength, cardio, HIIT",
         },
     },
-    "Low Energy / Recovery Mode (Восстановление / Спокойный режим)": {
-        "description": "Tired, low motivation, gentle activities only, self-care",
-        "intensity": "VERY LOW - minimal effort, restorative, gentle",
+
+    "OUTDOOR": {
+        "intensity": "Medium-high energy",
         "context": {
-            TaskTopic.PHYSICAL_ACTIVITY: "Gentle stretching, slow walk, restorative yoga, light mobility. No cardio.",
-            TaskTopic.CREATIVITY: "Coloring books, simple crafts, easy creative tasks. No pressure.",
-            TaskTopic.BRAIN: "Easy puzzles, simple games, light mental activity. Nothing challenging.",
-            TaskTopic.READING: "Light fiction, easy reading, no dense material.",
-            TaskTopic.LANGUAGE_LEARNING: "Passive listening, watching shows with subtitles, easy review.",
+            "general": "Fresh air, exploration",
+            TaskTopic.ADVENTURE: "Urban/nature exploration",
+            TaskTopic.PHYSICAL_ACTIVITY: "Running, hiking, sports",
         },
     },
-    "High Energy Challenge (Прилив сил / Амбициозная цель)": {
-        "description": "Peak energy, motivated, ready for intense challenge",
-        "intensity": "VERY HIGH - vigorous, demanding, maximum effort",
+
+    "LATE_NIGHT": {
+        "intensity": "Low energy",
         "context": {
-            TaskTopic.PHYSICAL_ACTIVITY: "Intensive workouts, HIIT, long runs, challenging sports. Maximum intensity.",
-            TaskTopic.SOCIAL_SKILLS: "Public speaking, leading groups, networking events, bold interactions.",
-            TaskTopic.PRODUCTIVITY: "Tackle biggest project, complete major milestone, extensive task clearing.",
-            TaskTopic.ADVENTURE: "Long hikes, challenging exploration, full-day adventure.",
+            "general": "Quiet, reflective",
+            TaskTopic.READING: "Deep reading",
+            TaskTopic.BRAIN: "Strategic puzzles",
+            TaskTopic.DEVELOPMENT: "Late-night coding",
         },
     },
-    "At Home / Indoors (Дома / В помещении)": {
-        "description": "Indoor setting, home environment, controlled space",
-        "intensity": "VARIABLE - depends on activity",
+
+    "WEEKEND": {
+        "intensity": "Flexible, high time budget",
         "context": {
-            TaskTopic.PHYSICAL_ACTIVITY: "Bodyweight exercises, indoor cardio, yoga, resistance bands. No equipment needed.",
-            TaskTopic.CREATIVITY: "Home crafts, writing, drawing, DIY projects.",
-            TaskTopic.SOCIAL_SKILLS: "Phone calls, video chats, family interactions.",
-            TaskTopic.NUTRITION: "Cooking, meal prep, kitchen organization.",
-            TaskTopic.PRODUCTIVITY: "Home office work, organizing living space, household tasks.",
-            TaskTopic.ADVENTURE: "Exploring rooms/areas you don't usually visit, reorganizing spaces.",
-            TaskTopic.MUSIC: "Home listening session, discovering albums at leisure.",
-            TaskTopic.BRAIN: "Puzzles, board games, mental exercises at home.",
-            TaskTopic.CYBERSPORT: "Gaming setup at home, practice in comfortable environment.",
-            TaskTopic.DEVELOPMENT: "Coding at home setup, personal projects, learning.",
-            TaskTopic.READING: "Comfortable reading at home, library browsing.",
-            TaskTopic.LANGUAGE_LEARNING: "Home study, app practice, online lessons.",
+            "general": "Large projects, exploration",
+            TaskTopic.ADVENTURE: "Day trips, long walks",
+            TaskTopic.CREATIVITY: "Extended creative work",
+            TaskTopic.MUSIC: "Multi-album listening sessions",
         },
     },
-    "Outdoor Activity (На свежем воздухе)": {
-        "description": "Outside environment, fresh air, nature or urban setting",
-        "intensity": "MEDIUM-HIGH - active, exploring, movement-focused",
+
+    "COMMUTE": {
+        "intensity": "Low energy, limited mobility",
         "context": {
-            TaskTopic.PHYSICAL_ACTIVITY: "Running, hiking, outdoor sports, park workouts. Use outdoor space.",
-            TaskTopic.SOCIAL_SKILLS: "Meeting people outdoors, park conversations, street interactions.",
-            TaskTopic.ADVENTURE: "Exploring nature/city, hiking trails, urban discovery, photography walks.",
+            "general": "Passive, mobile-friendly",
+            TaskTopic.MUSIC: "Album discovery",
+            TaskTopic.LANGUAGE_LEARNING: "Audio lessons, flashcards",
+            TaskTopic.READING: "Mobile reading",
         },
     },
-    "Work/Study Environment (Рабочая/учебная обстановка)": {
-        "description": "Professional/academic setting, desk work, focused environment",
-        "intensity": "MEDIUM - productive, focused, goal-oriented",
+
+    "BREAK": {
+        "intensity": "Quick refresh",
         "context": {
-            TaskTopic.PHYSICAL_ACTIVITY: "Desk stretches, office yoga, stair climbing, walking meetings.",
-            TaskTopic.CREATIVITY: "Work-related creative tasks, brainstorming at desk, design work.",
-            TaskTopic.SOCIAL_SKILLS: "Professional networking, team communication, presentations.",
-            TaskTopic.NUTRITION: "Healthy office snacks, meal prep for work, lunch planning.",
-            TaskTopic.PRODUCTIVITY: "Core work tasks, project completion, professional deliverables.",
-            TaskTopic.CYBERSPORT: "Practice in study setup, skill training at desk.",
-            TaskTopic.DEVELOPMENT: "Professional coding, work projects, technical tasks.",
-            TaskTopic.READING: "Industry reading, technical documentation, professional learning.",
-            TaskTopic.LANGUAGE_LEARNING: "Business language practice, professional vocabulary.",
-        },
-    },
-    "Solo Time (Время наедине с собой)": {
-        "description": "Alone, self-focused, no social interaction required",
-        "intensity": "VARIABLE - introspective, personal",
-        "context": {
-            TaskTopic.PHYSICAL_ACTIVITY: "Individual workouts, solo runs, personal training.",
-            TaskTopic.CREATIVITY: "Personal creative projects, solo art, journaling.",
-            TaskTopic.NUTRITION: "Cooking for yourself, meal prep, personal nutrition planning.",
-            TaskTopic.PRODUCTIVITY: "Individual work, personal projects, solo focus time.",
-            TaskTopic.ADVENTURE: "Solo exploration, independent discovery, personal journeys.",
-            TaskTopic.MUSIC: "Personal listening sessions, discovering music alone.",
-            TaskTopic.BRAIN: "Individual puzzles, solo mental challenges.",
-            TaskTopic.CYBERSPORT: "Solo practice, individual skill training, self-analysis.",
-            TaskTopic.DEVELOPMENT: "Personal coding projects, individual learning.",
-            TaskTopic.READING: "Personal reading time, solo study.",
-            TaskTopic.LANGUAGE_LEARNING: "Self-study, independent practice, solo learning.",
-        },
-    },
-    "With Others / Social Context (В компании / Социальный момент)": {
-        "description": "Group setting, social interaction, collaborative environment",
-        "intensity": "MEDIUM-HIGH - social, interactive, collaborative",
-        "context": {
-            TaskTopic.PHYSICAL_ACTIVITY: "Group sports, partner workouts, team activities.",
-            TaskTopic.SOCIAL_SKILLS: "Group conversations, networking, social events. PRIMARY FOCUS.",
-            TaskTopic.ADVENTURE: "Group exploration, social outings, discovering places with others.",
-            TaskTopic.LANGUAGE_LEARNING: "Conversation practice with others, language exchange, group learning.",
-        },
-    },
-    "Weekend / Free Time (Выходной / Свободное время)": {
-        "description": "Days off, leisure time, flexible schedule, no work pressure",
-        "intensity": "VARIABLE - relaxed, exploratory, at your own pace",
-        "context": {
-            # Применимо ко ВСЕМ топикам - свободное время для любых активностей
-            "general": "More time available, flexible scheduling, can do longer/more intensive tasks, leisure mindset, personal projects, hobbies, exploration. No work deadlines or constraints."
+            "general": "10-30 min activities",
+            TaskTopic.PHYSICAL_ACTIVITY: "Stretches, quick walk",
+            TaskTopic.BRAIN: "1-2 quick puzzles",
         },
     },
 }
 
 TOPIC_SCENARIOS_MAP: dict[TaskTopic, list[str]] = {
-    TaskTopic.PHYSICAL_ACTIVITY: [
-        "Morning Kick-start (Бодрое начало дня)",
-        "Midday Reset (Обеденный сброс/перезагрузка)",
-        "Evening Wind-down (Вечернее расслабление)",
-        "High Energy Challenge (Прилив сил / Амбициозная цель)",
-        "At Home / Indoors (Дома / В помещении)",
-        "Outdoor Activity (На свежем воздухе)",
-        "Solo Time (Время наедине с собой)",
-        "Weekend / Free Time (Выходной / Свободное время)",
-    ],
-    TaskTopic.CREATIVITY: [
-        "Morning Kick-start (Бодрое начало дня)",
-        "Midday Reset (Обеденный сброс/перезагрузка)",
-        "Evening Wind-down (Вечернее расслабление)",
-        "Late Night Ritual (Поздний вечер перед сном)",
-        "Deep Focus / Dedicated Session (Глубокое погружение)",
-        "Low Energy / Recovery Mode (Восстановление / Спокойный режим)",
-        "At Home / Indoors (Дома / В помещении)",
-        "Work/Study Environment (Рабочая/учебная обстановка)",
-        "Solo Time (Время наедине с собой)",
-        "Weekend / Free Time (Выходной / Свободное время)",
-    ],
-    TaskTopic.SOCIAL_SKILLS: [
-        "Morning Kick-start (Бодрое начало дня)",
-        "Midday Reset (Обеденный сброс/перезагрузка)",
-        "Evening Wind-down (Вечернее расслабление)",
-        "High Energy Challenge (Прилив сил / Амбициозная цель)",
-        "At Home / Indoors (Дома / В помещении)",  # звонки, видеозвонки
-        "Outdoor Activity (На свежем воздухе)",  # знакомства в парке
-        "Work/Study Environment (Рабочая/учебная обстановка)",
-        "With Others / Social Context (В компании / Социальный момент)",  # обязательно!
-        "Weekend / Free Time (Выходной / Свободное время)",
-    ],
-    TaskTopic.NUTRITION: [
-        "Morning Kick-start (Бодрое начало дня)",  # завтрак
-        "Midday Reset (Обеденный сброс/перезагрузка)",  # обед
-        "Evening Wind-down (Вечернее расслабление)",  # ужин
-        "Late Night Ritual (Поздний вечер перед сном)",  # планирование
-        "At Home / Indoors (Дома / В помещении)",
-        "Work/Study Environment (Рабочая/учебная обстановка)",  # meal prep
-        "Solo Time (Время наедине с собой)",
-        "Weekend / Free Time (Выходной / Свободное время)",
-    ],
-    TaskTopic.PRODUCTIVITY: [
-        "Morning Kick-start (Бодрое начало дня)",
-        "Midday Reset (Обеденный сброс/перезагрузка)",
-        "Deep Focus / Dedicated Session (Глубокое погружение)",  # обязательно!
-        "At Home / Indoors (Дома / В помещении)",
-        "Work/Study Environment (Рабочая/учебная обстановка)",  # обязательно!
-        "Solo Time (Время наедине с собой)",
-        "Weekend / Free Time (Выходной / Свободное время)",
-    ],
-    TaskTopic.ADVENTURE: [
-        "Morning Kick-start (Бодрое начало дня)",
-        "Midday Reset (Обеденный сброс/перезагрузка)",
-        "High Energy Challenge (Прилив сил / Амбициозная цель)",
-        "Outdoor Activity (На свежем воздухе)",  # обязательно!
-        "Solo Time (Время наедине с собой)",
-        "With Others / Social Context (В компании / Социальный момент)",
-        "Weekend / Free Time (Выходной / Свободное время)",  # обязательно!
-    ],
-    TaskTopic.MUSIC: list(
-        SCENARIO_CONTEXT_MAP.keys()
-    ),  # Музыку можно слушать везде и всегда!
-    TaskTopic.BRAIN: [
-        "Morning Kick-start (Бодрое начало дня)",
-        "Midday Reset (Обеденный сброс/перезагрузка)",
-        "Evening Wind-down (Вечернее расслабление)",
-        "Late Night Ritual (Поздний вечер перед сном)",
-        "Deep Focus / Dedicated Session (Глубокое погружение)",
-        "Low Energy / Recovery Mode (Восстановление / Спокойный режим)",
-        "At Home / Indoors (Дома / В помещении)",
-        "Work/Study Environment (Рабочая/учебная обстановка)",
-        "Solo Time (Время наедине с собой)",
-        "Weekend / Free Time (Выходной / Свободное время)",
-    ],
-    TaskTopic.CYBERSPORT: [
-        "Midday Reset (Обеденный сброс/перезагрузка)",
-        "Evening Wind-down (Вечернее расслабление)",
-        "Late Night Ritual (Поздний вечер перед сном)",
-        "Deep Focus / Dedicated Session (Глубокое погружение)",
-        "At Home / Indoors (Дома / В помещении)",  # обязательно!
-        "Work/Study Environment (Рабочая/учебная обстановка)",  # домашний офис
-        "Solo Time (Время наедине с собой)",
-        "Weekend / Free Time (Выходной / Свободное время)",
-    ],
-    TaskTopic.DEVELOPMENT: [
-        "Morning Kick-start (Бодрое начало дня)",
-        "Midday Reset (Обеденный сброс/перезагрузка)",
-        "Evening Wind-down (Вечернее расслабление)",
-        "Late Night Ritual (Поздний вечер перед сном)",
-        "Deep Focus / Dedicated Session (Глубокое погружение)",  # обязательно!
-        "At Home / Indoors (Дома / В помещении)",
-        "Work/Study Environment (Рабочая/учебная обстановка)",  # обязательно!
-        "Solo Time (Время наедине с собой)",
-        "Weekend / Free Time (Выходной / Свободное время)",
-    ],
-    TaskTopic.READING: list(
-        SCENARIO_CONTEXT_MAP.keys()
-    ),  # Читать можно везде и всегда!
-    TaskTopic.LANGUAGE_LEARNING: [
-        "Morning Kick-start (Бодрое начало дня)",
-        "Midday Reset (Обеденный сброс/перезагрузка)",
-        "Evening Wind-down (Вечернее расслабление)",
-        "Late Night Ritual (Поздний вечер перед сном)",
-        "Deep Focus / Dedicated Session (Глубокое погружение)",
-        "Low Energy / Recovery Mode (Восстановление / Спокойный режим)",
-        "At Home / Indoors (Дома / В помещении)",
-        "Work/Study Environment (Рабочая/учебная обстановка)",
-        "Solo Time (Время наедине с собой)",
-        "With Others / Social Context (В компании / Социальный момент)",  # разговорная практика
-        "Weekend / Free Time (Выходной / Свободное время)",
-    ],
+    TaskTopic.PHYSICAL_ACTIVITY: ["MORNING", "GYM", "OUTDOOR", "BREAK"],
+    TaskTopic.MUSIC: ["EVENING", "COMMUTE", "WEEKEND", "HOME"],
+    TaskTopic.DEVELOPMENT: ["OFFICE", "HOME", "LATE_NIGHT", "WEEKEND"],
+    TaskTopic.CREATIVITY: ["EVENING", "WEEKEND", "HOME"],
+    TaskTopic.SOCIAL_SKILLS: ["OFFICE", "EVENING", "WEEKEND"],
+    TaskTopic.NUTRITION: ["HOME", "WEEKEND"],
+    TaskTopic.PRODUCTIVITY: ["MORNING", "OFFICE", "HOME"],
+    TaskTopic.ADVENTURE: ["OUTDOOR", "WEEKEND"],
+    TaskTopic.BRAIN: ["OFFICE", "LATE_NIGHT", "BREAK", "COMMUTE"],
+    TaskTopic.CYBERSPORT: ["HOME", "EVENING", "WEEKEND"],
+    TaskTopic.READING: ["COMMUTE", "EVENING", "LATE_NIGHT", "HOME"],
+    TaskTopic.LANGUAGE_LEARNING: ["COMMUTE", "HOME", "EVENING"],
 }
+
+
+def add_diversity_hint(topic: TaskTopic) -> str:
+    """Добавляет случайную подсказку для разнообразия задач"""
+
+    diversity_hints = {
+        TaskTopic.MUSIC: [
+            "Focus on pre-1990 experimental/avant-garde albums",
+            "Choose from non-Western music traditions (African, Asian, Middle Eastern)",
+            "Select underground/cult classics, not mainstream hits",
+            "Explore electronic subgenres: IDM, ambient, dub techno, glitch",
+            "Focus on jazz fusion, free jazz, or spiritual jazz",
+            "Choose post-punk, noise rock, or shoegaze albums",
+            "Select minimalist/ambient classical composers",
+            "Focus on hip-hop: instrumental, abstract, experimental",
+            "Choose krautrock, kosmische musik, or psychedelic rock",
+            "Select contemporary classical or modern composition",
+        ],
+
+        TaskTopic.PHYSICAL_ACTIVITY: [
+            "Focus on animal movements (bear crawls, frog jumps, crab walks)",
+            "Emphasize unilateral exercises (single-leg, single-arm)",
+            "Use isometric holds and static positions",
+            "Focus on plyometrics and explosive movements",
+            "Emphasize flexibility and mobility work",
+            "Use unconventional cardio (shadow boxing, dancing, jumping rope)",
+            "Focus on core stability and anti-rotation exercises",
+            "Emphasize tempo variations (slow eccentric, pause reps)",
+            "Use ladder drills or agility patterns",
+            "Focus on breath-work combined with movement",
+        ],
+
+        TaskTopic.DEVELOPMENT: [
+            "Focus on graph algorithms (BFS, DFS, shortest path)",
+            "Emphasize dynamic programming patterns",
+            "Use bit manipulation and bitwise operations",
+            "Focus on tree traversals and binary search trees",
+            "Emphasize sliding window or two-pointer techniques",
+            "Use backtracking and recursion problems",
+            "Focus on system design patterns (singleton, factory, observer)",
+            "Emphasize test-driven development (write tests first)",
+            "Use refactoring exercises on legacy code",
+            "Focus on concurrent programming challenges",
+        ],
+
+        TaskTopic.CREATIVITY: [
+            "Write in second-person perspective",
+            "Use stream-of-consciousness style",
+            "Create non-linear narrative structure",
+            "Focus on sensory details (sounds, textures, smells)",
+            "Use dialogue-only format (no narration)",
+            "Create speculative fiction or magical realism",
+            "Focus on character emotions through actions, not descriptions",
+            "Use constraints (no letter 'e', only 100 words, etc.)",
+            "Create visual mind maps or concept boards",
+            "Focus on world-building elements (languages, cultures, systems)",
+        ],
+
+        TaskTopic.SOCIAL_SKILLS: [
+            "Practice active listening without interrupting",
+            "Use open-ended questions to deepen conversations",
+            "Practice giving specific, genuine compliments",
+            "Focus on mirroring body language subtly",
+            "Practice storytelling with clear structure (setup, conflict, resolution)",
+            "Use the 'cold approach' with strangers in public spaces",
+            "Practice remembering and using people's names",
+            "Focus on finding common ground quickly",
+            "Practice graceful disagreement without conflict",
+            "Use humor and self-deprecation appropriately",
+        ],
+
+        TaskTopic.NUTRITION: [
+            "Focus on fermented foods (kimchi, sauerkraut, miso)",
+            "Emphasize plant-based protein sources",
+            "Use spice blends from different cuisines",
+            "Focus on batch cooking grains and legumes",
+            "Emphasize seasonal and local ingredients",
+            "Use one-pot or sheet-pan meals for efficiency",
+            "Focus on protein-forward breakfasts",
+            "Emphasize colorful vegetables (eat the rainbow)",
+            "Use meal prep containers for portion control",
+            "Focus on hydration tracking alongside meals",
+        ],
+
+        TaskTopic.PRODUCTIVITY: [
+            "Use time-blocking with strict boundaries",
+            "Focus on single-tasking (no multitasking)",
+            "Apply the 2-minute rule (do it now if < 2 min)",
+            "Use the Eisenhower matrix (urgent vs important)",
+            "Focus on 'eating the frog' (hardest task first)",
+            "Use Pomodoro with 25/5 intervals",
+            "Focus on batching similar tasks together",
+            "Use the '3 MIT' method (3 Most Important Tasks)",
+            "Apply Pareto principle (80/20 rule)",
+            "Focus on environment design (remove distractions)",
+        ],
+
+        TaskTopic.ADVENTURE: [
+            "Explore industrial areas or abandoned places (safely)",
+            "Focus on street art and murals in unexpected neighborhoods",
+            "Visit local historical markers and read plaques",
+            "Explore rooftops or elevated viewpoints",
+            "Focus on hidden parks or green spaces",
+            "Visit ethnic neighborhoods and cultural districts",
+            "Explore waterfronts, rivers, or canals",
+            "Focus on architectural details in old buildings",
+            "Visit local markets or bazaars",
+            "Explore underground passages or metro art",
+        ],
+
+        TaskTopic.BRAIN: [
+            "Focus on chess tactics (pins, forks, skewers)",
+            "Use logic grid puzzles (zebra puzzles)",
+            "Solve Sudoku variants (killer, samurai, irregular)",
+            "Focus on spatial reasoning puzzles",
+            "Use memory techniques (method of loci, linking)",
+            "Solve mathematical riddles and paradoxes",
+            "Focus on pattern recognition sequences",
+            "Use lateral thinking puzzles (situation puzzles)",
+            "Solve cryptic crosswords or ciphers",
+            "Focus on probability and combinatorics problems",
+        ],
+
+        TaskTopic.CYBERSPORT: [
+            "Focus on flick accuracy drills",
+            "Emphasize tracking moving targets smoothly",
+            "Use spray pattern control practice",
+            "Focus on crosshair placement pre-aiming",
+            "Emphasize counter-strafing mechanics",
+            "Use utility lineups memorization",
+            "Focus on peeking angles and timing",
+            "Emphasize movement optimization (bunny hops, strafes)",
+            "Use demo review for decision-making analysis",
+            "Focus on economy management in ranked matches",
+        ],
+
+        TaskTopic.READING: [
+            "Focus on classic literature (pre-1950)",
+            "Read long-form investigative journalism",
+            "Focus on philosophy or critical theory",
+            "Read technical documentation or whitepapers",
+            "Focus on biographies of unconventional figures",
+            "Read scientific papers or research studies",
+            "Focus on translated literature (non-English origins)",
+            "Read essay collections or thought pieces",
+            "Focus on historical non-fiction",
+            "Read genre-blending experimental fiction",
+        ],
+
+        TaskTopic.LANGUAGE_LEARNING: [
+            "Focus on colloquial expressions and slang",
+            "Use sentence mining from native content",
+            "Focus on shadowing native speakers",
+            "Emphasize writing without translation apps",
+            "Use spaced repetition with context sentences",
+            "Focus on pronunciation drills (minimal pairs)",
+            "Emphasize active recall over passive review",
+            "Use comprehensible input (reading/listening just above level)",
+            "Focus on grammatical patterns in context",
+            "Emphasize conversational practice with natives",
+        ],
+    }
+
+    hints = diversity_hints.get(topic, [])
+    if not hints:
+        return ""
+
+    selected_hint = random.choice(hints)
+    return f"\n🎯 **Diversity instruction:** {selected_hint}"

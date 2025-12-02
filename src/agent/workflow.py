@@ -1,8 +1,11 @@
 import logging
+
 from typing import Dict, Any, cast
+
 from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, END
 from langchain_core.messages import HumanMessage, SystemMessage
+
 from src.agent.state import AgentState
 from src.avro.enums.rarity import Rarity
 from src.avro.enums.task_topic import TaskTopic
@@ -14,6 +17,116 @@ from src.prompt.system_prompt import SYSTEM_PROMPT
 
 logger = logging.getLogger(__name__)
 
+# ✅ ДОБАВЛЕНО: Явное разделение топиков по типу
+TIME_BASED_TOPICS = {TaskTopic.PHYSICAL_ACTIVITY, TaskTopic.ADVENTURE, TaskTopic.READING}
+
+COMPLEXITY_BASED_TOPICS = {
+    TaskTopic.MUSIC, TaskTopic.DEVELOPMENT, TaskTopic.CREATIVITY,
+    TaskTopic.SOCIAL_SKILLS, TaskTopic.NUTRITION, TaskTopic.PRODUCTIVITY,
+    TaskTopic.BRAIN, TaskTopic.CYBERSPORT, TaskTopic.LANGUAGE_LEARNING
+}
+
+REQUIREMENTS_MAP = {
+    TaskTopic.PHYSICAL_ACTIVITY: {
+        Rarity.COMMON: "5-10 minutes",
+        Rarity.UNCOMMON: "20-30 minutes",
+        Rarity.RARE: "45-60 minutes",
+        Rarity.EPIC: "1-2 hours",
+        Rarity.LEGENDARY: "3-5 hours",
+    },
+    TaskTopic.ADVENTURE: {
+        Rarity.COMMON: "10-20 minutes",
+        Rarity.UNCOMMON: "30-60 minutes",
+        Rarity.RARE: "1-2 hours",
+        Rarity.EPIC: "3-4 hours",
+        Rarity.LEGENDARY: "5+ hours",
+    },
+    TaskTopic.MUSIC: {
+        Rarity.COMMON: "1-2 legendary tracks",
+        Rarity.UNCOMMON: "1 mini-album/EP",
+        Rarity.RARE: "1 famous album",
+        Rarity.EPIC: "2-3 famous albums",
+        Rarity.LEGENDARY: "5 famous albums",
+    },
+    TaskTopic.READING: {
+        Rarity.COMMON: "10-15 minutes",
+        Rarity.UNCOMMON: "20-30 minutes",
+        Rarity.RARE: "45-60 minutes",
+        Rarity.EPIC: "1.5-2 hours",
+        Rarity.LEGENDARY: "3-4 hours",
+    },
+    TaskTopic.DEVELOPMENT: {
+        Rarity.COMMON: "1 easy problem",
+        Rarity.UNCOMMON: "1 medium problem",
+        Rarity.RARE: "2 medium problems",
+        Rarity.EPIC: "1 hard problem",
+        Rarity.LEGENDARY: "3 hard problems",
+    },
+    TaskTopic.CREATIVITY: {
+        Rarity.COMMON: "100 words / 3 concepts",
+        Rarity.UNCOMMON: "500 words / 10 concepts",
+        Rarity.RARE: "1000 words / 20 concepts",
+        Rarity.EPIC: "2000 words / 50 concepts",
+        Rarity.LEGENDARY: "5000 words / 100 concepts",
+    },
+    TaskTopic.SOCIAL_SKILLS: {
+        Rarity.COMMON: "1 brief interaction",
+        Rarity.UNCOMMON: "2-3 conversations",
+        Rarity.RARE: "Deep/extended engagement",
+        Rarity.EPIC: "Public speaking/presentation",
+        Rarity.LEGENDARY: "Event organization",
+    },
+    TaskTopic.NUTRITION: {
+        Rarity.COMMON: "1 healthy habit",
+        Rarity.UNCOMMON: "2 balanced meals",
+        Rarity.RARE: "3-day meal prep",
+        Rarity.EPIC: "5-day meal plan",
+        Rarity.LEGENDARY: "20+ meal prep sessions",
+    },
+    TaskTopic.PRODUCTIVITY: {
+        Rarity.COMMON: "1 focused task",
+        Rarity.UNCOMMON: "3 priority tasks",
+        Rarity.RARE: "5 scheduled tasks",
+        Rarity.EPIC: "8 deep work sessions",
+        Rarity.LEGENDARY: "15 organized tasks",
+    },
+    TaskTopic.BRAIN: {
+        Rarity.COMMON: "1 easy puzzle",
+        Rarity.UNCOMMON: "5 medium puzzles",
+        Rarity.RARE: "15 hard puzzles",
+        Rarity.EPIC: "30 intensive problems",
+        Rarity.LEGENDARY: "100 brain challenges",
+    },
+    TaskTopic.CYBERSPORT: {
+        Rarity.COMMON: "5 aim drills",
+        Rarity.UNCOMMON: "15 focused drills + 2 matches",
+        Rarity.RARE: "30 drills + 3 ranked matches",
+        Rarity.EPIC: "50 drills + 5 ranked games",
+        Rarity.LEGENDARY: "100 drills + 10 ranked games",
+    },
+    TaskTopic.LANGUAGE_LEARNING: {
+        Rarity.COMMON: "5 new words with pronunciation",
+        Rarity.UNCOMMON: "20 words + 5 sentences written",
+        Rarity.RARE: "50 words + 3 conversation topics practiced",
+        Rarity.EPIC: "100 words + 5 dialogues role-played",
+        Rarity.LEGENDARY: "200 words + 10 speaking exercises completed",
+    },
+}
+
+
+def _get_topic_type(topics: list[TaskTopic]) -> str:
+    """Определяет тип топика: TIME или COMPLEXITY"""
+    if any(topic in TIME_BASED_TOPICS for topic in topics):
+        return "TIME"
+    return "COMPLEXITY"
+
+
+def _get_metric_instruction(topic_type: str) -> str:
+    """Возвращает инструкцию по метрике для типа топика"""
+    if topic_type == "TIME":
+        return "DURATION (minutes/hours)"
+    return "OUTPUT COUNT (items/actions/numbers)"
+
 
 def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
     validator = TaskValidator()
@@ -22,6 +135,11 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
         """Генерирует задачу на основе topics и rarity"""
         topics = state["topics"]
         rarity = state["rarity"]
+        attempt_count = state["attempt_count"]
+
+        # ✅ НОВОЕ: Определяем тип топика
+        topic_type = _get_topic_type(topics)
+        metric_instruction = _get_metric_instruction(topic_type)
 
         user_prompt = prompt_service.construct_user_prompt(topics, rarity)
 
@@ -29,239 +147,212 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
             SystemMessage(content=SYSTEM_PROMPT),
             HumanMessage(content=user_prompt),
         ]
+
         if state.get("critique_feedback"):
+            # ✅ УЛУЧШЕНО: Добавлена явная инструкция по типу метрики
             feedback_msg = (
-                f"PREVIOUS ATTEMPT WAS REJECTED.\n"
-                f"Critic's feedback: {state['critique_feedback']}\n\n"
-                f"Generate a NEW task that fixes these issues. "
-                f"Pay special attention to the rarity requirements and duration/amount constraints."
+                f"⚠️ PREVIOUS ATTEMPT {attempt_count} WAS REJECTED.\n\n"
+                f"**Critic's feedback:**\n{state['critique_feedback']}\n\n"
+                f"**TOPIC TYPE: {topic_type}**\n"
+                f"Task MUST specify {metric_instruction}\n\n"
+                f"{'❌ FORBIDDEN: Mentioning time/duration' if topic_type == 'COMPLEXITY' else '❌ FORBIDDEN: Mentioning action counts'}\n"
+                f"{'✅ REQUIRED: Specify exact counts/numbers' if topic_type == 'COMPLEXITY' else '✅ REQUIRED: Specify exact duration'}\n\n"
+                f"**Common fixes:**\n"
+                f"- Duration/amount wrong → adjust to rarity requirements\n"
+                f"- Integration poor → create natural combination\n"
+                f"- Not specific → add concrete numbers\n"
+                f"- Not creative → entirely different activity\n"
+                f"- Attributes too low → INCREASE to match rarity minimum\n\n"
+                f"Create a COMPLETELY NEW task addressing the criticism."
             )
             messages.append(HumanMessage(content=feedback_msg))
+            logger.info(f"🔄 Regenerating task (attempt {attempt_count + 1}/3)")
 
         generator_chain = llm.with_structured_output(Task)
+
         try:
             generated_task_raw = generator_chain.invoke(messages)
             generated_task = cast(Task, generated_task_raw)
-
         except Exception as e:
             logger.error(f"Generator LLM call failed: {e}", exc_info=True)
-
             return {
                 "current_task": None,
                 "attempt_count": state["attempt_count"] + 1,
-                "critique_feedback": (
-                    f"Technical Error: Generator model failed. "
-                    f"Error: {str(e)[:100]}. Retrying."
-                ),
+                "critique_feedback": f"Technical Error: Generator failed. {str(e)[:100]}",
+                "validation_failed": True,
             }
 
         logger.info(
-            f"Generated task (attempt {state['attempt_count'] + 1}): {generated_task.title.en}"
+            f"📝 Generated task (attempt {state['attempt_count'] + 1}/3): {generated_task.title.en}"
         )
+
         try:
             normalized_task = _normalize_attributes(generated_task, rarity, validator)
+
+            # ✅ КРИТИЧЕСКАЯ ПРОВЕРКА
             hard_error = validator.validate_task(normalized_task, rarity)
             if hard_error:
-                logger.warning(f"Generated task failed hard validation: {hard_error}")
+                logger.error(f"❌ Hard validation failed: {hard_error}")
                 return {
                     "current_task": normalized_task,
                     "attempt_count": state["attempt_count"] + 1,
                     "critique_feedback": f"Technical Error: {hard_error}",
+                    "validation_failed": True,
                 }
 
+            # ✅ Валидация прошла - сбрасываем флаг
             return {
                 "current_task": normalized_task,
                 "attempt_count": state["attempt_count"] + 1,
+                "validation_failed": False,
             }
 
         except Exception as e:
-            logger.error(f"Task normalization/validation failed: {e}", exc_info=True)
+            logger.error(f"Task processing failed: {e}", exc_info=True)
             return {
                 "current_task": None,
                 "attempt_count": state["attempt_count"] + 1,
-                "critique_feedback": (
-                    f"Technical Error: Task processing failed. "
-                    f"Error: {str(e)[:100]}. Retrying."
-                ),
+                "critique_feedback": f"Technical Error: Processing failed. {str(e)[:100]}",
+                "validation_failed": True,
             }
 
     def critic_node(state: AgentState) -> Dict[str, Any]:
-        """
-        LLM-based critic that focuses on SUBJECTIVE quality checks only.
-        All deterministic validation is already done by TaskValidator.
-        """
+        """LLM critic focusing on SUBJECTIVE quality checks"""
+
+        # ✅ ПЕРВАЯ ПРОВЕРКА: Если валидация уже провалилась - пропускаем LLM
+        if state.get("validation_failed", False):
+            logger.warning("⚠️ Critic skipped: validation already failed")
+            return {
+                "critique_feedback": state.get(
+                    "critique_feedback", "Validation failed"
+                ),
+                "validation_failed": False,  # Сбрасываем для следующей попытки
+            }
+
         current_task = state["current_task"]
         if current_task is None:
-            logger.error("Current task is None in critic_node; skipping validation")
-            return {"critique_feedback": "Technical Error: task was not generated"}
+            logger.error("Current task is None in critic_node")
+            return {
+                "critique_feedback": "Technical Error: task was not generated",
+                "validation_failed": False,
+            }
 
         task: Task = current_task
         rarity = state["rarity"]
         topics = state["topics"]
         topics_str = ", ".join([t.value for t in topics])
-        time_requirements_map = {
-            TaskTopic.PHYSICAL_ACTIVITY: {
-                Rarity.COMMON: "5-10 minutes",
-                Rarity.UNCOMMON: "20-30 minutes",
-                Rarity.RARE: "45-60 minutes",
-                Rarity.EPIC: "1-2 hours",
-                Rarity.LEGENDARY: "3-4 hours",
-            },
-            TaskTopic.ADVENTURE: {
-                Rarity.COMMON: "5-10 minutes",
-                Rarity.UNCOMMON: "20-30 minutes",
-                Rarity.RARE: "45-60 minutes",
-                Rarity.EPIC: "1-2 hours",
-                Rarity.LEGENDARY: "3-4 hours",
-            },
-            TaskTopic.MUSIC: {
-                Rarity.COMMON: "1-2 legendary tracks (not full album)",
-                Rarity.UNCOMMON: "1 mini-album/EP",
-                Rarity.RARE: "1 iconic album (full listen)",
-                Rarity.EPIC: "2-3 cult albums by different artists/genres OR complete a discography of 1 key artist (up to 3 albums)",
-                Rarity.LEGENDARY: "5 iconic albums of different genres or decades",
-            },
-        }
+        attempt_count = state["attempt_count"]
+
+        # ✅ НОВОЕ: Определяем тип топика для критика
+        topic_type = _get_topic_type(topics)
+        metric_instruction = _get_metric_instruction(topic_type)
 
         topic_requirements = []
         for topic in topics:
-            if topic in time_requirements_map:
-                expected = time_requirements_map[topic].get(rarity, "")
+            if topic in REQUIREMENTS_MAP:
+                expected = REQUIREMENTS_MAP[topic].get(rarity, "")
                 topic_requirements.append(f"  • {topic.value}: {expected}")
 
         requirements_text = (
             "\n".join(topic_requirements)
             if topic_requirements
-            else "No strict time/amount constraints for these topics."
+            else "No strict time/amount constraints."
         )
 
+        previous_feedback = state.get("critique_feedback", "")
+        history_block = ""
+        if previous_feedback and attempt_count > 1:
+            history_block = f"""
+**⚠️ PREVIOUS REJECTION (Attempt {attempt_count - 1}):**
+{previous_feedback}
+**IMPORTANT:** Verify the new task addresses this feedback.
+"""
+
+        # ✅ УЛУЧШЕНО: Критик теперь знает тип топика
         critic_prompt = f"""You are a Senior Game Designer reviewing task quality.
 
-    **CONTEXT:**
-    - Topics: {topics_str}
-    - Rarity: {rarity.value}
+**Context:** Topics: {topics_str} | Rarity: {rarity.value} | Attempt: {attempt_count}/3
+**TOPIC TYPE: {topic_type}** → Task MUST specify {metric_instruction}
 
-    **GENERATED TASK:**
-    - Title (EN): {task.title.en}
-    - Title (RU): {task.title.ru}
-    - Description (EN): {task.description.en}
-    - Description (RU): {task.description.ru}
+{history_block}
 
-    ---
+**Generated Task:**
+- EN: {task.title.en} | {task.description.en}
+- RU: {task.title.ru} | {task.description.ru}
 
-    ✅ **TECHNICAL CHECKS ALREADY PASSED:**
-    - Experience, currency, and attributes are validated
-    - All fields are non-empty and properly localized
+✅ **Technical checks passed** (experience, currency, attributes validated)
 
-    **YOUR JOB: Focus ONLY on these SUBJECTIVE quality checks:**
+**Your job - verify SUBJECTIVE quality:**
 
-    **1. DURATION/AMOUNT REQUIREMENTS:**
-    Does the task description match the required scope for {rarity.value}?
+**1. Metric Compliance ({topic_type}):**
+Expected: {metric_instruction}
+Requirements for this rarity:
+{requirements_text}
 
-    {requirements_text}
+{'❌ REJECT if task mentions time/duration (use counts/numbers only)' if topic_type == 'COMPLEXITY' else '❌ REJECT if task mentions action counts (use time/duration only)'}
 
-    **Analysis:**
-    - Read both EN and RU descriptions carefully
-    - Identify mentioned duration/amount (e.g., "30 minutes", "1 album", "5km run")
-    - Verify it matches the requirements above
-    - ⚠️ REJECT if duration/amount is BELOW minimum or ABOVE maximum
-    - ✅ APPROVE if within the specified range
+**2. Topic Integration:** ONE natural action? (not "do X, then Y")
 
-    **2. TOPIC INTEGRATION:**
-    - Does the task naturally combine ALL topics: {topics_str}?
-    - Is it ONE coherent action (not "do X, then do Y")?
-    - Does the combination feel organic and realistic?
-    - ⚠️ REJECT if topics are separated or integration feels forced
+**3. Specificity:** Concrete numbers present?
 
-    **3. SPECIFICITY & MEASURABILITY:**
-    - Does the task include concrete numbers (quantities, durations, counts)?
-    - Is it actionable and measurable?
-    - Examples of good specificity: "20 push-ups", "5 pages", "3 conversations", "45 minutes"
-    - ⚠️ REJECT if too vague or missing specific measurements
+**4. Realism:** Average person can complete?
 
-    **4. REALISM & ACHIEVABILITY:**
-    - Can an average person realistically complete this task?
-    - Is it appropriate for the given rarity level?
-    - Are the activities safe and practical?
-    - ⚠️ REJECT if unrealistic, dangerous, or requires impossible resources
+**5. Creativity:** Not copying provided examples?
 
-    **5. CREATIVE QUALITY:**
-    - Is the task interesting and varied?
-    - Does it avoid being a direct copy of provided examples?
-    - Is it appropriate for the rarity difficulty?
-    - ⚠️ REJECT if it's too generic or clearly plagiarized from examples
+**6. Translation:** Natural? Same essence?
 
-    **6. TRANSLATION QUALITY:**
-    - Are both English and Russian descriptions meaningful?
-    - Are translations natural (not literal word-for-word)?
-    - Do they convey the same task essence?
-    - ⚠️ REJECT if translations are awkward or mismatched
+---
 
-    ---
+**Response:**
+✅ All pass: **APPROVED**
+❌ Any fail: **REJECTED: [specific reason with emphasis on metric type if violated]**
 
-    **VALIDATION PHILOSOPHY:**
-    - Apply COMMON SENSE, not pedantic interpretation
-    - Understand IMPLICIT meanings and widely-known facts
-    - Focus on SUBSTANTIAL issues, not minor wording details
-    - Be reasonable but maintain quality standards
-
-    **RESPONSE FORMAT:**
-    If ALL subjective checks pass: **APPROVED**
-
-    If ANY issue found: **REJECTED: [specific reason]**
-
-    **Examples of good rejections:**
-    - "REJECTED: Task says '30 minutes' but COMMON for PHYSICAL_ACTIVITY requires 5-10 minutes"
-    - "REJECTED: Task mentions 'full album' but COMMON for MUSIC requires only 1-2 tracks"
-    - "REJECTED: Task describes two separate actions ('do 20 push-ups, then read 5 pages') instead of integrated activity"
-    - "REJECTED: Task is too vague - no specific numbers for measurements"
-    - "REJECTED: Task requires access to specialized equipment not available to average person"
-
-    Be strict but fair. Your job is to ensure quality, not to nitpick minor details.
-    """
+Be strict but fair. Metric type ({topic_type}) is critical.
+"""
 
         critic_chain = llm.with_structured_output(CritiqueResult)
+
         try:
             result_raw = critic_chain.invoke(critic_prompt)
             result: CritiqueResult = cast(CritiqueResult, result_raw)
-
         except Exception as e:
             logger.error(f"Critic LLM call failed: {e}", exc_info=True)
-
             return {
-                "critique_feedback": (
-                    f"Technical Error: Critic model failed to respond. "
-                    f"Error: {str(e)[:100]}. Retrying generation."
-                )
+                "critique_feedback": f"Technical Error: Critic failed. {str(e)[:100]}",
+                "validation_failed": False,
             }
 
         if result.is_approved:
-            logger.info("Task approved by critic")
-            return {"critique_feedback": None}
+            logger.info(f"✅ Task approved by critic (attempt {attempt_count}/3)")
+            return {"critique_feedback": None, "validation_failed": False}
         else:
-            logger.warning(f"Task rejected by critic: {result.feedback}")
-            return {"critique_feedback": result.feedback}
+            logger.warning(
+                f"❌ Task rejected by critic (attempt {attempt_count}/3): {result.feedback}"
+            )
+            return {"critique_feedback": result.feedback, "validation_failed": False}
 
     def should_continue(state: AgentState) -> str:
-        """Решает, продолжать генерацию или завершить"""
+        """Решает, продолжать или завершить"""
         if state["critique_feedback"] is None:
-            logger.info("Task finalized successfully")
+            logger.info("✅ Task finalized successfully")
             return END
 
         if state["attempt_count"] >= 3:
-            logger.error(
-                "Max attempts reached (3/3), returning last task despite critique"
+            logger.warning(
+                f"⚠️ Max attempts (3/3). Last: {state['critique_feedback'][:100]}"
             )
+            logger.warning("Returning last task despite rejection")
             return END
 
-        logger.info(f"Retrying generation (attempt {state['attempt_count'] + 1}/3)")
+        logger.info(
+            f"🔄 Retrying (attempt {state['attempt_count']}/3). "
+            f"Reason: {state['critique_feedback'][:80]}..."
+        )
         return "generator"
 
-    # Сборка графа
     workflow = StateGraph(AgentState)
     workflow.add_node("generator", generator_node)
     workflow.add_node("critic", critic_node)
-
     workflow.set_entry_point("generator")
     workflow.add_edge("generator", "critic")
     workflow.add_conditional_edges(
@@ -272,7 +363,7 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
 
 
 def _normalize_attributes(task: Task, rarity: Rarity, validator: TaskValidator) -> Task:
-    """Нормализует атрибуты если их сумма превышает лимит для rarity"""
+    """Нормализует атрибуты если превышают лимит"""
     rules = validator.RARITY_RULES.get(rarity)
     if not rules:
         return task
@@ -303,5 +394,5 @@ def _normalize_attributes(task: Task, rarity: Rarity, validator: TaskValidator) 
     task.strength = new_strength
     task.intelligence = new_intelligence
 
-    logger.info(f"Attributes normalized for {rarity}: {current_sum} -> {max_limit}")
+    logger.info(f"⚙️ Attributes normalized: {current_sum} -> {max_limit}")
     return task
