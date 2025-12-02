@@ -10,7 +10,7 @@ Max sum: 2 (COMMON) → 20 (LEGENDARY)
 """,
     TaskTopic.MUSIC: """
 📊 COMPLEXITY-BASED: 1-2 tracks (COMMON) → 5 albums (LEGENDARY)
-Focus: Landmark albums across ALL genres
+Focus: Landmark albums across ALL genres. Use explicitly tracks and albums
 Attributes: Intelligence only (100%)
 Max sum: 2 (COMMON) → 20 (LEGENDARY)
 ❌ NEVER mention listening time/duration
