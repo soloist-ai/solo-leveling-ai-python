@@ -18,12 +18,22 @@ from src.prompt.system_prompt import SYSTEM_PROMPT
 logger = logging.getLogger(__name__)
 
 # ✅ ДОБАВЛЕНО: Явное разделение топиков по типу
-TIME_BASED_TOPICS = {TaskTopic.PHYSICAL_ACTIVITY, TaskTopic.ADVENTURE, TaskTopic.READING}
+TIME_BASED_TOPICS = {
+    TaskTopic.PHYSICAL_ACTIVITY,
+    TaskTopic.ADVENTURE,
+    TaskTopic.READING,
+}
 
 COMPLEXITY_BASED_TOPICS = {
-    TaskTopic.MUSIC, TaskTopic.DEVELOPMENT, TaskTopic.CREATIVITY,
-    TaskTopic.SOCIAL_SKILLS, TaskTopic.NUTRITION, TaskTopic.PRODUCTIVITY,
-    TaskTopic.BRAIN, TaskTopic.CYBERSPORT, TaskTopic.LANGUAGE_LEARNING
+    TaskTopic.MUSIC,
+    TaskTopic.DEVELOPMENT,
+    TaskTopic.CREATIVITY,
+    TaskTopic.SOCIAL_SKILLS,
+    TaskTopic.NUTRITION,
+    TaskTopic.PRODUCTIVITY,
+    TaskTopic.BRAIN,
+    TaskTopic.CYBERSPORT,
+    TaskTopic.LANGUAGE_LEARNING,
 }
 
 REQUIREMENTS_MAP = {

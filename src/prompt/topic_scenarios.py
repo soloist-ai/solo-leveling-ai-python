@@ -12,7 +12,6 @@ SCENARIO_CONTEXT_MAP = {
             TaskTopic.BRAIN: "Mental warm-up puzzles",
         },
     },
-
     "OFFICE": {
         "intensity": "Medium energy, quiet",
         "context": {
@@ -23,7 +22,6 @@ SCENARIO_CONTEXT_MAP = {
             TaskTopic.SOCIAL_SKILLS: "Networking, colleague interactions",
         },
     },
-
     "EVENING": {
         "intensity": "Low-medium energy",
         "context": {
@@ -34,7 +32,6 @@ SCENARIO_CONTEXT_MAP = {
             TaskTopic.READING: "Leisure reading",
         },
     },
-
     "HOME": {
         "intensity": "Flexible",
         "context": {
@@ -44,7 +41,6 @@ SCENARIO_CONTEXT_MAP = {
             TaskTopic.CYBERSPORT: "Training sessions",
         },
     },
-
     "GYM": {
         "intensity": "High energy",
         "context": {
@@ -52,7 +48,6 @@ SCENARIO_CONTEXT_MAP = {
             TaskTopic.PHYSICAL_ACTIVITY: "Strength, cardio, HIIT",
         },
     },
-
     "OUTDOOR": {
         "intensity": "Medium-high energy",
         "context": {
@@ -61,7 +56,6 @@ SCENARIO_CONTEXT_MAP = {
             TaskTopic.PHYSICAL_ACTIVITY: "Running, hiking, sports",
         },
     },
-
     "LATE_NIGHT": {
         "intensity": "Low energy",
         "context": {
@@ -71,7 +65,6 @@ SCENARIO_CONTEXT_MAP = {
             TaskTopic.DEVELOPMENT: "Late-night coding",
         },
     },
-
     "WEEKEND": {
         "intensity": "Flexible, high time budget",
         "context": {
@@ -81,7 +74,6 @@ SCENARIO_CONTEXT_MAP = {
             TaskTopic.MUSIC: "Multi-album listening sessions",
         },
     },
-
     "COMMUTE": {
         "intensity": "Low energy, limited mobility",
         "context": {
@@ -91,7 +83,6 @@ SCENARIO_CONTEXT_MAP = {
             TaskTopic.READING: "Mobile reading",
         },
     },
-
     "BREAK": {
         "intensity": "Quick refresh",
         "context": {
@@ -134,7 +125,6 @@ def add_diversity_hint(topic: TaskTopic) -> str:
             "Choose krautrock, kosmische musik, or psychedelic rock",
             "Select contemporary classical or modern composition",
         ],
-
         TaskTopic.PHYSICAL_ACTIVITY: [
             "Focus on animal movements (bear crawls, frog jumps, crab walks)",
             "Emphasize unilateral exercises (single-leg, single-arm)",
@@ -147,7 +137,6 @@ def add_diversity_hint(topic: TaskTopic) -> str:
             "Use ladder drills or agility patterns",
             "Focus on breath-work combined with movement",
         ],
-
         TaskTopic.DEVELOPMENT: [
             "Focus on graph algorithms (BFS, DFS, shortest path)",
             "Emphasize dynamic programming patterns",
@@ -160,7 +149,6 @@ def add_diversity_hint(topic: TaskTopic) -> str:
             "Use refactoring exercises on legacy code",
             "Focus on concurrent programming challenges",
         ],
-
         TaskTopic.CREATIVITY: [
             "Write in second-person perspective",
             "Use stream-of-consciousness style",
@@ -173,7 +161,6 @@ def add_diversity_hint(topic: TaskTopic) -> str:
             "Create visual mind maps or concept boards",
             "Focus on world-building elements (languages, cultures, systems)",
         ],
-
         TaskTopic.SOCIAL_SKILLS: [
             "Practice active listening without interrupting",
             "Use open-ended questions to deepen conversations",
@@ -186,7 +173,6 @@ def add_diversity_hint(topic: TaskTopic) -> str:
             "Practice graceful disagreement without conflict",
             "Use humor and self-deprecation appropriately",
         ],
-
         TaskTopic.NUTRITION: [
             "Focus on fermented foods (kimchi, sauerkraut, miso)",
             "Emphasize plant-based protein sources",
@@ -199,7 +185,6 @@ def add_diversity_hint(topic: TaskTopic) -> str:
             "Use meal prep containers for portion control",
             "Focus on hydration tracking alongside meals",
         ],
-
         TaskTopic.PRODUCTIVITY: [
             "Use time-blocking with strict boundaries",
             "Focus on single-tasking (no multitasking)",
@@ -212,7 +197,6 @@ def add_diversity_hint(topic: TaskTopic) -> str:
             "Apply Pareto principle (80/20 rule)",
             "Focus on environment design (remove distractions)",
         ],
-
         TaskTopic.ADVENTURE: [
             "Explore industrial areas or abandoned places (safely)",
             "Focus on street art and murals in unexpected neighborhoods",
@@ -225,7 +209,6 @@ def add_diversity_hint(topic: TaskTopic) -> str:
             "Visit local markets or bazaars",
             "Explore underground passages or metro art",
         ],
-
         TaskTopic.BRAIN: [
             "Focus on chess tactics (pins, forks, skewers)",
             "Use logic grid puzzles (zebra puzzles)",
@@ -238,7 +221,6 @@ def add_diversity_hint(topic: TaskTopic) -> str:
             "Solve cryptic crosswords or ciphers",
             "Focus on probability and combinatorics problems",
         ],
-
         TaskTopic.CYBERSPORT: [
             "Focus on flick accuracy drills",
             "Emphasize tracking moving targets smoothly",
@@ -251,7 +233,6 @@ def add_diversity_hint(topic: TaskTopic) -> str:
             "Use demo review for decision-making analysis",
             "Focus on economy management in ranked matches",
         ],
-
         TaskTopic.READING: [
             "Focus on classic literature (pre-1950)",
             "Read long-form investigative journalism",
@@ -264,7 +245,6 @@ def add_diversity_hint(topic: TaskTopic) -> str:
             "Focus on historical non-fiction",
             "Read genre-blending experimental fiction",
         ],
-
         TaskTopic.LANGUAGE_LEARNING: [
             "Focus on colloquial expressions and slang",
             "Use sentence mining from native content",

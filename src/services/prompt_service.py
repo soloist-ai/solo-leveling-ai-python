@@ -4,7 +4,11 @@ from typing import cast
 from src.avro.enums.task_topic import TaskTopic
 from src.avro.enums.rarity import Rarity
 from src.prompt.topic_prompts import TOPIC_PROMPT_MAP, DEFAULT_TOPIC_PROMPT
-from src.prompt.topic_scenarios import TOPIC_SCENARIOS_MAP, SCENARIO_CONTEXT_MAP, add_diversity_hint
+from src.prompt.topic_scenarios import (
+    TOPIC_SCENARIOS_MAP,
+    SCENARIO_CONTEXT_MAP,
+    add_diversity_hint,
+)
 
 
 class PromptService:
