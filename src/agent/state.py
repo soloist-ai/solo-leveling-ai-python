@@ -11,5 +11,6 @@ AgentState = TypedDict(
         "current_task": Optional[Task],
         "critique_feedback": Optional[str],
         "attempt_count": int,
+        "validation_failed": bool,
     },
 )
