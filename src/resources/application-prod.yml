@@ -20,7 +20,7 @@ schema_registry:
   url: http://schema-registry-service:8081
 
 logging:
-  level: DEBUG
+  level: INFO
   handlers:
     console:
       level: INFO
