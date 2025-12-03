@@ -1,9 +1,17 @@
 import logging
 from typing import Optional, List, Tuple, Dict, Any
 from faststream.kafka.message import KafkaMessage
-from src.kafka.context import set_locale, get_locale, set_user_id, get_user_id, set_timezone, get_timezone
+from src.kafka.context import (
+    set_locale,
+    get_locale,
+    set_user_id,
+    get_user_id,
+    set_timezone,
+    get_timezone,
+)
 
 logger = logging.getLogger(__name__)
+
 
 class ConsumerLocaleInterceptor:
     @staticmethod
