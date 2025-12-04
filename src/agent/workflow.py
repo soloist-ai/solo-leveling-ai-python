@@ -3,22 +3,20 @@ from typing import Dict, Any, cast
 
 from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, END
-from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
+from langchain_core.messages import HumanMessage, SystemMessage
 
 from src.agent.state import AgentState
-from src.agent.tools import get_task_requirements
 from src.avro.enums.rarity import Rarity
 from src.avro.enums.task_topic import TaskTopic
 from src.models.generate_task_response import Task
 from src.agent.critique import CritiqueResult
-from src.prompt.topic_prompts import get_requirements
+
 from src.services.prompt_service import PromptService
 from src.services.task_processor import TaskProcessor
 from src.services.task_validator import TaskValidator
 from src.prompt.system_prompt import SYSTEM_PROMPT
 
 logger = logging.getLogger(__name__)
-
 
 
 TIME_BASED_TOPICS = {
@@ -44,108 +42,55 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
     validator = TaskValidator()
     processor = TaskProcessor(validator)
 
-    llm_with_tools = llm.bind_tools([get_task_requirements])
-
     def generator_node(state: AgentState) -> Dict[str, Any]:
+        """Генерирует задачу БЕЗ tool calls."""
         topics = state["topics"]
         rarity = state["rarity"]
         attempt_count = state["attempt_count"]
-        tool_cache = {}
-        scenario = prompt_service.get_random_scenario(topics)
-        scenario_info = prompt_service.get_scenario_info(scenario)
-        scenario_hints = prompt_service.get_scenario_hints_for_topics(scenario, topics)
-        user_prompt = f"""
-        Generate a self-improvement task for gamification system.
+        user_prompt = prompt_service.build_user_prompt(topics, rarity)
 
-        **Parameters:**
-        - topics: {[t.value for t in topics]}
-        - rarity: {rarity.value}
-
-        **Scenario: {scenario}**
-        - Description: {scenario_info.get('description', 'N/A')}
-        - Intensity: {scenario_info.get('intensity', 'flexible')}
-        {chr(10).join(scenario_hints) if scenario_hints else ''}
-
-        **Instructions:**
-        1. FIRST: Call get_task_requirements tool for EACH topic to understand requirements:
-           - Call get_task_requirements(topic="{topics[0].value}", rarity="{rarity.value}")
-           {'- Call get_task_requirements(topic="' + topics[1].value + '", rarity="' + rarity.value + '")' if len(topics) > 1 else ''}
-
-        2. THEN: Generate ONE combined task following all requirements
-        3. ⚠️ CRITICAL for multiple topics:
-           - ALL topics MUST be executed SIMULTANEOUSLY (at the same time)
-           - ❌ FORBIDDEN: "do X, then Y" or "afterwards" or "followed by"
-           - ✅ REQUIRED: "do X while Y" or "do X during Y"
-           
-           Example for PHYSICAL_ACTIVITY + MUSIC:
-           - ❌ WRONG: "Jog for 30 minutes. Afterwards, listen to album for 45 minutes."
-           - ✅ CORRECT: "Jog for 50 minutes while listening to Portishead - Dummy (11 tracks)."
-        
-        4. Include concrete numbers in description (duration OR counts)
-        
-        Output valid JSON only.
-        """
-
+        # ✅ Собираем messages
         messages = [
             SystemMessage(content=SYSTEM_PROMPT, cache_control={"type": "ephemeral"}),
             HumanMessage(content=user_prompt),
         ]
 
+        # Добавляем feedback от critic (если retry)
         if state.get("critique_feedback"):
-            feedback_msg = f"Issue: {state['critique_feedback']}\nFix this and regenerate."
-            messages.append(HumanMessage(content=feedback_msg))
+            feedback = state["critique_feedback"]
+            messages.append(
+                HumanMessage(
+                    content=f"❌ Previous attempt rejected: {feedback}\n\nFix this issue and regenerate."
+                )
+            )
             logger.info(f"🔄 Regenerating task (attempt {attempt_count + 1}/3)")
 
+        # ✅ ОДИН LLM call для генерации
         try:
-            response = llm_with_tools.invoke(messages)
-
-            while response.tool_calls:
-                logger.info(f"🔧 LLM called {len(response.tool_calls)} tool(s)")
-
-                # Выполняем tool calls
-                for tool_call in response.tool_calls:
-                    tool_name = tool_call["name"]
-                    tool_args = tool_call["args"]
-
-                    if tool_name == "get_task_requirements":
-                        topic = TaskTopic(tool_args["topic"])
-                        rarity_arg = Rarity(tool_args["rarity"])
-                        cache_key = (topic, rarity_arg)
-                        if cache_key not in tool_cache:
-                            result = get_requirements(topic, rarity_arg)
-                            tool_cache[cache_key] = result
-                            logger.info(f"📋 Tool returned requirements for {topic.value}/{rarity_arg.value}")
-                        else:
-                            result = tool_cache[cache_key]
-                            logger.info(f"💾 Tool result from cache for {topic.value}/{rarity_arg.value}")
-
-                        messages.append(response)
-                        messages.append(ToolMessage(
-                            content=result,
-                            tool_call_id=tool_call["id"]
-                        ))
-
-                # Следующий вызов LLM с результатами tools
-                response = llm_with_tools.invoke(messages)
-
-            # Теперь генерируем финальную задачу
             generator_chain = llm.with_structured_output(Task)
-            generated_task = generator_chain.invoke(messages)
+            generated_task_raw = generator_chain.invoke(messages)
+            if not isinstance(generated_task_raw, Task):
+                raise ValueError(f"Expected Task, got {type(generated_task_raw)}")
+            generated_task: Task = generated_task_raw
 
         except Exception as e:
             logger.error(f"Generator LLM call failed: {e}", exc_info=True)
             return {
                 "current_task": None,
                 "attempt_count": state["attempt_count"] + 1,
-                "critique_feedback": f"Technical Error: Generator failed. {str(e)[:100]}",
+                "critique_feedback": f"Technical Error: {str(e)[:100]}",
                 "validation_failed": True,
             }
 
-        # Остальная логика processing без изменений...
-        logger.info(f"📝 Generated task (attempt {state['attempt_count'] + 1}/3): {generated_task.title.en}")
+        logger.info(
+            f"📝 Generated task (attempt {attempt_count + 1}/3): {generated_task.title.en}"
+        )
 
+        # Processing и validation
         try:
-            processed_task = processor.apply_numeric_logic(generated_task, rarity, topics)
+            processed_task = processor.apply_numeric_logic(
+                generated_task, rarity, topics
+            )
             hard_error = validator.validate_task(processed_task, rarity)
 
             if hard_error:
@@ -168,7 +113,7 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
             return {
                 "current_task": None,
                 "attempt_count": state["attempt_count"] + 1,
-                "critique_feedback": f"Technical Error: Processing failed. {str(e)[:100]}",
+                "critique_feedback": f"Technical Error: {str(e)[:100]}",
                 "validation_failed": True,
             }
 
@@ -179,7 +124,9 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
         if state.get("validation_failed", False):
             logger.warning("⚠️ Critic skipped: validation already failed")
             return {
-                "critique_feedback": state.get("critique_feedback", "Validation failed"),
+                "critique_feedback": state.get(
+                    "critique_feedback", "Validation failed"
+                ),
                 "validation_failed": False,  # сбрасываем флаг для следующей попытки
             }
 
@@ -196,9 +143,6 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
         topics = state["topics"]
         topics_str = ", ".join([t.value for t in topics])
         attempt_count = state["attempt_count"]
-        if rarity in {Rarity.COMMON, Rarity.UNCOMMON}:
-            logger.info("ℹ️ Critic skipped for low rarity task")
-            return {"critique_feedback": None, "validation_failed": False}
 
         critic_prompt = f"""
         You are a Senior Game Designer reviewing a self-improvement task.
@@ -288,7 +232,8 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
     workflow.add_node("critic", critic_node)
     workflow.set_entry_point("generator")
     workflow.add_edge("generator", "critic")
-    workflow.add_conditional_edges("critic", should_continue, {END: END, "generator": "generator"})
+    workflow.add_conditional_edges(
+        "critic", should_continue, {END: END, "generator": "generator"}
+    )
 
     return workflow.compile()
-

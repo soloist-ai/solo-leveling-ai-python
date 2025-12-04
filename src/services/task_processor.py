@@ -14,6 +14,7 @@ TIME_BASED_TOPICS = {
 }
 logger = logging.getLogger(__name__)
 
+
 class TaskProcessor:
     """Централизованная обработка числовой логики задач."""
 
@@ -21,10 +22,10 @@ class TaskProcessor:
         self.validator = validator
 
     def apply_numeric_logic(
-            self,
-            task: Task,
-            rarity: Rarity,
-            topics: List[TaskTopic],
+        self,
+        task: Task,
+        rarity: Rarity,
+        topics: List[TaskTopic],
     ) -> Task:
         """
         Применяет все детерминистические правила:
@@ -109,9 +110,8 @@ class TaskProcessor:
         time_markers_en = ["min", "minutes", "hour", "hours"]
         time_markers_ru = ["минут", "минуты", "час", "часа", "часов"]
 
-        has_time = (
-                any(m in desc_en for m in time_markers_en) or
-                any(m in desc_ru for m in time_markers_ru)
+        has_time = any(m in desc_en for m in time_markers_en) or any(
+            m in desc_ru for m in time_markers_ru
         )
 
         if is_time_based and not has_time:

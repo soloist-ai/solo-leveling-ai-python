@@ -125,7 +125,6 @@ def add_diversity_hint(topic: TaskTopic) -> str:
             "Use jumping jacks for cardio",
             "Focus on sit-ups and crunches for core",
         ],
-
         TaskTopic.MUSIC: [
             "Choose krautrock: Can - Tago Mago, Neu!, Faust",
             "Select afrobeat: Fela Kuti - Zombie, Expensive Shit",
