@@ -6,7 +6,6 @@ from langgraph.graph import StateGraph, END
 from langchain_core.messages import HumanMessage, SystemMessage
 
 from src.agent.state import AgentState
-from src.avro.enums.rarity import Rarity
 from src.avro.enums.task_topic import TaskTopic
 from src.models.generate_task_response import Task
 from src.agent.critique import CritiqueResult

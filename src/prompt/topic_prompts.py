@@ -49,7 +49,6 @@ Examples:
 
 Generate one task following this exact style.
 """,
-
     (
         TaskTopic.PHYSICAL_ACTIVITY,
         Rarity.UNCOMMON,
@@ -94,7 +93,6 @@ Examples:
 
 Generate one task following this exact style.
 """,
-
     (
         TaskTopic.PHYSICAL_ACTIVITY,
         Rarity.RARE,
