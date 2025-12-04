@@ -49,12 +49,16 @@ class TaskValidator:
             return f"Unknown rarity: {rarity}"
 
         exp_min, exp_max = rules["experience_range"]
+        if task.experience is None:
+            return f"Experience is required for {rarity}"
         if not (exp_min <= task.experience <= exp_max):
             return (
                 f"Experience {task.experience} out of range for {rarity}: "
                 f"expected {exp_min}-{exp_max}"
             )
 
+        if task.experience is None:
+            return f"Experience is required for {rarity}"
         expected_reward = task.experience // 2
         if task.currencyReward != expected_reward:
             return (
@@ -62,6 +66,8 @@ class TaskValidator:
                 f"expected {expected_reward} (experience / 2)"
             )
 
+        if task.agility is None or task.strength is None or task.intelligence is None:
+            return "All attributes (agility, strength, intelligence) are required"
         total_attributes = task.agility + task.strength + task.intelligence
         max_attributes = rules["max_attributes"]
         if total_attributes > max_attributes:
