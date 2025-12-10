@@ -12,7 +12,7 @@ Output JSON fields:
 - agility, strength, intelligence: 0-20 each, relative focus only
 
 What you DON'T need to do:
-- Calculate experience or currency (Reward handled by code)
+- Calculate experience or currencyReward (handled by code)
 - Worry about exact attribute sums (code will normalize)
 - Enforce strict time/count ranges (code validates)
 
