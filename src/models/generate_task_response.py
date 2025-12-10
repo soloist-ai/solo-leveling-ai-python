@@ -1,6 +1,6 @@
 from typing import Optional
+from pydantic import BaseModel, Field
 
-from pydantic import BaseModel
 from src.avro.enums.localization_item import LocalizationItem
 
 
@@ -12,3 +12,9 @@ class Task(BaseModel):
     agility: int
     strength: int
     intelligence: int
+
+
+class TaskBatch(BaseModel):
+    """Модель для batch-генерации нескольких задач"""
+
+    tasks: list[Task] = Field(..., min_length=1, description="List of generated tasks")

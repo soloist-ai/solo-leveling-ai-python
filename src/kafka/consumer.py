@@ -1,11 +1,14 @@
 import asyncio
 import logging
-from typing import List
+from typing import List, Dict, Tuple
+from collections import defaultdict
+
 from aiokafka import AIOKafkaProducer
 from dishka import FromDishka
 from faststream import Context
 from faststream.kafka import KafkaBroker
 from faststream.kafka.message import KafkaMessage
+
 from src.kafka.interceptors import ConsumerLocaleInterceptor
 from src.kafka.producer import send_save_tasks_event
 from src.services.task_service import TaskService
@@ -13,6 +16,7 @@ from src.services.avro_serialization import ConfluentAvroService
 from src.avro.events.save_tasks_event import SaveTask, SaveTasksEvent
 from src.avro.events.generate_tasks_event import GenerateTask, GenerateTasksEvent
 from src.avro.enums.rarity import Rarity
+from src.avro.enums.task_topic import TaskTopic
 from src.config.config_loader import (
     config,
     is_feature_enabled,
@@ -23,6 +27,7 @@ from src.config.config_loader import (
 logger = logging.getLogger(__name__)
 
 topics = get_kafka_topics()
+
 SUBJECTS = {
     "generate_tasks_event": "com.sleepkqq.sololeveling.avro.task.GenerateTasksEvent",
     "save_tasks_event": "com.sleepkqq.sololeveling.avro.task.SaveTasksEvent",
@@ -48,9 +53,11 @@ def register_consumers(broker: KafkaBroker):
         try:
             message = msg.body
             ConsumerLocaleInterceptor.process_message(msg)
+
             event_dict = confluent_avro.deserialize(
                 message, SUBJECTS["generate_tasks_event"]
             )
+
             event = GenerateTasksEvent.from_dict(event_dict)
 
             if not event.inputs:
@@ -67,29 +74,47 @@ def register_consumers(broker: KafkaBroker):
             if is_feature_enabled("debug_logging"):
                 logger.debug(f"Full event data: {event}")
 
-            async def process_single_task(task_input: GenerateTask) -> SaveTask:
-                logger.info(f"Processing task: taskId={task_input.taskId}")
-                task_rarity = (
-                    task_input.rarity
-                    if task_input.rarity is not None
-                    else Rarity.COMMON
-                )
+            # Группируем задачи по (topics, rarity) для batch-обработки
+            task_groups = group_tasks_by_params(event.inputs)
 
-                result_task = await asyncio.to_thread(
-                    task_service.generate_task,
-                    topics=task_input.topics if task_input.topics else [],
-                    rarity=task_rarity,
-                )
+            logger.info(
+                f"Grouped {len(event.inputs)} tasks into {len(task_groups)} batch groups"
+            )
+
+            # Обрабатываем каждую группу батчем
+            save_tasks: List[SaveTask] = []
+
+            for group_key, group_tasks in task_groups.items():
+                topics_tuple, rarity = group_key
+                topics_list = list(topics_tuple)
 
                 logger.info(
-                    f"Generated task: {result_task.title.en} (taskId={task_input.taskId})"
+                    f"Processing batch: {len(group_tasks)} tasks with "
+                    f"topics={[t.value for t in topics_list]}, rarity={rarity.value}"
                 )
-                return SaveTask.from_generated(task_input, result_task)
 
-            save_tasks: List[SaveTask] = await asyncio.gather(
-                *[process_single_task(task) for task in event.inputs]
+                # Генерируем все задачи группы одним запросом
+                generated_tasks = await asyncio.to_thread(
+                    task_service.generate_tasks_batch,
+                    count=len(group_tasks),
+                    topics=topics_list,
+                    rarity=rarity,
+                )
+
+                # Мапим сгенерированные задачи на исходные taskId
+                for task_input, generated_task in zip(group_tasks, generated_tasks):
+                    save_task = SaveTask.from_generated(task_input, generated_task)
+                    save_tasks.append(save_task)
+
+                    logger.info(
+                        f"Mapped generated task '{generated_task.title.en}' -> taskId={task_input.taskId}"
+                    )
+
+            logger.info(
+                f"Successfully generated {len(save_tasks)} tasks in {len(task_groups)} batch(es)"
             )
-            logger.info(f"Successfully generated {len(save_tasks)} tasks")
+
+            # Отправляем результат
             save_event = SaveTasksEvent(
                 txId=event.txId, playerId=event.playerId, tasks=save_tasks
             )
@@ -105,3 +130,30 @@ def register_consumers(broker: KafkaBroker):
             logger.error(f"Error processing task request: {e}", exc_info=True)
 
     logger.info(f"Consumer registered for topic: {topics['task_requests']}")
+
+
+def group_tasks_by_params(
+    inputs: List[GenerateTask],
+) -> Dict[Tuple[Tuple[TaskTopic, ...], Rarity], List[GenerateTask]]:
+    """
+    Группирует задачи по (topics, rarity) для batch-обработки.
+
+    Args:
+        inputs: Список входящих задач
+
+    Returns:
+        Словарь {(topics_tuple, rarity): [список задач с этими параметрами]}
+    """
+    groups: Dict[Tuple[Tuple[TaskTopic, ...], Rarity], List[GenerateTask]] = (
+        defaultdict(list)
+    )
+
+    for task_input in inputs:
+        # Создаем ключ для группировки
+        topics_tuple = tuple(sorted(task_input.topics or [], key=lambda t: t.value))
+        rarity = task_input.rarity if task_input.rarity is not None else Rarity.COMMON
+
+        group_key = (topics_tuple, rarity)
+        groups[group_key].append(task_input)
+
+    return dict(groups)
