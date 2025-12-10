@@ -96,7 +96,9 @@ def register_consumers(broker: KafkaBroker):
                 )
 
                 if len(group_tasks) == 1:
-                    logger.info("Single task detected, using agent workflow with critique")
+                    logger.info(
+                        "Single task detected, using agent workflow with critique"
+                    )
 
                     generated_task = await asyncio.to_thread(
                         task_service.generate_task,  # Старый метод с critic
@@ -113,7 +115,7 @@ def register_consumers(broker: KafkaBroker):
                     )
                 else:
                     # Batch-генерация для 2+ задач
-                    logger.info(f"Multiple tasks detected, using batch generation")
+                    logger.info("Multiple tasks detected, using batch generation")
 
                     generated_tasks = await asyncio.to_thread(
                         task_service.generate_tasks_batch,
