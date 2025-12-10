@@ -84,6 +84,8 @@ def register_consumers(broker: KafkaBroker):
             # Обрабатываем каждую группу батчем
             save_tasks: List[SaveTask] = []
 
+            # В handle_task_request(), после группировки:
+
             for group_key, group_tasks in task_groups.items():
                 topics_tuple, rarity = group_key
                 topics_list = list(topics_tuple)
@@ -93,22 +95,41 @@ def register_consumers(broker: KafkaBroker):
                     f"topics={[t.value for t in topics_list]}, rarity={rarity.value}"
                 )
 
-                # Генерируем все задачи группы одним запросом
-                generated_tasks = await asyncio.to_thread(
-                    task_service.generate_tasks_batch,
-                    count=len(group_tasks),
-                    topics=topics_list,
-                    rarity=rarity,
-                )
+                if len(group_tasks) == 1:
+                    logger.info("Single task detected, using agent workflow with critique")
 
-                # Мапим сгенерированные задачи на исходные taskId
-                for task_input, generated_task in zip(group_tasks, generated_tasks):
+                    generated_task = await asyncio.to_thread(
+                        task_service.generate_task,  # Старый метод с critic
+                        topics=topics_list,
+                        rarity=rarity,
+                    )
+
+                    task_input = group_tasks[0]
                     save_task = SaveTask.from_generated(task_input, generated_task)
                     save_tasks.append(save_task)
 
                     logger.info(
-                        f"Mapped generated task '{generated_task.title.en}' -> taskId={task_input.taskId}"
+                        f"Generated single task '{generated_task.title.en}' -> taskId={task_input.taskId}"
                     )
+                else:
+                    # Batch-генерация для 2+ задач
+                    logger.info(f"Multiple tasks detected, using batch generation")
+
+                    generated_tasks = await asyncio.to_thread(
+                        task_service.generate_tasks_batch,
+                        count=len(group_tasks),
+                        topics=topics_list,
+                        rarity=rarity,
+                    )
+
+                    # Мапим сгенерированные задачи на исходные taskId
+                    for task_input, generated_task in zip(group_tasks, generated_tasks):
+                        save_task = SaveTask.from_generated(task_input, generated_task)
+                        save_tasks.append(save_task)
+
+                        logger.info(
+                            f"Mapped generated task '{generated_task.title.en}' -> taskId={task_input.taskId}"
+                        )
 
             logger.info(
                 f"Successfully generated {len(save_tasks)} tasks in {len(task_groups)} batch(es)"
