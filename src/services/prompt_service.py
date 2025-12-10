@@ -159,9 +159,9 @@ Your task:
 
         if TaskTopic.READING in topics and TaskTopic.SOCIAL_SKILLS in topics:
             return """Integration examples:
-✓ Read article for 25 min, then have 30-min discussion with friend about the ideas
-✓ Book club session: read chapter for 40 min, then discuss with group for 45 min
-✗ Read alone for 30 minutes. Later talk to friend (WRONG)"""
+✓ Read a play aloud with a friend for 45 minutes, each taking on different roles.
+✓ Join a book club discussion for 60 minutes, analyzing a chapter you read together during the session.
+✗ Read alone for 30 minutes. Later talk to a friend about it (WRONG)"""
 
         if TaskTopic.DEVELOPMENT in topics and TaskTopic.MUSIC in topics:
             return """Integration examples:
