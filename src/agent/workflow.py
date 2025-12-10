@@ -9,14 +9,12 @@ from src.agent.state import AgentState
 from src.avro.enums.task_topic import TaskTopic
 from src.models.generate_task_response import Task
 from src.agent.critique import CritiqueResult
-
 from src.services.prompt_service import PromptService
 from src.services.task_processor import TaskProcessor
 from src.services.task_validator import TaskValidator
 from src.prompt.system_prompt import SYSTEM_PROMPT
 
 logger = logging.getLogger(__name__)
-
 
 TIME_BASED_TOPICS = {
     TaskTopic.PHYSICAL_ACTIVITY,
@@ -42,19 +40,17 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
     processor = TaskProcessor(validator)
 
     def generator_node(state: AgentState) -> Dict[str, Any]:
-        """Генерирует задачу БЕЗ tool calls."""
         topics = state["topics"]
         rarity = state["rarity"]
         attempt_count = state["attempt_count"]
+
         user_prompt = prompt_service.build_user_prompt(topics, rarity)
 
-        # ✅ Собираем messages
         messages = [
             SystemMessage(content=SYSTEM_PROMPT, cache_control={"type": "ephemeral"}),
             HumanMessage(content=user_prompt),
         ]
 
-        # Добавляем feedback от critic (если retry)
         if state.get("critique_feedback"):
             feedback = state["critique_feedback"]
             messages.append(
@@ -64,12 +60,13 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
             )
             logger.info(f"🔄 Regenerating task (attempt {attempt_count + 1}/3)")
 
-        # ✅ ОДИН LLM call для генерации
         try:
             generator_chain = llm.with_structured_output(Task)
             generated_task_raw = generator_chain.invoke(messages)
+
             if not isinstance(generated_task_raw, Task):
                 raise ValueError(f"Expected Task, got {type(generated_task_raw)}")
+
             generated_task: Task = generated_task_raw
 
         except Exception as e:
@@ -85,11 +82,11 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
             f"📝 Generated task (attempt {attempt_count + 1}/3): {generated_task.title.en}"
         )
 
-        # Processing и validation
         try:
             processed_task = processor.apply_numeric_logic(
                 generated_task, rarity, topics
             )
+
             hard_error = validator.validate_task(processed_task, rarity)
 
             if hard_error:
@@ -117,16 +114,27 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
             }
 
     def critic_node(state: AgentState) -> Dict[str, Any]:
-        """LLM critic focusing on SUBJECTIVE quality checks."""
+        """
+        LLM critic для субъективных проверок качества.
 
-        # Если жёсткая валидация уже провалилась — критика не вызываем
+        Критические проверки:
+        1. Интеграция топиков (simultaneous vs sequential)
+        2. Конкретность (наличие чисел)
+        3. Качество локализации (EN vs RU)
+
+        При одобрении - сохраняет задачу в diversity tracker.
+
+        Returns:
+            Updated state с critique_feedback (None если approved)
+        """
+        # Если жёсткая валидация провалилась - пропускаем критика
         if state.get("validation_failed", False):
             logger.warning("⚠️ Critic skipped: validation already failed")
             return {
                 "critique_feedback": state.get(
                     "critique_feedback", "Validation failed"
                 ),
-                "validation_failed": False,  # сбрасываем флаг для следующей попытки
+                "validation_failed": False,
             }
 
         current_task = state["current_task"]
@@ -144,53 +152,56 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
         attempt_count = state["attempt_count"]
 
         critic_prompt = f"""
-        You are a Senior Game Designer reviewing a self-improvement task.
+You are a Senior Game Designer reviewing a self-improvement task.
 
-        **Context:**
-        - topics: {topics_str}
-        - rarity: {rarity.value}
-        - attempt: {attempt_count}/3
+**Context:**
+- topics: {topics_str}
+- rarity: {rarity.value}
+- attempt: {attempt_count}/3
 
-        **Task:**
-        - EN: {task.title.en} | {task.description.en}
-        - RU: {task.title.ru} | {task.description.ru}
+**Task:**
+- EN: {task.title.en} | {task.description.en}
+- RU: {task.title.ru} | {task.description.ru}
 
-        **Code has ALREADY validated:**
-        - All numeric constraints (experience, currency, attributes)
-        - JSON schema correctness
-        - Metric type requirements
+**Code has ALREADY validated:**
+- All numeric constraints (experience, currency, attributes)
+- JSON schema correctness
+- Metric type requirements
 
-        **Your subjective review (CRITICAL CHECKS):**
+**Your subjective review (CRITICAL CHECKS):**
 
-        1. **Topic integration (MOST IMPORTANT)**: 
-           ❌ REJECT if description has two separate phases:
-           - Words like "afterwards", "then", "later", "followed by" indicate separate phases
-           - "Do X for N minutes. Then do Y for M minutes" is WRONG
-           - "Do X. Afterwards, do Y" is WRONG
+1. **Topic integration (MOST IMPORTANT)**:
+   ❌ REJECT if description has two separate phases:
+      - Words like "afterwards", "then", "later", "followed by" indicate separate phases
+      - "Do X for N minutes. Then do Y for M minutes" is WRONG
+      - "Do X. Afterwards, do Y" is WRONG
 
-           ✅ APPROVE only if topics happen SIMULTANEOUSLY:
-           - "Do X while Y"
-           - "Do X during Y"
-           - "Combine X and Y"
+   ✅ APPROVE only if topics happen SIMULTANEOUSLY:
+      - "Do X while Y"
+      - "Do X during Y"
+      - "Combine X and Y"
 
-           Example for PHYSICAL + MUSIC:
-           - ❌ BAD: "Jog 30 min. Afterwards, listen to album 45 min"
-           - ✅ GOOD: "Jog 50 min while listening to album (11 tracks)"
+   Example for PHYSICAL + MUSIC:
+   - ❌ BAD: "Jog 30 min. Afterwards, listen to album 45 min"
+   - ✅ GOOD: "Jog 50 min while listening to album (11 tracks)"
 
-        2. **Specificity**: Does description include concrete numbers?
+2. **Specificity**: Does description include concrete numbers?
 
-        3. **Localization quality**: Do EN and RU describe the same action naturally?
+3. **Localization quality**: Do EN and RU describe the same action naturally?
 
-        Return JSON:
-        - is_approved: true/false
-        - feedback: brief reason if rejected (max 2 sentences, mention specific issue)
-        """
+4. **Diversity check**: Does the task feel fresh and different from typical patterns?
+
+Return JSON:
+- is_approved: true/false
+- feedback: brief reason if rejected (max 2 sentences, mention specific issue)
+"""
 
         critic_chain = llm.with_structured_output(CritiqueResult)
 
         try:
             result_raw = critic_chain.invoke(critic_prompt)
             result: CritiqueResult = cast(CritiqueResult, result_raw)
+
         except Exception as e:
             logger.error(f"Critic LLM call failed: {e}", exc_info=True)
             return {
@@ -200,6 +211,7 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
 
         if result.is_approved:
             logger.info(f"✅ Task approved by critic (attempt {attempt_count}/3)")
+
             return {"critique_feedback": None, "validation_failed": False}
         else:
             logger.warning(
@@ -208,7 +220,17 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
             return {"critique_feedback": result.feedback, "validation_failed": False}
 
     def should_continue(state: AgentState) -> str:
-        """Решает, продолжать или завершить."""
+        """
+        Routing logic для workflow.
+
+        Решения:
+        - critique_feedback = None -> END (успех)
+        - attempt_count >= 3 -> END (макс попытки, возвращаем последнее)
+        - иначе -> "generator" (retry)
+
+        Returns:
+            "generator" для retry или END для финализации
+        """
         if state["critique_feedback"] is None:
             logger.info("✅ Task finalized successfully")
             return END
@@ -227,8 +249,10 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
         return "generator"
 
     workflow = StateGraph(AgentState)
+
     workflow.add_node("generator", generator_node)
     workflow.add_node("critic", critic_node)
+
     workflow.set_entry_point("generator")
     workflow.add_edge("generator", "critic")
     workflow.add_conditional_edges(

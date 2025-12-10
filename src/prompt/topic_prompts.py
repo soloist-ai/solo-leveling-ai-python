@@ -1,9 +1,207 @@
+from typing import List, Dict
+
 from src.avro.enums.task_topic import TaskTopic
 from src.avro.enums.rarity import Rarity
 
-# ============================================================================
-# СТРУКТУРА: {(topic, rarity): "детальные требования"}
-# ============================================================================
+DIVERSITY_HINTS: Dict[TaskTopic, List[str]] = {
+    TaskTopic.PHYSICAL_ACTIVITY: [
+        "Focus on push-up variations (wide grip, close grip, decline, incline, diamond)",
+        "Emphasize bodyweight squats (standard, jump squats, single-leg, pistol squats)",
+        "Use pull-ups or chin-ups with different grips (wide, narrow, neutral)",
+        "Focus on plank holds (standard, side plank, plank-to-downdog, walking plank)",
+        "Emphasize lunges (forward, reverse, walking, jumping lunges)",
+        "Use burpees for full-body work (standard, burpee tuck jumps, burpee pull-ups)",
+        "Focus on running or jogging (intervals, tempo runs, fartlek, hill sprints)",
+        "Emphasize dips if parallel bars available (chest dips, tricep dips, L-sit dips)",
+        "Use jumping jacks for cardio (standard, seal jacks, plank jacks)",
+        "Focus on sit-ups and crunches for core (bicycle crunches, Russian twists, leg raises)",
+        "Emphasize explosive movements (jump squats, box jumps, explosive push-ups, clap push-ups)",
+        "Use isometric holds (wall sits, dead hangs, L-sits, hollow body holds)",
+        "Focus on tempo variations (3-1-3 tempo, pause reps, slow negatives)",
+        "Emphasize unilateral movements (single-leg deadlifts, one-arm push-ups, single-leg bridges)",
+        "Use compound movements (burpees, thrusters, man-makers, mountain climbers)",
+    ],
+    TaskTopic.MUSIC: [
+        "Choose krautrock (Can - Tago Mago, Neu!, Faust, Harmonia)",
+        "Select afrobeat (Fela Kuti - Zombie, Expensive Shit, Tony Allen)",
+        "Use trip-hop (Portishead, Massive Attack, Tricky, Morcheeba)",
+        "Choose post-rock (Godspeed You! Black Emperor, Mogwai, Explosions in the Sky, Tortoise)",
+        "Select IDM (Aphex Twin, Boards of Canada, Autechre, Squarepusher)",
+        "Use shoegaze (My Bloody Valentine, Slowdive, Ride, Lush)",
+        "Choose avant-garde jazz (Alice Coltrane, Pharoah Sanders, Sun Ra, Don Cherry)",
+        "Select experimental (Fishmans - Long Season, This Heat, Faust, The Residents)",
+        "Use electronic (Burial, Four Tet, Flying Lotus, Nicolas Jaar)",
+        "Choose dub techno (Basic Channel, Rhythm & Sound, Deepchord, Maurizio)",
+        "Select minimal techno (Richie Hawtin, Robert Hood, Jeff Mills, Ricardo Villalobos)",
+        "Use dark ambient (Lustmord, Atrium Carceri, Raison d'être, Kammarheit)",
+        "Choose progressive house (Sasha, John Digweed, Eric Prydz, Guy J)",
+        "Select future garage (Burial followers, James Blake, SBTRKT, Mount Kimbie)",
+        "Use math rock (Don Caballero, Battles, Toe, Hella)",
+        "Choose drone (Sunn O))), Earth, Stars of the Lid, Tim Hecker)",
+        "Select UK garage (MJ Cole, Artful Dodger, Craig David early work)",
+        "Use downtempo (Bonobo, Thievery Corporation, Nightmares on Wax, Zero 7)",
+    ],
+    TaskTopic.DEVELOPMENT: [
+        "Focus on graph algorithms (BFS, DFS, shortest path, topological sort)",
+        "Emphasize dynamic programming patterns (knapsack, LCS, LIS, coin change)",
+        "Use bit manipulation and bitwise operations (XOR tricks, bit masks, power of two)",
+        "Focus on tree traversals and binary search trees (inorder, preorder, postorder, Morris)",
+        "Emphasize sliding window or two-pointer techniques (maximum subarray, longest substring)",
+        "Use backtracking and recursion problems (N-queens, sudoku solver, permutations)",
+        "Focus on system design patterns (singleton, factory, observer, strategy, decorator)",
+        "Emphasize test-driven development (write tests first, red-green-refactor cycle)",
+        "Use refactoring exercises on legacy code (extract method, rename, move class)",
+        "Focus on concurrent programming challenges (thread safety, deadlocks, race conditions)",
+        "Emphasize greedy algorithms (interval scheduling, Huffman coding, fractional knapsack)",
+        "Use divide and conquer (merge sort variations, quick select, Strassen's algorithm)",
+        "Focus on hash map optimization patterns (two sum, group anagrams, frequency counting)",
+        "Emphasize monotonic stack/queue problems (next greater element, sliding window maximum)",
+        "Use prefix sum and difference arrays (range sum query, subarray sum)",
+        "Focus on trie and suffix structures (word search, autocomplete, longest common prefix)",
+        "Emphasize union-find (disjoint sets, connected components, Kruskal's algorithm)",
+    ],
+    TaskTopic.CREATIVITY: [
+        "Write in second-person perspective (you walk, you see, you feel)",
+        "Use stream-of-consciousness style (no punctuation, free flow, Joycean)",
+        "Create non-linear narrative structure (flashbacks, parallel timelines, fragmented)",
+        "Focus on sensory details (sounds, textures, smells, tastes, temperatures)",
+        "Use dialogue-only format (no narration, only conversations)",
+        "Create speculative fiction or magical realism (subtle fantasy elements in real world)",
+        "Focus on character emotions through actions, not descriptions (show don't tell)",
+        "Use constraints (no letter 'e', only 100 words, one sentence story)",
+        "Create visual mind maps or concept boards (sketch ideas, connect concepts)",
+        "Focus on world-building elements (languages, cultures, systems, geography)",
+        "Use unreliable narrator perspective (narrator lies, contradicts, misremembers)",
+        "Create reverse chronology structure (end to beginning, backward timeline)",
+        "Focus on epistolary format (letters, emails, texts, diary entries)",
+        "Use found footage or documentary style (interview transcripts, reports)",
+        "Create multiple timelines or parallel narratives (alternate realities, different POVs)",
+        "Focus on minimalist prose (Hemingway style, short sentences, sparse description)",
+        "Use absurdist or surrealist elements (Kafka, Ionesco, dreamlike logic)",
+    ],
+    TaskTopic.SOCIAL_SKILLS: [
+        "Practice active listening without interrupting (maintain eye contact, nod, paraphrase)",
+        "Use open-ended questions to deepen conversations (how, why, what if)",
+        "Practice giving specific, genuine compliments (notice details, be sincere)",
+        "Focus on mirroring body language subtly (match posture, gestures, energy)",
+        "Practice storytelling with clear structure (setup, conflict, resolution, lesson)",
+        "Use the cold approach with strangers in public spaces (ask time, directions, opinion)",
+        "Practice remembering and using people's names (repeat, associate, use 3 times)",
+        "Focus on finding common ground quickly (shared interests, experiences, values)",
+        "Practice graceful disagreement without conflict (acknowledge, reframe, bridge)",
+        "Use humor and self-deprecation appropriately (laugh at yourself, timing, read room)",
+        "Practice vulnerability and authentic sharing (share struggles, admit mistakes)",
+        "Focus on asking for help or favors (Ben Franklin effect, build rapport)",
+        "Use power poses before interactions (stand tall, expand, boost confidence)",
+        "Practice giving and receiving constructive feedback (sandwich method, be specific)",
+        "Focus on network expansion (introduce people, connect others, be connector)",
+    ],
+    TaskTopic.NUTRITION: [
+        "Focus on fermented foods (kimchi, sauerkraut, miso, kombucha, kefir)",
+        "Emphasize plant-based protein sources (lentils, chickpeas, tofu, tempeh, seitan)",
+        "Use spice blends from different cuisines (garam masala, za'atar, berbere, harissa)",
+        "Focus on batch cooking grains and legumes (quinoa, brown rice, black beans)",
+        "Emphasize seasonal and local ingredients (farmer's market, CSA box, what's in season)",
+        "Use one-pot or sheet-pan meals for efficiency (roast vegetables and protein together)",
+        "Focus on protein-forward breakfasts (eggs, Greek yogurt, protein smoothies)",
+        "Emphasize colorful vegetables (eat the rainbow, phytonutrients, variety)",
+        "Use meal prep containers for portion control (glass containers, divide macros)",
+        "Focus on hydration tracking alongside meals (water intake, herbal teas)",
+        "Emphasize whole food ingredients (avoid processed, cook from scratch)",
+        "Use ethnic cuisine exploration (Thai, Ethiopian, Peruvian, Georgian)",
+        "Focus on omega-3 rich foods (salmon, mackerel, walnuts, flaxseeds, chia)",
+        "Emphasize probiotic and prebiotic foods (yogurt, garlic, onions, asparagus)",
+    ],
+    TaskTopic.PRODUCTIVITY: [
+        "Use time-blocking with strict boundaries (calendar blocks, no interruptions)",
+        "Focus on single-tasking (no multitasking, one thing at a time, deep work)",
+        "Apply the 2-minute rule (do it now if under 2 minutes, clear small tasks)",
+        "Use the Eisenhower matrix (urgent vs important, quadrant planning)",
+        "Focus on eating the frog (hardest task first, morning productivity)",
+        "Use Pomodoro with 25/5 intervals (timer, focused bursts, regular breaks)",
+        "Focus on batching similar tasks together (email blocks, calls block, errands)",
+        "Use the 3 MIT method (3 Most Important Tasks, daily priorities)",
+        "Apply Pareto principle (80/20 rule, focus on high-impact activities)",
+        "Focus on environment design (remove distractions, optimize workspace, friction reduction)",
+        "Use Getting Things Done (GTD) system (capture, clarify, organize, reflect, engage)",
+        "Focus on energy management over time management (work with natural rhythms)",
+        "Use commitment devices (accountability partner, public declaration, stakes)",
+        "Focus on habit stacking (link new habit to existing one, anchor behavior)",
+    ],
+    TaskTopic.ADVENTURE: [
+        "Explore industrial areas or abandoned places (safely, urban decay, history)",
+        "Focus on street art and murals in unexpected neighborhoods (graffiti tours)",
+        "Visit local historical markers and read plaques (learn city history)",
+        "Explore rooftops or elevated viewpoints (safe access, city panoramas)",
+        "Focus on hidden parks or green spaces (pocket parks, community gardens)",
+        "Visit ethnic neighborhoods and cultural districts (Chinatown, Little Italy, explore)",
+        "Explore waterfronts, rivers, or canals (walking paths, bridges, water views)",
+        "Focus on architectural details in old buildings (ornaments, styles, eras)",
+        "Visit local markets or bazaars (food markets, flea markets, farmer's markets)",
+        "Explore underground passages or metro art (subway stations, tunnels, public art)",
+        "Focus on discovering new streets (take random turns, get deliberately lost)",
+        "Visit public libraries or bookstores (browse sections, discover books)",
+        "Explore university campuses (architecture, museums, public lectures)",
+    ],
+    TaskTopic.BRAIN: [
+        "Focus on chess tactics (pins, forks, skewers, discovered attacks)",
+        "Use logic grid puzzles (zebra puzzles, Einstein's riddle variations)",
+        "Solve Sudoku variants (killer sudoku, samurai, irregular, X-sudoku)",
+        "Focus on spatial reasoning puzzles (tangrams, pentominoes, cube nets)",
+        "Use memory techniques (method of loci, linking, peg system, chunking)",
+        "Solve mathematical riddles and paradoxes (Monty Hall, unexpected hanging)",
+        "Focus on pattern recognition (sequences, number patterns, visual patterns)",
+        "Use lateral thinking puzzles (situation puzzles, mystery scenarios)",
+        "Solve cryptic crosswords or ciphers (Caesar cipher, substitution, cryptograms)",
+        "Focus on probability and combinatorics problems (permutations, combinations)",
+        "Use Rubik's cube solving (learn algorithms, speed cubing, blindfolded)",
+        "Focus on mental arithmetic (rapid calculation, estimation, Vedic math)",
+        "Solve Kakuro puzzles (cross-sum puzzles, numerical clues)",
+        "Use SET card game patterns (find sets, visual-spatial reasoning)",
+    ],
+    TaskTopic.CYBERSPORT: [
+        "Focus on flick accuracy drills (fast precise clicks, target switching)",
+        "Emphasize tracking moving targets smoothly (consistent aim, no flicks)",
+        "Use spray pattern control practice (recoil control, burst fire, tap shooting)",
+        "Focus on crosshair placement (pre-aiming angles, head level)",
+        "Emphasize counter-strafing mechanics (stop before shooting, accuracy)",
+        "Use utility lineups memorization (smokes, flashes, mollies, specific spots)",
+        "Focus on peeking angles and timing (jiggle peek, shoulder peek, wide swing)",
+        "Emphasize movement optimization (bunny hops, strafes, air acceleration)",
+        "Use demo review for decision-making analysis (watch replays, learn mistakes)",
+        "Focus on economy management in ranked matches (save rounds, force buys, eco)",
+        "Use aim trainers with specific scenarios (Kovaak's, Aim Lab, task-focused)",
+        "Focus on warm-up routines (consistent pre-game, muscle memory)",
+    ],
+    TaskTopic.READING: [
+        "Focus on classic literature (pre-1950, canonical works, timeless themes)",
+        "Read long-form investigative journalism (New Yorker, Atlantic, in-depth reporting)",
+        "Focus on philosophy or critical theory (existentialism, phenomenology, Frankfurt School)",
+        "Read technical documentation or whitepapers (research papers, RFCs, academic)",
+        "Focus on biographies of unconventional figures (artists, rebels, innovators)",
+        "Read scientific papers or research studies (Nature, Science, peer-reviewed)",
+        "Focus on translated literature (non-English origins, world literature, Nobel winners)",
+        "Read essay collections or thought pieces (Montaigne, Baldwin, Didion, Sontag)",
+        "Focus on historical non-fiction (deep dives, narrative history, primary sources)",
+        "Read genre-blending experimental fiction (postmodern, metafiction, magical realism)",
+        "Focus on poetry collections (contemporary, classic, diverse voices)",
+        "Read graphic novels and visual literature (Maus, Watchmen, Sandman, Persepolis)",
+    ],
+    TaskTopic.LANGUAGE_LEARNING: [
+        "Focus on colloquial expressions and slang (real speech, informal language)",
+        "Use sentence mining from native content (extract phrases, study in context)",
+        "Focus on shadowing native speakers (repeat after audio, mimic intonation)",
+        "Emphasize writing without translation apps (think in target language, natural phrasing)",
+        "Use spaced repetition with context sentences (Anki, full sentences not words)",
+        "Focus on pronunciation drills (minimal pairs, difficult sounds, IPA)",
+        "Emphasize active recall over passive review (test yourself, don't just read)",
+        "Use comprehensible input (reading/listening just above level, i+1 principle)",
+        "Focus on grammatical patterns in context (notice patterns, inductive learning)",
+        "Emphasize conversational practice with natives (language exchange, italki, tandem)",
+        "Use monolingual dictionaries (definitions in target language, native thinking)",
+        "Focus on listening to podcasts at native speed (gradual speed increase, natural speech)",
+    ],
+}
 
 TOPIC_RARITY_REQUIREMENTS: dict[tuple[TaskTopic, Rarity], str] = {
     # ========================================================================
@@ -19,7 +217,7 @@ Requirements:
 - Metric type: TIME only
 - Duration: 5 to 10 minutes
 - Intensity: Light, beginner-friendly, anyone can complete
-- Exercises: Only 1-2 basic movements from the allowed list
+- Exercises: Only 1-2 basic exercises from the allowed list
 
 Allowed exercises ONLY:
 - Push-ups (standard, wide grip, close grip)
@@ -59,7 +257,7 @@ Requirements:
 - Metric type: TIME only
 - Duration: 20 to 30 minutes
 - Intensity: Moderate, some variation allowed
-- Exercises: 2-3 basic movements from the allowed list
+- Exercises: 2-3 basic exercises from the allowed list
 - Structure: Simple circuit or alternating exercises
 - Format: Single direct instruction, no motivation or explanations
 
@@ -103,7 +301,7 @@ Requirements:
 - Metric type: TIME only
 - Duration: 45 to 60 minutes
 - Intensity: Challenging but sustainable for trained individuals
-- Exercises: 3-4 basic movements from the allowed list
+- Exercises: 3-4 basic exercises from the allowed list
 - Structure: Full workout session with multiple sets/rounds
 - Format: Technical instruction, no motivation or feelings description
 
@@ -147,7 +345,7 @@ Requirements:
 - Metric type: TIME only
 - Duration: 60 to 120 minutes
 - Intensity: High volume with multiple rounds, rest periods included
-- Exercises: 4-5+ basic movements from the allowed list
+- Exercises: 4-5+ basic exercises from the allowed list
 - Structure: Serious training session with circuits/blocks/rounds
 - Format: Dry instruction resembling a training plan
 
@@ -1686,25 +1884,13 @@ Generate one task following this exact style.
 
 
 def get_requirements(topic: TaskTopic, rarity: Rarity) -> str:
-    """
-    Получить детальные требования для конкретной пары топик+редкость.
-
-    Args:
-        topic: Топик задачи
-        rarity: Редкость задачи
-
-    Returns:
-        Строка с детальными требованиями для генерации задачи
-    """
     key = (topic, rarity)
-    requirements = TOPIC_RARITY_REQUIREMENTS.get(key)
+    if key not in TOPIC_RARITY_REQUIREMENTS:
+        raise ValueError(
+            f"No requirements found for topic={topic.value}, rarity={rarity.value}"
+        )
+    return TOPIC_RARITY_REQUIREMENTS[key]
 
-    if not requirements:
-        # Fallback на случай если пара не найдена
-        return f"""
-Generate task for {topic.value} with {rarity.value} difficulty.
-Use appropriate scope and metrics for this combination.
-Follow general rules for this topic type.
-"""
 
-    return requirements.strip()
+def get_diversity_hints(topic: TaskTopic) -> List[str]:
+    return DIVERSITY_HINTS.get(topic, [])
