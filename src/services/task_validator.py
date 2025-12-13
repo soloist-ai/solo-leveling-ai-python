@@ -3,10 +3,6 @@ from src.avro.enums.rarity import Rarity
 from typing import Optional, TypedDict
 
 
-class TaskValidationError(Exception):
-    pass
-
-
 class RarityRule(TypedDict):
     experience_range: tuple[int, int]
     max_attributes: int
