@@ -7,6 +7,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 
 from src.agent.state import AgentState
 from src.avro.enums.task_topic import TaskTopic
+from src.exceptions.exceptions import TaskGenerationError
 from src.models.generate_task_response import Task
 from src.agent.critique import CritiqueResult
 from src.services.prompt_service import PromptService
@@ -92,7 +93,7 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
             if hard_error:
                 logger.error(f"❌ Hard validation failed: {hard_error}")
                 return {
-                    "current_task": processed_task,
+                    "current_task": None,
                     "attempt_count": state["attempt_count"] + 1,
                     "critique_feedback": f"Technical Error: {hard_error}",
                     "validation_failed": True,
@@ -236,6 +237,11 @@ Return JSON:
             return END
 
         if state["attempt_count"] >= 3:
+            if state.get("current_task") is None:
+                logger.error("❌ Failed to generate valid task after 3 attempts")
+                raise TaskGenerationError(
+                    f"All attempts failed: {state['critique_feedback']}"
+                )
             logger.warning(
                 f"⚠️ Max attempts (3/3). Last: {state['critique_feedback'][:100]}"
             )
