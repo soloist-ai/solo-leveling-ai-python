@@ -50,6 +50,13 @@ ai:
   timeout: 30
   max_retries: 3
 
+  validation:
+    temperature_text: 0.0
+    temperature_vision: 0.1
+    max_tokens_text: 768
+    max_tokens_vision: 1024
+    timeout: 30
+
 # Logging configuration
 logging:
   level: ${LOG_LEVEL:WARNING}
