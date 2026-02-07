@@ -201,6 +201,25 @@ DIVERSITY_HINTS: Dict[TaskTopic, List[str]] = {
         "Use monolingual dictionaries (definitions in target language, native thinking)",
         "Focus on listening to podcasts at native speed (gradual speed increase, natural speech)",
     ],
+    TaskTopic.MOTION: [
+        "Vary walking pace: leisurely stroll (3-4 km/h), brisk walk (5-6 km/h), power walking (6-7 km/h)",
+        "Alternate terrain types: flat urban streets, gentle hills, park trails, waterfront paths, cobblestone streets",
+        "Use interval structures: 5-min walk / 2-min faster pace cycles, pyramid intervals (gradual acceleration/deceleration)",
+        "Focus on route geometry: circular loops (return to start), point-to-point (A→B), figure-8 patterns, spiral outward/inward",
+        "Emphasize time-of-day variations: sunrise walk (golden hour lighting), midday sun exposure, sunset stroll (changing colors), blue hour walking (dusk ambiance)",
+        "Vary sensory focus: auditory walking (notice 5 distinct sounds), visual scanning (spot 10 specific colors), tactile awareness (feel ground textures through shoes)",
+        "Use elevation profiles: flat terrain only, consistent gentle incline, rolling hills (repeated ascents/descents), stair segments integrated naturally",
+        "Focus on surface diversity: pavement, gravel paths, grass fields, wooden boardwalks, sand (beach/dunes), mixed surfaces within single session",
+        "Emphasize mindful locomotion: synchronized breathing with steps (e.g., inhale 4 steps/exhale 4 steps), heel-to-toe rolling gait focus, posture awareness (spine alignment)",
+        "Vary social context: solo walking (internal focus), parallel walking with companion (minimal conversation), walking while listening to ambient sounds only (no audio)",
+        "Use weather integration: light drizzle walk (waterproof gear), crisp autumn air, morning fog immersion, gentle breeze awareness (face wind direction changes)",
+        "Focus on rhythm variations: steady metronome pace, natural acceleration/deceleration with terrain, syncopated stepping patterns (long-short-long steps)",
+        "Emphasize directional changes: cardinal direction shifts (north→east→south→west segments), random turns at intersections, deliberate zigzag pattern",
+        "Use urban micro-environments: residential streets only, commercial districts, park connectors, bridge crossings, underpasses/tunnels (safe, well-lit)",
+        "Focus on duration phasing: single continuous block, two equal blocks with short rest, three ascending blocks (20/25/30 min with rests)",
+        "Vary stride characteristics: natural stride length, slightly elongated strides, deliberate shorter quicker steps, occasional side-stepping segments",
+        "Emphasize transition zones: walking through thresholds (park gates, bridge entrances, neighborhood boundaries) with momentary pause/awareness",
+    ],
 }
 
 TOPIC_RARITY_REQUIREMENTS: dict[tuple[TaskTopic, Rarity], str] = {
@@ -1879,6 +1898,211 @@ Generate one task following this exact style.
 - With READING: "Read for 3 hours in target language gathering 200 new words"
 - With SOCIAL: "Learn 200 words + have 10 extended conversations throughout day"
 - With CREATIVITY: "Learn 200 words + write 20 sentences + compose 10 short texts/dialogues"
+""",
+# ========================================================================
+# MOTION (TIME-BASED LOCOMOTION)
+# ========================================================================
+(
+    TaskTopic.MOTION,
+    Rarity.COMMON,
+): """
+**Metric Type:** TIME-BASED (DURATION ONLY)
+**Amount:** 5 to 10 minutes
+**Focus:** Light movement, minimal effort, accessible to everyone
+**Pattern:** Single simple locomotion activity
+
+**ALLOWED activities ONLY:**
+1. Leisurely walking (normal pace)
+2. Slow stroll (relaxed pace)
+3. Gentle walking indoors/outdoors
+
+**STRICTLY FORBIDDEN:**
+- Running or jogging (too intense for COMMON)
+- Animal movements, creative gaits
+- Exercise descriptions (squats while walking, etc. — belongs to PHYSICAL_ACTIVITY)
+- "Adventure" storytelling ("explore mysterious forest" without concrete duration)
+
+**CRITICAL RULES:**
+- You MUST specify EXACT duration within 5-10 min range.
+- You MUST use ONE activity type only.
+- DO NOT mix with exercises or cognitive tasks unless explicitly integrating with another topic.
+- Be concrete: "walk for X minutes", not "move around for a bit".
+
+**Diversity instruction:** Rotate between "walking" and "stroll" phrasing across generations.
+
+**Examples (CORRECT):**
+- "Walk leisurely for 8 minutes"
+- "Take a slow 7-minute stroll"
+- "Walk at a relaxed pace for 10 minutes"
+
+**Examples (WRONG — DO NOT USE):**
+- "Move around for 10 minutes" (vague)
+- "Walk and do squats" (mixes MOTION + PHYSICAL_ACTIVITY without integration context)
+- "Explore your neighborhood for 10 minutes" (story-focused, not duration-focused)
+
+""",
+(
+    TaskTopic.MOTION,
+    Rarity.UNCOMMON,
+): """
+**Metric Type:** TIME-BASED (DURATION ONLY)
+**Amount:** 20 to 30 minutes
+**Focus:** Moderate sustained movement, light cardio effect
+**Pattern:** Continuous locomotion with consistent pace
+
+**ALLOWED activities ONLY:**
+1. Brisk walking (purposeful pace, ~5 km/h)
+2. Light jogging (very slow pace, walk-jog intervals allowed)
+3. Sustained walking with slight elevation changes (gentle hills)
+
+**STRICTLY FORBIDDEN:**
+- High-intensity running/sprinting
+- Complex routes requiring navigation skills (belongs to ADVENTURE)
+- Exercise combinations without explicit integration context
+- Animal movements or "creative walking styles"
+
+**CRITICAL RULES:**
+- You MUST specify EXACT duration within 20-30 min range.
+- You MAY use walk-jog intervals BUT must specify structure simply (e.g., "alternate walking and light jogging").
+- DO NOT default to running — prioritize brisk walking for accessibility.
+- Be specific about pace: "brisk walk", not just "walk".
+
+**Diversity instruction:** Alternate between pure brisk walking and light walk-jog intervals across generations.
+
+**Examples (CORRECT):**
+- "Brisk walk for 25 minutes"
+- "Alternate walking and light jogging for 28 minutes"
+- "Sustained brisk walking with gentle hills for 22 minutes"
+
+**Examples (WRONG — DO NOT USE):**
+- "Jog for 25 minutes" (too intense for UNCOMMON without qualification)
+- "Move at moderate intensity for 30 minutes" (vague)
+- "Walk 3 km" (distance-based — MOTION uses TIME metric only)
+
+""",
+(
+    TaskTopic.MOTION,
+    Rarity.RARE,
+): """
+**Metric Type:** TIME-BASED (DURATION ONLY)
+**Amount:** 45 to 60 minutes
+**Focus:** Sustained locomotion session, moderate endurance challenge
+**Pattern:** Continuous movement with optional brief rest periods
+
+**ALLOWED activities ONLY:**
+1. Steady jogging (comfortable sustainable pace)
+2. Extended brisk walking (45+ min continuous)
+3. Mixed pace: walking + jogging intervals with defined structure
+4. Trail walking (natural terrain, moderate difficulty)
+
+**STRICTLY FORBIDDEN:**
+- Sprinting or high-intensity intervals
+- Technical trails requiring climbing/navigation skills
+- Exercise stops during locomotion (e.g., "stop every 10 min for push-ups" — belongs to PHYSICAL_ACTIVITY integration)
+- Vague descriptions like "long walk" without exact duration
+
+**CRITICAL RULES:**
+- You MUST specify EXACT duration within 45-60 min range.
+- For intervals: MUST specify simple structure (e.g., "alternate 5 min jog / 3 min walk").
+- Total moving time must be 45-60 min (brief rest periods may be included but not counted as primary activity).
+- DO NOT exceed 60 minutes at this rarity level.
+
+**Diversity instruction:** Rotate between pure jogging, extended brisk walking, and structured intervals.
+
+**Examples (CORRECT):**
+- "Jog at a steady pace for 50 minutes"
+- "Brisk walk continuously for 55 minutes"
+- "Alternate 6 minutes jogging and 4 minutes walking for 50 minutes total"
+- "Trail walk on moderate terrain for 48 minutes"
+
+**Examples (WRONG — DO NOT USE):**
+- "Run for an hour" (too vague — specify pace: "jog" vs "run")
+- "Walk 5 km on trails" (distance-based metric)
+- "Jog with exercise stops" (mixes topics without integration context)
+
+""",
+(
+    TaskTopic.MOTION,
+    Rarity.EPIC,
+): """
+**Metric Type:** TIME-BASED (DURATION ONLY)
+**Amount:** 60 to 120 minutes
+**Focus:** Extended locomotion endurance session
+**Pattern:** Structured multi-phase movement with planned pacing
+
+**ALLOWED activities ONLY:**
+1. Long-distance jogging (sustainable pace for 60+ min)
+2. Fast walking (consistent brisk pace 60+ min)
+3. Run-walk intervals with defined ratios
+4. Mixed terrain walking/jogging (urban + trail segments)
+
+**STRICTLY FORBIDDEN:**
+- Racing or competitive pacing
+- Technical off-trail navigation
+- Unstructured "just move for 2 hours" descriptions
+- Combining with strength exercises without explicit integration
+
+**CRITICAL RULES:**
+- You MUST specify EXACT duration within 60-120 min range.
+- You MUST describe pacing structure simply (e.g., "steady pace", "alternate 10-min jog/5-min walk").
+- Total locomotion time must be 60-120 min (short hydration/rest breaks permitted but not dominant).
+- DO NOT use distance metrics ("run 10 km") — TIME only.
+
+**Diversity instruction:** Alternate between continuous jogging, fast walking, and structured interval approaches.
+
+**Examples (CORRECT):**
+- "Jog at a sustainable pace for 90 minutes"
+- "Fast walking continuously for 75 minutes"
+- "Alternate 12 minutes jogging and 5 minutes walking for 100 minutes total"
+- "Mixed terrain session: 40 min urban jogging + 40 min trail walking"
+
+**Examples (WRONG — DO NOT USE):**
+- "Run for 2 hours" (vague — specify sustainable/jogging pace)
+- "Cover as much distance as possible in 90 minutes" (goal-oriented, not duration-focused)
+- "Jog with random stops for exercises" (unstructured topic mixing)
+
+""",
+(
+    TaskTopic.MOTION,
+    Rarity.LEGENDARY,
+): """
+**Metric Type:** TIME-BASED (DURATION ONLY)
+**Amount:** 3 to 5 hours
+**Focus:** Extreme endurance locomotion session
+**Pattern:** Multi-phase marathon-style movement with strategic pacing/rest
+
+**ALLOWED activities ONLY:**
+1. Ultra-endurance walking (continuous 3-5h at steady pace)
+2. Long slow distance (LSD) jogging (sustainable pace entire duration)
+3. Structured multi-phase sessions (e.g., walking blocks + jogging blocks)
+4. Terrain-varied routes (urban segments alternating with trails/parks)
+
+**STRICTLY FORBIDDEN:**
+- Racing, speed challenges, or time trials
+- Technical mountaineering/navigation requiring special skills
+- Vague "all-day walk" without exact 3-5h specification
+- Unplanned or chaotic structure
+
+**CRITICAL RULES:**
+- You MUST specify EXACT duration within 3-5 hour range (e.g., "3 hours 20 minutes", "4.5 hours").
+- You MUST describe basic phase structure (e.g., "three 70-minute walking blocks with 10-min rests").
+- Total locomotion time must be 3-5 hours (planned short rests/hydration included in total duration).
+- You MUST avoid single-pace monotony — describe natural pacing variation or phase changes.
+- DO NOT exceed 5 hours total duration.
+
+**Diversity instruction:** Prioritize multi-phase structures over monotonous single-pace sessions for sustainability.
+
+**Examples (CORRECT):**
+- "Ultra-endurance walk: 4 hours continuous at steady pace with brief hydration stops"
+- "LSD jogging session for 3 hours 30 minutes at conversational pace"
+- "4-hour session: three 70-minute walking blocks with 10-minute rest periods between"
+- "5-hour mixed terrain journey: 2h urban walking, 2h trail walking, 1h gentle jogging"
+
+**Examples (WRONG — DO NOT USE):**
+- "Walk all day" (no exact duration)
+- "Run 5 hours straight without stopping" (unrealistic, ignores necessary micro-breaks)
+- "Cover maximum distance in 4 hours" (distance/goal-focused, not pure locomotion)
+
 """,
 }
 

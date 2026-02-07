@@ -14,6 +14,8 @@ class TaskTopic(str, Enum):
     DEVELOPMENT = "DEVELOPMENT"
     READING = "READING"
     LANGUAGE_LEARNING = "LANGUAGE_LEARNING"
+    MOTION = "MOTION"
+    FINANCE = "FINANCE"
 
     def to_dict(self) -> str:
         return self.value
