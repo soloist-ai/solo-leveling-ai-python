@@ -16,7 +16,9 @@ async def main():
     print("=" * 70)
     print(f"Title:      {task.title.en}/{task.title.ru}")
     print(f"Description:{task.description.en}/{task.description.ru}")
-    print(f"Stats:      AGI={task.agility} | STR={task.strength} | INT={task.intelligence}")
+    print(
+        f"Stats:      AGI={task.agility} | STR={task.strength} | INT={task.intelligence}"
+    )
     print(f"Rewards:    EXP={task.experience} | CUR={task.currencyReward}")
     print("=" * 70 + "\n")
 

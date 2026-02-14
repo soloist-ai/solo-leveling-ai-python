@@ -23,15 +23,15 @@ async def send_save_tasks_event(
         await producer.send_and_wait(
             topics["task_responses"],
             value=response_bytes,
-            key=str(save_event.playerId).encode() if save_event.playerId else None,
+            key=str(save_event.txId).encode() if save_event.txId else None,
             headers=headers,
         )
 
-        logger.info(f"Published SaveTasksEvent for player {save_event.playerId}")
+        logger.info(f"Published SaveTasksEvent for player {save_event.userId}")
         return True
     except Exception as e:
         logger.error(
-            f"Failed to publish SaveTasksEvent for player {save_event.playerId}: {e}",
+            f"Failed to publish SaveTasksEvent for player {save_event.userId}: {e}",
             exc_info=True,
         )
         return False

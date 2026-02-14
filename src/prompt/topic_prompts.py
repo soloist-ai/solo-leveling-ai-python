@@ -1899,13 +1899,13 @@ Generate one task following this exact style.
 - With SOCIAL: "Learn 200 words + have 10 extended conversations throughout day"
 - With CREATIVITY: "Learn 200 words + write 20 sentences + compose 10 short texts/dialogues"
 """,
-# ========================================================================
-# MOTION (TIME-BASED LOCOMOTION)
-# ========================================================================
-(
-    TaskTopic.MOTION,
-    Rarity.COMMON,
-): """
+    # ========================================================================
+    # MOTION (TIME-BASED LOCOMOTION)
+    # ========================================================================
+    (
+        TaskTopic.MOTION,
+        Rarity.COMMON,
+    ): """
 **Metric Type:** TIME-BASED (DURATION ONLY)
 **Amount:** 5 to 10 minutes
 **Focus:** Light movement, minimal effort, accessible to everyone
@@ -1941,10 +1941,10 @@ Generate one task following this exact style.
 - "Explore your neighborhood for 10 minutes" (story-focused, not duration-focused)
 
 """,
-(
-    TaskTopic.MOTION,
-    Rarity.UNCOMMON,
-): """
+    (
+        TaskTopic.MOTION,
+        Rarity.UNCOMMON,
+    ): """
 **Metric Type:** TIME-BASED (DURATION ONLY)
 **Amount:** 20 to 30 minutes
 **Focus:** Moderate sustained movement, light cardio effect
@@ -1980,10 +1980,10 @@ Generate one task following this exact style.
 - "Walk 3 km" (distance-based — MOTION uses TIME metric only)
 
 """,
-(
-    TaskTopic.MOTION,
-    Rarity.RARE,
-): """
+    (
+        TaskTopic.MOTION,
+        Rarity.RARE,
+    ): """
 **Metric Type:** TIME-BASED (DURATION ONLY)
 **Amount:** 45 to 60 minutes
 **Focus:** Sustained locomotion session, moderate endurance challenge
@@ -2021,10 +2021,10 @@ Generate one task following this exact style.
 - "Jog with exercise stops" (mixes topics without integration context)
 
 """,
-(
-    TaskTopic.MOTION,
-    Rarity.EPIC,
-): """
+    (
+        TaskTopic.MOTION,
+        Rarity.EPIC,
+    ): """
 **Metric Type:** TIME-BASED (DURATION ONLY)
 **Amount:** 60 to 120 minutes
 **Focus:** Extended locomotion endurance session
@@ -2062,10 +2062,10 @@ Generate one task following this exact style.
 - "Jog with random stops for exercises" (unstructured topic mixing)
 
 """,
-(
-    TaskTopic.MOTION,
-    Rarity.LEGENDARY,
-): """
+    (
+        TaskTopic.MOTION,
+        Rarity.LEGENDARY,
+    ): """
 **Metric Type:** TIME-BASED (DURATION ONLY)
 **Amount:** 3 to 5 hours
 **Focus:** Extreme endurance locomotion session
