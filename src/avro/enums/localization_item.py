@@ -1,14 +1,6 @@
-from dataclasses import dataclass, asdict
+from pydantic import BaseModel
 
 
-@dataclass
-class LocalizationItem:
+class LocalizationItem(BaseModel):
     en: str
     ru: str
-
-    def to_dict(self) -> dict:
-        return asdict(self)
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "LocalizationItem":
-        return cls(en=data["en"], ru=data["ru"])

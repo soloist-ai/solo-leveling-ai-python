@@ -59,7 +59,7 @@ def register_consumers(broker: KafkaBroker):
                 message, SUBJECTS["generate_tasks_event"]
             )
 
-            event = GenerateTasksEvent.from_dict(event_dict)
+            event = GenerateTasksEvent.model_validate(event_dict)
 
             if not event.tasks:
                 logger.warning(
@@ -108,8 +108,8 @@ def register_consumers(broker: KafkaBroker):
                     )
 
                     task_input = group_tasks[0]
-                    save_task = Task.from_generated(task_input, generated_task)
-                    save_tasks.append(save_task)
+                    task_input.apply_generated(generated_task)
+                    save_tasks.append(task_input)
 
                     logger.info(
                         f"Generated single task '{generated_task.title.en}' -> taskId={task_input.id}"
@@ -126,9 +126,11 @@ def register_consumers(broker: KafkaBroker):
                     )
 
                     # Мапим сгенерированные задачи на исходные taskId
-                    for task_input, generated_task in zip(group_tasks, generated_tasks):
-                        save_task = Task.from_generated(task_input, generated_task)
-                        save_tasks.append(save_task)
+                    for task_input, generated_task in zip(
+                        group_tasks, generated_tasks
+                    ):
+                        task_input.apply_generated(generated_task)
+                        save_tasks.append(task_input)
 
                         logger.info(
                             f"Mapped generated task '{generated_task.title.en}' -> taskId={task_input.id}"
@@ -140,7 +142,10 @@ def register_consumers(broker: KafkaBroker):
 
             # Отправляем результат
             save_event = SaveTasksEvent(
-                txId=event.txId, userId=event.userId, tasks=save_tasks
+                txId=event.txId,
+                userId=event.userId,
+                tasks=save_tasks,
+                operation=event.operation,
             )
 
             await send_save_tasks_event(producer, save_event)

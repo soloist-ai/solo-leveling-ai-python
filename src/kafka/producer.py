@@ -17,7 +17,7 @@ async def send_save_tasks_event(
 ) -> bool:
     try:
         response_bytes = confluent_avro.serialize(
-            save_event.to_dict(), SAVE_TASKS_EVENT_SUBJECT
+            save_event.model_dump(mode="json"), SAVE_TASKS_EVENT_SUBJECT
         )
         headers = ProducerLocaleInterceptor.inject_locale_header()
         await producer.send_and_wait(
