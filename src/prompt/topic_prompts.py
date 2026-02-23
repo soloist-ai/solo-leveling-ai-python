@@ -428,164 +428,272 @@ Generate one task following this exact style.
     # ========================================================================
     # ADVENTURE (TIME-BASED)
     # ========================================================================
-    (
-        TaskTopic.ADVENTURE,
-        Rarity.COMMON,
-    ): """
-    **Metric Type:** TIME-BASED
-    **Duration:** 10-20 minutes
-    **Focus:** Short walk, basic observation
-    **Scope:** Universal - anyone, anywhere
-    **Pattern:** Simple timed walk
+    (TaskTopic.ADVENTURE, Rarity.COMMON): """
+### TOPIC CONTEXT
+- Topic: ADVENTURE (Exploration & Novelty)
+- Rarity: COMMON (Minimal commitment, high accessibility)
+- Duration: 10 to 20 minutes
+- Scope: Universal — works in city, village, dacha, anywhere
 
-    **FORBIDDEN:**
-    - NO specific landmarks or locations
-    - NO location-dependent activities
-    - NO extreme exploration
-    - NO photography requirements
+### STAT HIERARCHY (CRITICAL)
+- AGI (Primary): Navigation, route adaptation, novelty
+- INT (Secondary): Observation, light awareness
+- STR (Minimal): This is exploration, not physical training
+- Rule: AGI ≥ INT ≥ STR (Agility must be highest (70%), INT (30%). STR near 0)
 
-    **ALLOWED:**
-    - Timed walks
-    - Mental observation
-    - Counting objects (trees, buildings, cars)
-    - Route awareness
+### DIVERSITY ENGINE
+For THIS generation, randomly select ONE focus:
+1. Route: New path/street never used before
+2. Observation: Notice specific details (architecture, nature, sounds)
+3. Discovery: Find something never noticed in your area
 
-    **Examples:**
-    - "Walk for 15 minutes observing surroundings"
-    - "Take 12-minute walk on new street"
-    - "Explore nearby area for 18 minutes"
+### CONSTRAINTS
+- NO specific landmarks (monuments, museums, shops, cafes)
+- NO location-dependent requirements (must work anywhere)
+- NO photography or documentation requirements
+- NO paid entry locations
+- Description must work in both EN and RU (no culture-specific references)
 
-    **Integration:**
-    - With MUSIC: "Walk for 15 min while listening to [2-3 tracks]"
-    - With BRAIN: "Walk for 18 min while solving 3 mental riddles"
-    """,
-    (
-        TaskTopic.ADVENTURE,
-        Rarity.UNCOMMON,
-    ): """
-    **Metric Type:** TIME-BASED
-    **Duration:** 30-60 minutes
-    **Focus:** Extended walk, active exploration
-    **Scope:** Universal, more engagement
-    **Pattern:** Structured exploration with objectives
+### FORBIDDEN WORDS & CONCEPTS (CRITICAL)
+Do NOT use these words or concepts:
+- subway, metro, underground, tunnel, station
+- market, marketplace, stall, vendor, shop, mall
+- park, garden, pocket park, community garden, green space
+- street art, mural, graffiti, sculpture, installation, public art
+- bridge, hill, overlook, viewpoint, elevated, tall building
+- university, campus, school, educational institution
+- museum, gallery, exhibition, monument, memorial
+- industrial, factory, warehouse, zone, district
+- architectural, heritage, historic, old buildings
 
-    **FORBIDDEN:**
-    - NO specific landmarks
-    - NO location-dependent activities
-    - NO photography requirements
+### INTEGRATION HINTS (If combined with other topics)
+- With MUSIC: Focus on rhythm of exploration, not track counting
+- With SOCIAL: Shared exploration, not conversation-focused
 
-    **ALLOWED:**
-    - Extended walks with mental goals
-    - Counting discoveries (new streets, interesting details)
-    - Route discovery and mental mapping
-    - Observation challenges (count 10 unique details)
+### EXAMPLES (CORRECT — Study the Pattern)
+- "Take a new route home exploring unfamiliar street" (AGI high, INT low, STR minimal)
+- "Walk through neighborhood area you rarely visit noticing details" (AGI high, INT mid, STR minimal)
+- "Explore nearby path you've never walked before" (AGI high, INT low, STR minimal)
 
-    **Examples:**
-    - "Walk for 45 minutes taking only new routes"
-    - "Explore for 35 minutes while mentally noting 15 interesting details"
-    - "Take 50-minute walk discovering 3 new streets"
+### EXAMPLES (WRONG — DO NOT USE)
+- "Visit the park monument" → Specific landmark
+- "Go to the nearest museum" → Location-dependent
+- "Walk for 15 minutes" → No novelty element (this is MOTION, not ADVENTURE)
 
-    **Integration:**
-    - With MUSIC: "Walk for 45 min while listening to [5-8 tracks]"
-    - With READING: "Walk for 40 min, then read related article for 15 min"
-    - With SOCIAL: "Take 50-min walk with friend discussing topics"
-    """,
-    (
-        TaskTopic.ADVENTURE,
-        Rarity.RARE,
-    ): """
-    **Metric Type:** TIME-BASED
-    **Duration:** 60-120 minutes
-    **Focus:** Substantial exploration
-    **Scope:** Universal, significant commitment
-    **Pattern:** Long exploration with purpose
+""",
 
-    **FORBIDDEN:**
-    - NO specific landmarks
-    - NO location-dependent activities
-    - NO photography requirements
+    (TaskTopic.ADVENTURE, Rarity.UNCOMMON): """
+### TOPIC CONTEXT
+- Topic: ADVENTURE (Exploration & Novelty)
+- Rarity: UNCOMMON (Moderate commitment, requires planning)
+- Duration: 30 to 60 minutes
+- Scope: Universal — works in city, village, dacha, anywhere
 
-    **ALLOWED:**
-    - Long exploration walks
-    - Mental mapping of new areas
-    - Multiple new routes
-    - Detailed mental observation (count 20+ unique details)
-    - Route journaling (write notes after walk)
+### STAT HIERARCHY (CRITICAL)
+- AGI (Primary): Route navigation, multi-path adaptation
+- INT (Secondary): Active observation, light mental mapping
+- STR (Minimal): Extended duration only
+- Rule: AGI ≥ INT ≥ STR (Agility must be highest (70%), INT (25%). STR near 5%)
 
-    **Examples:**
-    - "Explore for 90 minutes taking entirely new routes"
-    - "Take 75-minute exploration walk mentally noting 25 interesting details"
-    - "Walk for 2 hours discovering 5 new streets or paths"
+### DIVERSITY ENGINE
+For THIS generation, randomly select ONE discovery type:
+1. Streets: Discover 2-3 completely new streets/paths
+2. Details: Notice 10+ unique elements (buildings, plants, sounds)
+3. Mapping: Mentally map an unfamiliar area layout
 
-    **Integration:**
-    - With MUSIC: "Walk for 90 min while listening to [full album, 10-15 tracks]"
-    - With READING: "Walk 60 min + read outdoor for 30 min"
-    - With SOCIAL: "Take 90-min walk with friend having discussion"
-    - With BRAIN: "Walk for 75 min while solving 10 mental puzzles"
-    """,
-    (
-        TaskTopic.ADVENTURE,
-        Rarity.EPIC,
-    ): """
-    **Metric Type:** TIME-BASED
-    **Duration:** 180-240 minutes
-    **Focus:** Extended adventure, major exploration
-    **Scope:** Universal, serious commitment
-    **Pattern:** Half-day exploration mission
-
-    **FORBIDDEN:**
-    - NO specific landmarks
-    - NO location-dependent activities
-    - NO photography requirements
-
-    **ALLOWED:**
-    - Multi-hour exploration
-    - Written journaling after (summarize discoveries)
-    - Multiple objectives (discover 10 new areas)
-    - Comprehensive mental observation
-    - Route sketching after walk
-
-    **Examples:**
-    - "Take 3-hour exploration walk discovering entirely new areas"
-    - "Spend 3.5 hours walking and mentally noting observations"
-    - "Complete 4-hour adventure walk with multiple discovery objectives"
-
-    **Integration:**
-    - With MUSIC: "Walk for 3 hours while listening to [2-3 albums, 25-35 tracks]"
-    - With CREATIVITY: "3-hour walk while mentally noting ideas, write them down after"
-    - With SOCIAL: "3.5-hour adventure walk with friend"
-    """,
-    (
-        TaskTopic.ADVENTURE,
-        Rarity.LEGENDARY,
-    ): """
-**Metric Type:** TIME-BASED
-**Duration:** 300+ minutes (5+ hours)
-**Focus:** Epic day-long adventure
-**Scope:** Universal, marathon exploration
-**Pattern:** Full-day expedition
-
-**FORBIDDEN:**
-- NO specific landmarks
-- NO location-dependent activities
+### CONSTRAINTS
+- NO specific landmarks or named locations
+- NO location-dependent requirements (universal accessibility)
 - NO photography requirements
+- Focus on route novelty, not destination check-in
+- Description must work in both EN and RU (no culture-specific references)
 
-**ALLOWED:**
-- All-day exploration
-- Extensive goals (discover 15+ new areas)
-- Multi-phase adventure
-- Comprehensive written journal after walk
-- Detailed route sketching after
+### FORBIDDEN WORDS & CONCEPTS (CRITICAL)
+Do NOT use these words or concepts:
+- subway, metro, underground, tunnel, station
+- market, marketplace, stall, vendor, shop, mall
+- park, garden, pocket park, community garden, green space
+- street art, mural, graffiti, sculpture, installation, public art
+- bridge, hill, overlook, viewpoint, elevated, tall building
+- university, campus, school, educational institution
+- museum, gallery, exhibition, monument, memorial
+- industrial, factory, warehouse, zone, district
+- architectural, heritage, historic, old buildings
 
-**Examples:**
-- "Take 5-hour epic exploration walk discovering new territories"
-- "Spend 6 hours walking and documenting observations after"
-- "Complete full-day 7-hour adventure walk with multiple phases"
+### INTEGRATION HINTS (If combined with other topics)
+- With MUSIC: Match exploration pace to album flow
+- With SOCIAL: Explore together, share discoveries in real-time
 
-**Integration:**
-- With MUSIC: "Walk for 5 hours while listening to [4-5 albums, 50+ tracks]"
-- With SOCIAL: "5-hour group adventure with friends"
-- With CREATIVITY: "6-hour walk, then write comprehensive journal entry"
+### EXAMPLES (CORRECT — Study the Pattern)
+- "Explore 3 new streets in your area taking unfamiliar turns" (AGI high, INT mid, STR low)
+- "Take an unfamiliar route while noting unique details about buildings" (AGI high, INT mid, STR low)
+- "Discover a neighborhood section you've never walked mapping it mentally" (AGI high, INT mid, STR low)
+
+### EXAMPLES (WRONG — DO NOT USE)
+- "Visit the town square" → Specific landmark
+- "Walk to the library and back" → Destination-focused
+- "Explore for 40 minutes" → No novelty element specified
+""",
+
+    (TaskTopic.ADVENTURE, Rarity.RARE): """
+### TOPIC CONTEXT
+- Topic: ADVENTURE (Exploration & Novelty)
+- Rarity: RARE (Significant commitment, deeper exploration)
+- Duration: 60 to 120 minutes
+- Scope: Universal — works in city, village, dacha, anywhere
+
+### STAT HIERARCHY (CRITICAL)
+- AGI (Primary): Complex route navigation, area coverage
+- INT (Secondary): Detailed observation, mental mapping
+- STR (Low): Duration-based endurance
+- Rule: AGI ≥ INT ≥ STR (Agility must be highest (70%), INT (25%). STR near 5%)
+
+### DIVERSITY ENGINE
+For THIS generation, randomly select ONE exploration depth:
+1. Area: Explore an entire unfamiliar neighborhood section
+2. Routes: Take 5+ completely new paths/streets
+3. Details: Document 20+ unique observations mentally
+
+### CONSTRAINTS
+- NO specific landmarks or named locations
+- NO location-dependent requirements (must work anywhere)
+- NO photography or mandatory documentation
+- Optional: brief notes after walk (not during)
+- Description must work in both EN and RU (no culture-specific references)
+
+### FORBIDDEN WORDS & CONCEPTS (CRITICAL)
+Do NOT use these words or concepts:
+- subway, metro, underground, tunnel, station
+- market, marketplace, stall, vendor, shop, mall
+- park, garden, pocket park, community garden, green space
+- street art, mural, graffiti, sculpture, installation, public art
+- bridge, hill, overlook, viewpoint, elevated, tall building
+- university, campus, school, educational institution
+- museum, gallery, exhibition, monument, memorial
+- industrial, factory, warehouse, zone, district
+- architectural, heritage, historic, old buildings
+
+### INTEGRATION HINTS (If combined with other topics)
+- With MUSIC: Full album journey matching exploration phases
+- With SOCIAL: Group exploration with shared discovery goals
+
+### EXAMPLES (CORRECT — Study the Pattern)
+- "Explore an entirely new neighborhood section taking multiple paths" (AGI high, INT mid, STR low)
+- "Take 5+ unfamiliar routes while observing architectural details" (AGI high, INT mid, STR low)
+- "Discover multiple new paths in your area creating mental map" (AGI high, INT mid, STR low)
+
+### EXAMPLES (WRONG — DO NOT USE)
+- "Visit the historic district" → Specific area (may not exist everywhere)
+- "Walk to the castle and explore" → Landmark-dependent
+- "Explore for 90 minutes" → No novelty depth specified
+""",
+
+    (TaskTopic.ADVENTURE, Rarity.EPIC): """
+### TOPIC CONTEXT
+- Topic: ADVENTURE (Exploration & Novelty)
+- Rarity: EPIC (Serious commitment, half-day exploration)
+- Duration: 180 to 240 minutes (3-4 hours)
+- Scope: Within your settlement (no travel required)
+
+### STAT HIERARCHY (CRITICAL)
+- AGI (Primary): Extended navigation, route planning across areas
+- INT (Secondary): Comprehensive observation, optional journaling
+- STR (Low): Duration endurance
+- Rule: AGI ≥ INT ≥ STR (Agility must be highest (70%), INT (25%). STR near 5%)
+
+### DIVERSITY ENGINE
+For THIS generation, randomly select ONE mission type:
+1. Deep Dive: Explore the far side of your city/village never visited
+2. Multi-Area: Discover 10+ new streets/paths across different sections
+3. Comprehensive: Full mental map of an unfamiliar neighborhood
+
+### CONSTRAINTS
+- NO specific landmarks or named locations
+- Must work within ANY settlement (city, village, dacha area)
+- NO travel outside your current settlement required
+- Optional: brief summary notes after (not during exploration)
+- Description must work in both EN and RU (no culture-specific references)
+
+### FORBIDDEN WORDS & CONCEPTS (CRITICAL)
+Do NOT use these words or concepts:
+- subway, metro, underground, tunnel, station
+- market, marketplace, stall, vendor, shop, mall
+- park, garden, pocket park, community garden, green space
+- street art, mural, graffiti, sculpture, installation, public art
+- bridge, hill, overlook, viewpoint, elevated, tall building
+- university, campus, school, educational institution
+- museum, gallery, exhibition, monument, memorial
+- industrial, factory, warehouse, zone, district
+- architectural, heritage, historic, old buildings
+
+### INTEGRATION HINTS (If combined with other topics)
+- With MUSIC: Multiple albums matching exploration phases
+- With CREATIVITY: Collect ideas during walk, write them down after
+- With SOCIAL: Half-day group adventure with shared exploration goals
+
+### EXAMPLES (CORRECT — Study the Pattern)
+- "Explore the far side of your city you've never visited taking new routes" (AGI very high, INT mid, STR low)
+- "Discover 10+ new areas across your settlement mapping connections" (AGI very high, INT mid, STR low)
+- "Deep exploration of unfamiliar neighborhood sections creating full mental map" (AGI very high, INT mid, STR low)
+
+### EXAMPLES (WRONG — DO NOT USE)
+- "Travel to neighboring city" → Requires travel outside settlement
+- "Visit the central park" → Specific landmark
+- "Explore for 3 hours" → No mission depth specified
+""",
+
+    (TaskTopic.ADVENTURE, Rarity.LEGENDARY): """
+### TOPIC CONTEXT
+- Topic: ADVENTURE (Exploration & Novelty)
+- Rarity: LEGENDARY (Marathon commitment, full-day expedition)
+- Duration: 300+ minutes (5+ hours, exact specification required)
+- Scope: May include travel to unfamiliar settlement/area
+
+### STAT HIERARCHY (CRITICAL)
+- AGI (Primary): Complex navigation, new territory adaptation
+- INT (Secondary): Strategic planning, comprehensive observation
+- STR (Low): Extreme duration endurance
+- Rule: AGI ≥ INT ≥ STR (Agility must be highest (70%), INT (25%). STR near 5%)
+
+### DIVERSITY ENGINE
+For THIS generation, randomly select ONE expedition type:
+1. New Territory: Travel to and explore an unfamiliar village/town/region
+2. Multi-Phase: 3+ distinct exploration phases in different new areas
+3. Comprehensive: Full-day discovery mission with detailed mental mapping
+
+### CONSTRAINTS
+- NO specific landmarks or named destinations
+- Must be achievable from ANY starting point (universal accessibility)
+- Travel distance should be reasonable (not requiring flights/long trips)
+- Optional: comprehensive journal after expedition (not during)
+- Description must work in both EN and RU (no culture-specific references)
+
+### FORBIDDEN WORDS & CONCEPTS (CRITICAL)
+Do NOT use these words or concepts:
+- subway, metro, underground, tunnel, station
+- market, marketplace, stall, vendor, shop, mall
+- park, garden, pocket park, community garden, green space
+- street art, mural, graffiti, sculpture, installation, public art
+- bridge, hill, overlook, viewpoint, elevated, tall building
+- university, campus, school, educational institution
+- museum, gallery, exhibition, monument, memorial
+- industrial, factory, warehouse, zone, district
+- architectural, heritage, historic, old buildings
+
+### INTEGRATION HINTS (If combined with other topics)
+- With MUSIC: Full-day soundtrack matching expedition phases
+- With SOCIAL: Full-day group adventure with shared exploration goals
+- With CREATIVITY: Collect inspiration during walk, create comprehensive work after
+
+### EXAMPLES (CORRECT — Study the Pattern)
+- "Travel to and explore an unfamiliar nearby village taking multiple routes" (AGI very high, INT mid, STR low)
+- "Full-day expedition: 3 new areas with different terrain creating mental map" (AGI very high, INT mid, STR low)
+- "Discover a region you've never visited through full-day exploration walk" (AGI very high, INT mid, STR low)
+
+### EXAMPLES (WRONG — DO NOT USE)
+- "Fly to another country" → Unrealistic travel requirement
+- "Visit the famous mountain" → Specific landmark
+- "Explore for 5 hours" → No expedition scope specified
 """,
     # ========================================================================
     # READING (TIME-BASED)

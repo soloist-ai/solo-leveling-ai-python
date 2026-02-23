@@ -21,6 +21,7 @@ TIME_BASED_TOPICS = {
     TaskTopic.PHYSICAL_ACTIVITY,
     TaskTopic.ADVENTURE,
     TaskTopic.READING,
+    TaskTopic.MOTION,
 }
 
 COMPLEXITY_BASED_TOPICS = {
