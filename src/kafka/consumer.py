@@ -126,9 +126,7 @@ def register_consumers(broker: KafkaBroker):
                     )
 
                     # Мапим сгенерированные задачи на исходные taskId
-                    for task_input, generated_task in zip(
-                        group_tasks, generated_tasks
-                    ):
+                    for task_input, generated_task in zip(group_tasks, generated_tasks):
                         task_input.apply_generated(generated_task)
                         save_tasks.append(task_input)
 

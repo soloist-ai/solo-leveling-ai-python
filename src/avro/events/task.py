@@ -22,9 +22,7 @@ class Task(BaseModel):
     intelligence: Optional[int] = None
 
     def apply_generated(self, result_task: PydanticTask) -> None:
-        self.title = LocalizationItem(
-            en=result_task.title.en, ru=result_task.title.ru
-        )
+        self.title = LocalizationItem(en=result_task.title.en, ru=result_task.title.ru)
         self.description = LocalizationItem(
             en=result_task.description.en, ru=result_task.description.ru
         )

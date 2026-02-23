@@ -428,7 +428,10 @@ Generate one task following this exact style.
     # ========================================================================
     # ADVENTURE (TIME-BASED)
     # ========================================================================
-    (TaskTopic.ADVENTURE, Rarity.COMMON): """
+    (
+        TaskTopic.ADVENTURE,
+        Rarity.COMMON,
+    ): """
 ### TOPIC CONTEXT
 - Topic: ADVENTURE (Exploration & Novelty)
 - Rarity: COMMON (Minimal commitment, high accessibility)
@@ -481,8 +484,10 @@ Do NOT use these words or concepts:
 - "Walk for 15 minutes" → No novelty element (this is MOTION, not ADVENTURE)
 
 """,
-
-    (TaskTopic.ADVENTURE, Rarity.UNCOMMON): """
+    (
+        TaskTopic.ADVENTURE,
+        Rarity.UNCOMMON,
+    ): """
 ### TOPIC CONTEXT
 - Topic: ADVENTURE (Exploration & Novelty)
 - Rarity: UNCOMMON (Moderate commitment, requires planning)
@@ -534,8 +539,10 @@ Do NOT use these words or concepts:
 - "Walk to the library and back" → Destination-focused
 - "Explore for 40 minutes" → No novelty element specified
 """,
-
-    (TaskTopic.ADVENTURE, Rarity.RARE): """
+    (
+        TaskTopic.ADVENTURE,
+        Rarity.RARE,
+    ): """
 ### TOPIC CONTEXT
 - Topic: ADVENTURE (Exploration & Novelty)
 - Rarity: RARE (Significant commitment, deeper exploration)
@@ -587,8 +594,10 @@ Do NOT use these words or concepts:
 - "Walk to the castle and explore" → Landmark-dependent
 - "Explore for 90 minutes" → No novelty depth specified
 """,
-
-    (TaskTopic.ADVENTURE, Rarity.EPIC): """
+    (
+        TaskTopic.ADVENTURE,
+        Rarity.EPIC,
+    ): """
 ### TOPIC CONTEXT
 - Topic: ADVENTURE (Exploration & Novelty)
 - Rarity: EPIC (Serious commitment, half-day exploration)
@@ -641,8 +650,10 @@ Do NOT use these words or concepts:
 - "Visit the central park" → Specific landmark
 - "Explore for 3 hours" → No mission depth specified
 """,
-
-    (TaskTopic.ADVENTURE, Rarity.LEGENDARY): """
+    (
+        TaskTopic.ADVENTURE,
+        Rarity.LEGENDARY,
+    ): """
 ### TOPIC CONTEXT
 - Topic: ADVENTURE (Exploration & Novelty)
 - Rarity: LEGENDARY (Marathon commitment, full-day expedition)
@@ -2010,7 +2021,10 @@ Do NOT use these words or concepts:
     # ========================================================================
     # MOTION (TIME-BASED LOCOMOTION)
     # ========================================================================
-    (TaskTopic.MOTION, Rarity.COMMON): """
+    (
+        TaskTopic.MOTION,
+        Rarity.COMMON,
+    ): """
 
     ### PARAMETERS
     - **Rarity:** COMMON (Minimal effort, high accessibility)
@@ -2047,8 +2061,10 @@ Do NOT use these words or concepts:
     - "Walk and do squats" (Mixes activity types)
     - "Explore mysterious forest for 10 minutes" (Story-focused, not duration-focused)
     """,
-
-    (TaskTopic.MOTION, Rarity.UNCOMMON): """
+    (
+        TaskTopic.MOTION,
+        Rarity.UNCOMMON,
+    ): """
 
     ### PARAMETERS
     - **Rarity:** UNCOMMON (Moderate effort, light cardio)
@@ -2086,8 +2102,10 @@ Do NOT use these words or concepts:
     - "Move at moderate intensity for 30 minutes" (Vague pacing)
     - "Walk 3 km" (Distance-based metric forbidden)
     """,
-
-    (TaskTopic.MOTION, Rarity.RARE): """
+    (
+        TaskTopic.MOTION,
+        Rarity.RARE,
+    ): """
 
     ### PARAMETERS
     - **Rarity:** RARE (Significant effort, endurance focus)
@@ -2125,8 +2143,10 @@ Do NOT use these words or concepts:
     - "Walk 5 km on trails" (Distance-based metric forbidden)
     - "Jog with exercise stops every 10 min" (Mixes activity types without context)
     """,
-
-    (TaskTopic.MOTION, Rarity.EPIC): """
+    (
+        TaskTopic.MOTION,
+        Rarity.EPIC,
+    ): """
 
     ### PARAMETERS
     - **Rarity:** EPIC (High effort, planning required)
@@ -2164,8 +2184,10 @@ Do NOT use these words or concepts:
     - "Cover as much distance as possible in 90 minutes" (Goal-oriented, not duration-focused)
     - "Jog with random stops for exercises" (Unstructured activity mixing)
     """,
-
-    (TaskTopic.MOTION, Rarity.LEGENDARY): """
+    (
+        TaskTopic.MOTION,
+        Rarity.LEGENDARY,
+    ): """
 
     ### PARAMETERS
     - **Rarity:** LEGENDARY (Extreme effort, event-level achievement)
@@ -2202,7 +2224,7 @@ Do NOT use these words or concepts:
     - "Walk all day" (No exact duration specified)
     - "Run 5 hours straight without stopping" (Unrealistic, ignores necessary breaks)
     - "Cover maximum distance in 4 hours" (Distance/goal-focused, not pure locomotion)
-    """
+    """,
 }
 
 
