@@ -8,7 +8,7 @@ from src.services.avro_serialization import ConfluentAvroService
 topics = get_kafka_topics()
 logger = logging.getLogger(__name__)
 
-SAVE_TASKS_EVENT_SUBJECT = "com.sleepkqq.sololeveling.avro.task.SaveTasksEvent"
+SAVE_TASKS_EVENT_SUBJECT = "com.soloist.avro.task.SaveTasksEvent"
 confluent_avro = ConfluentAvroService(schema_registry_url=get_schema_registry_url())
 
 

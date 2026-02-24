@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: solo-leveling-ai-python
+  name: soloist-ai
 spec:
   replicas: ${REPLICAS}
   selector:
     matchLabels:
-      app: solo-leveling-ai-python
+      app: soloist-ai
   template:
     metadata:
       labels:
-        app: solo-leveling-ai-python
+        app: soloist-ai
       annotations:
         commit.sha: "${GIT_COMMIT_SHA}"
     spec:
       containers:
         - name: app
-          image: $DOCKERHUB_USER/solo-leveling-ai-python:$GIT_COMMIT_SHA
+          image: $DEPLOY_IMAGE
           ports:
             - containerPort: 8080
           env:

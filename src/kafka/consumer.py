@@ -30,8 +30,8 @@ logger = logging.getLogger(__name__)
 topics = get_kafka_topics()
 
 SUBJECTS = {
-    "generate_tasks_event": "com.sleepkqq.sololeveling.avro.task.GenerateTasksEvent",
-    "save_tasks_event": "com.sleepkqq.sololeveling.avro.task.SaveTasksEvent",
+    "generate_tasks_event": "com.soloist.avro.task.GenerateTasksEvent",
+    "save_tasks_event": "com.soloist.avro.task.SaveTasksEvent",
 }
 
 confluent_avro = ConfluentAvroService(schema_registry_url=get_schema_registry_url())
