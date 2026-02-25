@@ -9,7 +9,7 @@ from src.config.ai_config import create_llm
 async def main():
     llm = create_llm()
     service = TaskService(llm, PromptService())
-    task = service.generate_task([TaskTopic.MOTION], Rarity.EPIC)
+    task = service.generate_task([TaskTopic.ADVENTURE], Rarity.EPIC)
 
     # Полный вывод всех полей
     print("\n✅ ЗАДАЧА СГЕНЕРИРОВАНА")
