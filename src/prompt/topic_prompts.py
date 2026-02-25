@@ -129,19 +129,19 @@ DIVERSITY_HINTS: Dict[TaskTopic, List[str]] = {
         "Focus on habit stacking (link new habit to existing one, anchor behavior)",
     ],
     TaskTopic.ADVENTURE: [
-        "Explore industrial areas or abandoned places (safely, urban decay, history)",
-        "Focus on street art and murals in unexpected neighborhoods (graffiti tours)",
-        "Visit local historical markers and read plaques (learn city history)",
-        "Explore rooftops or elevated viewpoints (safe access, city panoramas)",
-        "Focus on hidden parks or green spaces (pocket parks, community gardens)",
-        "Visit ethnic neighborhoods and cultural districts (Chinatown, Little Italy, explore)",
-        "Explore waterfronts, rivers, or canals (walking paths, bridges, water views)",
-        "Focus on architectural details in old buildings (ornaments, styles, eras)",
-        "Visit local markets or bazaars (food markets, flea markets, farmer's markets)",
-        "Explore underground passages or metro art (subway stations, tunnels, public art)",
-        "Focus on discovering new streets (take random turns, get deliberately lost)",
-        "Visit public libraries or bookstores (browse sections, discover books)",
-        "Explore university campuses (architecture, museums, public lectures)",
+        "Discover new streets/paths you've never walked before (any area)",
+        "Take unfamiliar turns at intersections (deliberately explore)",
+        "Notice details you usually overlook (colors, sounds, textures, shapes)",
+        "Explore a neighborhood section you rarely visit (any residential area)",
+        "Find vantage points with wide views (hill, open area, elevated ground)",
+        "Observe natural elements (trees, plants, sky, ground patterns)",
+        "Notice human-made elements (buildings, fences, signs, paths)",
+        "Explore different times of day (morning vs evening atmosphere)",
+        "Vary your observation focus (sounds → sights → textures each session)",
+        "Create mental maps of unfamiliar areas (note connections between paths)",
+        "Discover shortcuts or alternative routes between familiar points",
+        "Explore perimeter boundaries of your area (edges, transitions)",
+        "Notice changes in your environment (seasonal, construction, new elements)",
     ],
     TaskTopic.BRAIN: [
         "Focus on chess tactics (pins, forks, skewers, discovered attacks)",
@@ -200,6 +200,25 @@ DIVERSITY_HINTS: Dict[TaskTopic, List[str]] = {
         "Emphasize conversational practice with natives (language exchange, italki, tandem)",
         "Use monolingual dictionaries (definitions in target language, native thinking)",
         "Focus on listening to podcasts at native speed (gradual speed increase, natural speech)",
+    ],
+    TaskTopic.MOTION: [
+        "Vary walking pace: leisurely stroll (3-4 km/h), brisk walk (5-6 km/h), power walking (6-7 km/h)",
+        "Alternate terrain types: flat urban streets, gentle hills, park trails, waterfront paths, cobblestone streets",
+        "Use interval structures: 5-min walk / 2-min faster pace cycles, pyramid intervals (gradual acceleration/deceleration)",
+        "Focus on route geometry: circular loops (return to start), point-to-point (A→B), figure-8 patterns, spiral outward/inward",
+        "Emphasize time-of-day variations: sunrise walk (golden hour lighting), midday sun exposure, sunset stroll (changing colors), blue hour walking (dusk ambiance)",
+        "Vary sensory focus: auditory walking (notice 5 distinct sounds), visual scanning (spot 10 specific colors), tactile awareness (feel ground textures through shoes)",
+        "Use elevation profiles: flat terrain only, consistent gentle incline, rolling hills (repeated ascents/descents), stair segments integrated naturally",
+        "Focus on surface diversity: pavement, gravel paths, grass fields, wooden boardwalks, sand (beach/dunes), mixed surfaces within single session",
+        "Emphasize mindful locomotion: synchronized breathing with steps (e.g., inhale 4 steps/exhale 4 steps), heel-to-toe rolling gait focus, posture awareness (spine alignment)",
+        "Vary social context: solo walking (internal focus), parallel walking with companion (minimal conversation), walking while listening to ambient sounds only (no audio)",
+        "Use weather integration: light drizzle walk (waterproof gear), crisp autumn air, morning fog immersion, gentle breeze awareness (face wind direction changes)",
+        "Focus on rhythm variations: steady metronome pace, natural acceleration/deceleration with terrain, syncopated stepping patterns (long-short-long steps)",
+        "Emphasize directional changes: cardinal direction shifts (north→east→south→west segments), random turns at intersections, deliberate zigzag pattern",
+        "Use urban micro-environments: residential streets only, commercial districts, park connectors, bridge crossings, underpasses/tunnels (safe, well-lit)",
+        "Focus on duration phasing: single continuous block, two equal blocks with short rest, three ascending blocks (20/25/30 min with rests)",
+        "Vary stride characteristics: natural stride length, slightly elongated strides, deliberate shorter quicker steps, occasional side-stepping segments",
+        "Emphasize transition zones: walking through thresholds (park gates, bridge entrances, neighborhood boundaries) with momentary pause/awareness",
     ],
 }
 
@@ -413,160 +432,279 @@ Generate one task following this exact style.
         TaskTopic.ADVENTURE,
         Rarity.COMMON,
     ): """
-    **Metric Type:** TIME-BASED
-    **Duration:** 10-20 minutes
-    **Focus:** Short walk, basic observation
-    **Scope:** Universal - anyone, anywhere
-    **Pattern:** Simple timed walk
+### TOPIC CONTEXT
+- Topic: ADVENTURE (Exploration & Novelty)
+- Rarity: COMMON (Minimal commitment, high accessibility)
+- Duration: 10 to 20 minutes
+- Scope: Universal — works in city, village, dacha, anywhere
 
-    **FORBIDDEN:**
-    - NO specific landmarks or locations
-    - NO location-dependent activities
-    - NO extreme exploration
-    - NO photography requirements
+### STAT HIERARCHY (CRITICAL)
+- AGI (Primary): Navigation, route adaptation, novelty
+- INT (Secondary): Observation, light awareness
+- STR (Minimal): This is exploration, not physical training
+- Rule: AGI ≥ INT ≥ STR (Agility must be highest (70%), INT (30%). STR near 0)
 
-    **ALLOWED:**
-    - Timed walks
-    - Mental observation
-    - Counting objects (trees, buildings, cars)
-    - Route awareness
+### DIVERSITY ENGINE
+For THIS generation, randomly select ONE focus:
+1. Route: New path/street never used before
+2. Observation: Notice specific details (architecture, nature, sounds)
+3. Discovery: Find something never noticed in your area
 
-    **Examples:**
-    - "Walk for 15 minutes observing surroundings"
-    - "Take 12-minute walk on new street"
-    - "Explore nearby area for 18 minutes"
+### CONSTRAINTS
+- NO specific landmarks (monuments, museums, shops, cafes)
+- NO location-dependent requirements (must work anywhere)
+- NO photography or documentation requirements
+- NO paid entry locations
+- Description must work in both EN and RU (no culture-specific references)
 
-    **Integration:**
-    - With MUSIC: "Walk for 15 min while listening to [2-3 tracks]"
-    - With BRAIN: "Walk for 18 min while solving 3 mental riddles"
-    """,
+### FORBIDDEN WORDS & CONCEPTS (CRITICAL)
+Do NOT use these words or concepts:
+- subway, metro, underground, tunnel, station
+- market, marketplace, stall, vendor, shop, mall
+- park, garden, pocket park, community garden, green space
+- street art, mural, graffiti, sculpture, installation, public art
+- bridge, hill, overlook, viewpoint, elevated, tall building
+- university, campus, school, educational institution
+- museum, gallery, exhibition, monument, memorial
+- industrial, factory, warehouse, zone, district
+- architectural, heritage, historic, old buildings
+
+### INTEGRATION HINTS (If combined with other topics)
+- With MUSIC: Focus on rhythm of exploration, not track counting
+- With SOCIAL: Shared exploration, not conversation-focused
+
+### EXAMPLES (CORRECT — Study the Pattern)
+- "Take a new route home exploring unfamiliar street" (AGI high, INT low, STR minimal)
+- "Walk through neighborhood area you rarely visit noticing details" (AGI high, INT mid, STR minimal)
+- "Explore nearby path you've never walked before" (AGI high, INT low, STR minimal)
+
+### EXAMPLES (WRONG — DO NOT USE)
+- "Visit the park monument" → Specific landmark
+- "Go to the nearest museum" → Location-dependent
+- "Walk for 15 minutes" → No novelty element (this is MOTION, not ADVENTURE)
+
+""",
     (
         TaskTopic.ADVENTURE,
         Rarity.UNCOMMON,
     ): """
-    **Metric Type:** TIME-BASED
-    **Duration:** 30-60 minutes
-    **Focus:** Extended walk, active exploration
-    **Scope:** Universal, more engagement
-    **Pattern:** Structured exploration with objectives
+### TOPIC CONTEXT
+- Topic: ADVENTURE (Exploration & Novelty)
+- Rarity: UNCOMMON (Moderate commitment, requires planning)
+- Duration: 30 to 60 minutes
+- Scope: Universal — works in city, village, dacha, anywhere
 
-    **FORBIDDEN:**
-    - NO specific landmarks
-    - NO location-dependent activities
-    - NO photography requirements
+### STAT HIERARCHY (CRITICAL)
+- AGI (Primary): Route navigation, multi-path adaptation
+- INT (Secondary): Active observation, light mental mapping
+- STR (Minimal): Extended duration only
+- Rule: AGI ≥ INT ≥ STR (Agility must be highest (70%), INT (25%). STR near 5%)
 
-    **ALLOWED:**
-    - Extended walks with mental goals
-    - Counting discoveries (new streets, interesting details)
-    - Route discovery and mental mapping
-    - Observation challenges (count 10 unique details)
+### DIVERSITY ENGINE
+For THIS generation, randomly select ONE discovery type:
+1. Streets: Discover 2-3 completely new streets/paths
+2. Details: Notice 10+ unique elements (buildings, plants, sounds)
+3. Mapping: Mentally map an unfamiliar area layout
 
-    **Examples:**
-    - "Walk for 45 minutes taking only new routes"
-    - "Explore for 35 minutes while mentally noting 15 interesting details"
-    - "Take 50-minute walk discovering 3 new streets"
+### CONSTRAINTS
+- NO specific landmarks or named locations
+- NO location-dependent requirements (universal accessibility)
+- NO photography requirements
+- Focus on route novelty, not destination check-in
+- Description must work in both EN and RU (no culture-specific references)
 
-    **Integration:**
-    - With MUSIC: "Walk for 45 min while listening to [5-8 tracks]"
-    - With READING: "Walk for 40 min, then read related article for 15 min"
-    - With SOCIAL: "Take 50-min walk with friend discussing topics"
-    """,
+### FORBIDDEN WORDS & CONCEPTS (CRITICAL)
+Do NOT use these words or concepts:
+- subway, metro, underground, tunnel, station
+- market, marketplace, stall, vendor, shop, mall
+- park, garden, pocket park, community garden, green space
+- street art, mural, graffiti, sculpture, installation, public art
+- bridge, hill, overlook, viewpoint, elevated, tall building
+- university, campus, school, educational institution
+- museum, gallery, exhibition, monument, memorial
+- industrial, factory, warehouse, zone, district
+- architectural, heritage, historic, old buildings
+
+### INTEGRATION HINTS (If combined with other topics)
+- With MUSIC: Match exploration pace to album flow
+- With SOCIAL: Explore together, share discoveries in real-time
+
+### EXAMPLES (CORRECT — Study the Pattern)
+- "Explore 3 new streets in your area taking unfamiliar turns"
+- "Take an unfamiliar route while noting unique details about buildings"
+- "Discover a neighborhood section you've never walked mapping it mentally"
+
+### EXAMPLES (WRONG — DO NOT USE)
+- "Visit the town square" → Specific landmark
+- "Walk to the library and back" → Destination-focused
+- "Explore for 40 minutes" → No novelty element specified
+""",
     (
         TaskTopic.ADVENTURE,
         Rarity.RARE,
     ): """
-    **Metric Type:** TIME-BASED
-    **Duration:** 60-120 minutes
-    **Focus:** Substantial exploration
-    **Scope:** Universal, significant commitment
-    **Pattern:** Long exploration with purpose
+### TOPIC CONTEXT
+- Topic: ADVENTURE (Exploration & Novelty)
+- Rarity: RARE (Significant commitment, deeper exploration)
+- Duration: 60 to 120 minutes
+- Scope: Universal — works in city, village, dacha, anywhere
 
-    **FORBIDDEN:**
-    - NO specific landmarks
-    - NO location-dependent activities
-    - NO photography requirements
+### STAT HIERARCHY (CRITICAL)
+- AGI (Primary): Complex route navigation, area coverage
+- INT (Secondary): Detailed observation, mental mapping
+- STR (Low): Duration-based endurance
+- Rule: AGI ≥ INT ≥ STR (Agility must be highest (70%), INT (25%). STR near 5%)
 
-    **ALLOWED:**
-    - Long exploration walks
-    - Mental mapping of new areas
-    - Multiple new routes
-    - Detailed mental observation (count 20+ unique details)
-    - Route journaling (write notes after walk)
+### DIVERSITY ENGINE
+For THIS generation, randomly select ONE exploration depth:
+1. Area: Explore an entire unfamiliar neighborhood section
+2. Routes: Take 5+ completely new paths/streets
+3. Details: Document 20+ unique observations mentally
 
-    **Examples:**
-    - "Explore for 90 minutes taking entirely new routes"
-    - "Take 75-minute exploration walk mentally noting 25 interesting details"
-    - "Walk for 2 hours discovering 5 new streets or paths"
+### CONSTRAINTS
+- NO specific landmarks or named locations
+- NO location-dependent requirements (must work anywhere)
+- NO photography or mandatory documentation
+- Optional: brief notes after walk (not during)
+- Description must work in both EN and RU (no culture-specific references)
 
-    **Integration:**
-    - With MUSIC: "Walk for 90 min while listening to [full album, 10-15 tracks]"
-    - With READING: "Walk 60 min + read outdoor for 30 min"
-    - With SOCIAL: "Take 90-min walk with friend having discussion"
-    - With BRAIN: "Walk for 75 min while solving 10 mental puzzles"
-    """,
+### FORBIDDEN WORDS & CONCEPTS (CRITICAL)
+Do NOT use these words or concepts:
+- subway, metro, underground, tunnel, station
+- market, marketplace, stall, vendor, shop, mall
+- park, garden, pocket park, community garden, green space
+- street art, mural, graffiti, sculpture, installation, public art
+- bridge, hill, overlook, viewpoint, elevated, tall building
+- university, campus, school, educational institution
+- museum, gallery, exhibition, monument, memorial
+- industrial, factory, warehouse, zone, district
+- architectural, heritage, historic, old buildings
+
+### INTEGRATION HINTS (If combined with other topics)
+- With MUSIC: Full album journey matching exploration phases
+- With SOCIAL: Group exploration with shared discovery goals
+
+### EXAMPLES (CORRECT — Study the Pattern)
+- "Explore an entirely new neighborhood section taking multiple paths"
+- "Take 5+ unfamiliar routes while observing architectural details"
+- "Discover multiple new paths in your area creating mental map"
+
+### EXAMPLES (WRONG — DO NOT USE)
+- "Visit the historic district" → Specific area (may not exist everywhere)
+- "Walk to the castle and explore" → Landmark-dependent
+- "Explore for 90 minutes" → No novelty depth specified
+""",
     (
         TaskTopic.ADVENTURE,
         Rarity.EPIC,
     ): """
-    **Metric Type:** TIME-BASED
-    **Duration:** 180-240 minutes
-    **Focus:** Extended adventure, major exploration
-    **Scope:** Universal, serious commitment
-    **Pattern:** Half-day exploration mission
+### TOPIC CONTEXT
+- Topic: ADVENTURE (Exploration & Novelty)
+- Rarity: EPIC (Serious commitment, half-day exploration)
+- Duration: 180 to 240 minutes (3-4 hours)
+- Scope: Within your settlement (no travel required)
 
-    **FORBIDDEN:**
-    - NO specific landmarks
-    - NO location-dependent activities
-    - NO photography requirements
+### STAT HIERARCHY (CRITICAL)
+- AGI (Primary): Extended navigation, route planning across areas
+- INT (Secondary): Comprehensive observation, optional journaling
+- STR (Low): Duration endurance
+- Rule: AGI ≥ INT ≥ STR (Agility must be highest (70%), INT (25%). STR near 5%)
 
-    **ALLOWED:**
-    - Multi-hour exploration
-    - Written journaling after (summarize discoveries)
-    - Multiple objectives (discover 10 new areas)
-    - Comprehensive mental observation
-    - Route sketching after walk
+### DIVERSITY ENGINE
+For THIS generation, randomly select ONE mission type:
+1. Deep Dive: Explore the far side of your city/village never visited
+2. Multi-Area: Discover 10+ new streets/paths across different sections
+3. Comprehensive: Full mental map of an unfamiliar neighborhood
 
-    **Examples:**
-    - "Take 3-hour exploration walk discovering entirely new areas"
-    - "Spend 3.5 hours walking and mentally noting observations"
-    - "Complete 4-hour adventure walk with multiple discovery objectives"
+### CONSTRAINTS
+- NO specific landmarks or named locations
+- Must work within ANY settlement (city, village, dacha area)
+- NO travel outside your current settlement required
+- Optional: brief summary notes after (not during exploration)
+- Description must work in both EN and RU (no culture-specific references)
 
-    **Integration:**
-    - With MUSIC: "Walk for 3 hours while listening to [2-3 albums, 25-35 tracks]"
-    - With CREATIVITY: "3-hour walk while mentally noting ideas, write them down after"
-    - With SOCIAL: "3.5-hour adventure walk with friend"
-    """,
+### FORBIDDEN WORDS & CONCEPTS (CRITICAL)
+Do NOT use these words or concepts:
+- subway, metro, underground, tunnel, station
+- market, marketplace, stall, vendor, shop, mall
+- park, garden, pocket park, community garden, green space
+- street art, mural, graffiti, sculpture, installation, public art
+- bridge, hill, overlook, viewpoint, elevated, tall building
+- university, campus, school, educational institution
+- museum, gallery, exhibition, monument, memorial
+- industrial, factory, warehouse, zone, district
+- architectural, heritage, historic, old buildings
+
+### INTEGRATION HINTS (If combined with other topics)
+- With MUSIC: Multiple albums matching exploration phases
+- With CREATIVITY: Collect ideas during walk, write them down after
+- With SOCIAL: Half-day group adventure with shared exploration goals
+
+### EXAMPLES (CORRECT — Study the Pattern)
+- "Explore the far side of your city you've never visited taking new routes"
+- "Discover 10+ new areas across your settlement mapping connections"
+- "Deep exploration of unfamiliar neighborhood sections creating full mental map"
+
+### EXAMPLES (WRONG — DO NOT USE)
+- "Travel to neighboring city" → Requires travel outside settlement
+- "Visit the central park" → Specific landmark
+- "Explore for 3 hours" → No mission depth specified
+""",
     (
         TaskTopic.ADVENTURE,
         Rarity.LEGENDARY,
     ): """
-**Metric Type:** TIME-BASED
-**Duration:** 300+ minutes (5+ hours)
-**Focus:** Epic day-long adventure
-**Scope:** Universal, marathon exploration
-**Pattern:** Full-day expedition
+### TOPIC CONTEXT
+- Topic: ADVENTURE (Exploration & Novelty)
+- Rarity: LEGENDARY (Marathon commitment, full-day expedition)
+- Duration: 300+ minutes (5+ hours, exact specification required)
+- Scope: May include travel to unfamiliar settlement/area
 
-**FORBIDDEN:**
-- NO specific landmarks
-- NO location-dependent activities
-- NO photography requirements
+### STAT HIERARCHY (CRITICAL)
+- AGI (Primary): Complex navigation, new territory adaptation
+- INT (Secondary): Strategic planning, comprehensive observation
+- STR (Low): Extreme duration endurance
+- Rule: AGI ≥ INT ≥ STR (Agility must be highest (70%), INT (25%). STR near 5%)
 
-**ALLOWED:**
-- All-day exploration
-- Extensive goals (discover 15+ new areas)
-- Multi-phase adventure
-- Comprehensive written journal after walk
-- Detailed route sketching after
+### DIVERSITY ENGINE
+For THIS generation, randomly select ONE expedition type:
+1. New Territory: Travel to and explore an unfamiliar village/town/region
+2. Multi-Phase: 3+ distinct exploration phases in different new areas
+3. Comprehensive: Full-day discovery mission with detailed mental mapping
 
-**Examples:**
-- "Take 5-hour epic exploration walk discovering new territories"
-- "Spend 6 hours walking and documenting observations after"
-- "Complete full-day 7-hour adventure walk with multiple phases"
+### CONSTRAINTS
+- NO specific landmarks or named destinations
+- Must be achievable from ANY starting point (universal accessibility)
+- Travel distance should be reasonable (not requiring flights/long trips)
+- Optional: comprehensive journal after expedition (not during)
+- Description must work in both EN and RU (no culture-specific references)
 
-**Integration:**
-- With MUSIC: "Walk for 5 hours while listening to [4-5 albums, 50+ tracks]"
-- With SOCIAL: "5-hour group adventure with friends"
-- With CREATIVITY: "6-hour walk, then write comprehensive journal entry"
+### FORBIDDEN WORDS & CONCEPTS (CRITICAL)
+Do NOT use these words or concepts:
+- subway, metro, underground, tunnel, station
+- market, marketplace, stall, vendor, shop, mall
+- park, garden, pocket park, community garden, green space
+- street art, mural, graffiti, sculpture, installation, public art
+- bridge, hill, overlook, viewpoint, elevated, tall building
+- university, campus, school, educational institution
+- museum, gallery, exhibition, monument, memorial
+- industrial, factory, warehouse, zone, district
+- architectural, heritage, historic, old buildings
+
+### INTEGRATION HINTS (If combined with other topics)
+- With MUSIC: Full-day soundtrack matching expedition phases
+- With SOCIAL: Full-day group adventure with shared exploration goals
+- With CREATIVITY: Collect inspiration during walk, create comprehensive work after
+
+### EXAMPLES (CORRECT — Study the Pattern)
+- "Travel to and explore an unfamiliar nearby village taking multiple routes"
+- "Full-day expedition: 3 new areas with different terrain creating mental map"
+- "Discover a region you've never visited through full-day exploration walk"
+
+### EXAMPLES (WRONG — DO NOT USE)
+- "Fly to another country" → Unrealistic travel requirement
+- "Visit the famous mountain" → Specific landmark
+- "Explore for 5 hours" → No expedition scope specified
 """,
     # ========================================================================
     # READING (TIME-BASED)
@@ -1879,6 +2017,198 @@ Generate one task following this exact style.
 - With READING: "Read for 3 hours in target language gathering 200 new words"
 - With SOCIAL: "Learn 200 words + have 10 extended conversations throughout day"
 - With CREATIVITY: "Learn 200 words + write 20 sentences + compose 10 short texts/dialogues"
+""",
+    # ========================================================================
+    # MOTION (TIME-BASED LOCOMOTION)
+    # ========================================================================
+    (
+        TaskTopic.MOTION,
+        Rarity.COMMON,
+    ): """
+    
+### PARAMETERS
+- **Rarity:** COMMON (Minimal effort, high accessibility)
+- **Duration:** 5 to 10 minutes (Exact integer)
+- **Intensity:** Very Light (Zone 1, conversational breathing)
+- **Core Action:** Walking or Strolling
+- AGI is the PRIMARY stat for MOTION (AGI ≥ STR ≥ INT).
+- INT must be 0 or 1 only (physical task, not mental).
+
+### DIVERSITY ENGINE (CRITICAL)
+For THIS generation, randomly select ONE focus dimension to include in the task:
+1. **Location:** (e.g., indoors, around block, near home)
+2. **Purpose:** (e.g., to clear mind, to relax, for fresh air)
+3. **Condition:** (e.g., while listening to music, at sunrise, after meal)
+Do NOT copy examples exactly. Use them as a style reference.
+
+### CONSTRAINTS
+- Use TIME only (minutes). No distance (km/miles).
+- Keep language encouraging and simple.
+- Single activity type only (no exercise combinations).
+- Pace must remain leisurely/relaxed.
+
+### EXAMPLES (CORRECT — Note Structural Variety)
+- "Walk leisurely around your block for 8 minutes"
+- "Take a slow stroll to clear your mind for 7 minutes"
+- "Walk at a relaxed pace indoors while listening to music for 10 minutes"
+- "Gentle walking near your home for 6 minutes"
+
+### EXAMPLES (WRONG — DO NOT USE)
+- "Move around for 10 minutes" (Too vague)
+- "Walk and do squats" (Mixes activity types)
+- "Explore mysterious forest for 10 minutes" (Story-focused, not duration-focused)
+""",
+    (
+        TaskTopic.MOTION,
+        Rarity.UNCOMMON,
+    ): """
+
+### PARAMETERS
+- **Rarity:** UNCOMMON (Moderate effort, light cardio)
+- **Duration:** 20 to 30 minutes (Exact integer)
+- **Intensity:** Light Cardio (Zone 2, purposeful pace)
+- **Core Action:** Brisk Walking or Light Walk-Jog
+- AGI is the PRIMARY stat for MOTION (AGI ≥ STR ≥ INT).
+- INT must be 0 or 1 only (physical task, not mental).
+
+### DIVERSITY ENGINE (CRITICAL)
+For THIS generation, randomly select ONE pacing style:
+1. **Steady:** Consistent brisk pace throughout
+2. **Intervals:** Simple alternation (e.g., 3 min walk / 2 min jog)
+3. **Terrain:** Include gentle hills or varied surfaces
+4. **Purposeful:** "Power walking" with clear intent
+Do NOT copy examples exactly. Use them as a style reference.
+
+### CONSTRAINTS
+- Use TIME only. No distance metrics.
+- Specify pace clearly (e.g., "brisk", "purposeful", "light jog").
+- Prioritize brisk walking over running for accessibility.
+- If intervals used, specify simple structure.
+
+### EXAMPLES (CORRECT — Note Structural Variety)
+- "Brisk walk at a purposeful pace for 25 minutes (Steady)"
+- "Alternate 3 min walking and 2 min light jogging for 28 minutes (Intervals)"
+- "Power walk on a route with gentle hills for 22 minutes (Terrain)"
+- "Brisk walking at a purposeful pace for 30 minutes (Purposeful))"
+
+### EXAMPLES (WRONG — DO NOT USE)
+- "Jog for 25 minutes" (Too intense without qualification)
+- "Move at moderate intensity for 30 minutes" (Vague pacing)
+- "Walk 3 km" (Distance-based metric forbidden)
+""",
+    (
+        TaskTopic.MOTION,
+        Rarity.RARE,
+    ): """
+
+### PARAMETERS
+- **Rarity:** RARE (Significant effort, endurance focus)
+- **Duration:** 45 to 60 minutes (Exact integer)
+- **Intensity:** Moderate Cardio (Zone 3, sustainable jogging pace)
+- **Core Action:** Jogging, Extended Brisk Walking, or Structured Intervals
+- AGI is the PRIMARY stat for MOTION (AGI ≥ STR ≥ INT).
+- INT must be 0 or 1 only (physical task, not mental).
+
+### DIVERSITY ENGINE (CRITICAL)
+For THIS generation, randomly select ONE engagement hook:
+1. **Flow State:** Focus on rhythm, breathing, and consistency
+2. **Exploration:** New route, trail, or natural environment
+3. **Structure:** Defined work/rest or jog/walk ratios
+4. **Resilience:** Pushing through mild fatigue comfortably
+Do NOT copy examples exactly. Use them as a style reference.
+
+### CONSTRAINTS
+- Use TIME only. No distance metrics.
+- Must specify structure if intervals are used (e.g., "5 min jog / 3 min walk").
+- Pace must be sustainable (conversational jogging).
+- Brief rest periods allowed but not counted as primary activity.
+
+### EXAMPLES (CORRECT — Note Structural Variety)
+- "Steady jogging at a conversational pace for 50 minutes (Flow State)"
+- "Trail walking on moderate terrain for 55 minutes (Exploration)"
+- "Cycle of 5 min jog / 3 min walk for 45 minutes total (Structure)"
+- "Extended brisk walk continuously for 60 minutes to build stamina (Resilience)"
+
+### EXAMPLES (WRONG — DO NOT USE)
+- "Run for an hour" (Vague pace — specify "jog" vs "run")
+- "Walk 5 km on trails" (Distance-based metric forbidden)
+- "Jog with exercise stops every 10 min" (Mixes activity types without context)
+""",
+    (
+        TaskTopic.MOTION,
+        Rarity.EPIC,
+    ): """
+
+### PARAMETERS
+- **Rarity:** EPIC (High effort, planning required)
+- **Duration:** 60 to 120 minutes (Exact integer or half-hours)
+- **Intensity:** Moderate to High Sustained (Zone 3-4)
+- **Core Action:** Long-distance Jogging, Fast Walking, or Mixed Phases
+- AGI is the PRIMARY stat for MOTION (AGI ≥ STR ≥ INT).
+- INT must be 0 or 1 only (physical task, not mental).
+
+### DIVERSITY ENGINE (CRITICAL)
+For THIS generation, randomly select ONE strategic element:
+1. **Phased:** Split session into distinct blocks (e.g., Urban + Trail)
+2. **Pacing:** Negative split (start slow, finish strong)
+3. **Environment:** Mixed terrain challenge
+4. **Mental:** Focus on discipline and consistency over time
+Do NOT copy examples exactly. Use them as a style reference.
+
+### CONSTRAINTS
+- Use TIME only. No distance metrics.
+- Describe pacing strategy briefly in the task.
+- Hydration breaks allowed but not counted as rest time.
+- Total locomotion time must be 60-120 min.
+
+### EXAMPLES (CORRECT — Note Structural Variety)
+- "Sustainable jogging with negative split pacing for 90 minutes (Pacing)"
+- "Mixed terrain: 40 min road + 40 min trail for 80 minutes total (Phased)"
+- "Fast walking continuously with focused discipline for 75 minutes (Mental)"
+- "Alternate 12 min jogging and 5 min walking for 100 minutes total (Environment)"
+
+### EXAMPLES (WRONG — DO NOT USE)
+- "Run for 2 hours" (Vague — specify sustainable/jogging pace)
+- "Cover as much distance as possible in 90 minutes" (Goal-oriented, not duration-focused)
+- "Jog with random stops for exercises" (Unstructured activity mixing)
+""",
+    (
+        TaskTopic.MOTION,
+        Rarity.LEGENDARY,
+    ): """
+
+### PARAMETERS
+- **Rarity:** LEGENDARY (Extreme effort, event-level achievement)
+- **Duration:** 3 to 5 hours (Exact hours/minutes, e.g., "3 hours 20 minutes")
+- **Intensity:** Ultra-Endurance (Sustainable over hours, Zone 2-3)
+- **Core Action:** LSD Jogging, Ultra-Walking, or Multi-Phase Sessions
+- AGI is the PRIMARY stat for MOTION (AGI ≥ STR ≥ INT).
+- INT must be 0 or 1 only (physical task, not mental).
+
+### DIVERSITY ENGINE (CRITICAL)
+For THIS generation, randomly select ONE narrative theme:
+1. **The Journey:** Point A to Point B exploration
+2. **The Test:** Pure endurance and mental grit
+3. **The Ritual:** Meditative long movement
+4. **The Marathoner:** Structured race-pace simulation
+Do NOT copy examples exactly. Use them as a style reference.
+
+### CONSTRAINTS
+- Use TIME only (e.g., "3 hours 15 minutes", "4.5 hours").
+- Must include planned micro-breaks or phase changes in description.
+- Tone should be inspiring and serious (achievement-focused).
+- Total duration must be 3-5 hours (planned rests included in total).
+
+### EXAMPLES (CORRECT — Note Structural Variety)
+- "The Journey: Mixed terrain walking/jogging for 4 hours (Urban to Nature)"
+- "The Test: LSD jogging at sustainable pace for 3 hours 30 minutes (Mental Grit)"
+- "The Ritual: Mindful ultra-walking with brief hydration stops for 5 hours (Meditative)"
+- "The Marathoner: Three 70-minute blocks with 10-min rests for 4 hours total (Structured)"
+
+### EXAMPLES (WRONG — DO NOT USE)
+- "Walk all day" (No exact duration specified)
+- "Run 5 hours straight without stopping" (Unrealistic, ignores necessary breaks)
+- "Cover maximum distance in 4 hours" (Distance/goal-focused, not pure locomotion)
 """,
 }
 

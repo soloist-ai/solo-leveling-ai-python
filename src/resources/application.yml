@@ -1,9 +1,5 @@
-# =============================================================================
-# Solo Leveling AI - Application Configuration
-# =============================================================================
-
 app:
-  name: "solo-leveling-ai"
+  name: "soloist-ai"
   version: "1.0.0"
   environment: ${APP_ENV:development}
   debug: ${DEBUG:true}
@@ -46,7 +42,7 @@ ai:
   temperature: 0.9
   api_base: "https://openrouter.ai/api/v1"
   api_key: ${OPENROUTER_API_KEY}
-  max_tokens: 1024
+  max_tokens: 2048
   timeout: 30
   max_retries: 3
 
@@ -68,8 +64,6 @@ logging:
     aiokafka.consumer: "ERROR"
     aiokafka.consumer.group_coordinator: "ERROR"
 
-
-
 # Timeouts
 timeouts:
   http_request: 30
@@ -77,9 +71,7 @@ timeouts:
   kafka_consumer: 300
   ai_request: 60
 
-
-
 # Avro schemas configuration
 avro:
-  namespace: "com.sleepkqq.sololeveling.avro"
+  namespace: "com.soloist.avro"
   compatibility: "BACKWARD"

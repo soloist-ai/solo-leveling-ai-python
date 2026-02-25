@@ -127,8 +127,10 @@ Style: Generate task in a {style} tone.
 
 Final requirements:
 - Generate title and description in BOTH English and Russian
+- Generate agility, strength, intelligence as integers (0-20)
 - Include concrete numbers (duration OR counts)
 - Ensure uniqueness and variety
+- ALL fields are mandatory
 - Output ONLY valid JSON, no commentary
 """
 
@@ -162,7 +164,9 @@ CRITICAL: All {count} tasks must be SIGNIFICANTLY DIFFERENT:
 Final requirements for EACH task:
 - Generate title and description in BOTH English and Russian
 - Include concrete numbers (duration OR counts)
+- Generate agility, strength, intelligence as integers (0-20)
 - Ensure uniqueness within the batch
+- ALL fields are mandatory
 - Output ONLY valid JSON with "tasks" array containing {count} task objects
 """
 

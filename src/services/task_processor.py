@@ -11,6 +11,7 @@ TIME_BASED_TOPICS = {
     TaskTopic.PHYSICAL_ACTIVITY,
     TaskTopic.ADVENTURE,
     TaskTopic.READING,
+    TaskTopic.MOTION,
 }
 logger = logging.getLogger(__name__)
 

@@ -26,15 +26,15 @@ kafka_broker = KafkaBroker(get_kafka_bootstrap_servers())
 setup_logging()
 logger = logging.getLogger(__name__)
 SCHEMA_SUBJECTS = [
-    "com.sleepkqq.sololeveling.avro.task.GenerateTasksEvent",
-    "com.sleepkqq.sololeveling.avro.task.SaveTasksEvent",
+    "com.soloist.avro.task.GenerateTasksEvent",
+    "com.soloist.avro.task.SaveTasksEvent",
 ]
 
 
 @asynccontextmanager
 async def lifespan():
     env = get_environment()
-    logger.info(f"Starting Solo Leveling AI in {env} environment")
+    logger.info(f"Starting Soloist AI in {env} environment")
     logger.info("Feature flags:")
     logger.info(f"  - Schema Registry: {is_feature_enabled('use_schema_registry')}")
     logger.info(f"  - Task Caching: {is_feature_enabled('enable_task_caching')}")

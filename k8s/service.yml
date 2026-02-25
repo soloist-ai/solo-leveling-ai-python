@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: solo-leveling-ai-python
+  name: soloist-ai
 spec:
   selector:
-    app: solo-leveling-ai-python
+    app: soloist-ai
   ports:
     - protocol: TCP
       port: 80

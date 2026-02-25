@@ -21,6 +21,7 @@ TIME_BASED_TOPICS = {
     TaskTopic.PHYSICAL_ACTIVITY,
     TaskTopic.ADVENTURE,
     TaskTopic.READING,
+    TaskTopic.MOTION,
 }
 
 COMPLEXITY_BASED_TOPICS = {
@@ -62,7 +63,7 @@ def create_agent_graph(llm: ChatOpenAI, prompt_service: PromptService):
             logger.info(f"🔄 Regenerating task (attempt {attempt_count + 1}/3)")
 
         try:
-            generator_chain = llm.with_structured_output(Task)
+            generator_chain = llm.with_structured_output(Task, method="json_mode")
             generated_task_raw = generator_chain.invoke(messages)
 
             if not isinstance(generated_task_raw, Task):
@@ -197,7 +198,7 @@ Return JSON:
 - feedback: brief reason if rejected (max 2 sentences, mention specific issue)
 """
 
-        critic_chain = llm.with_structured_output(CritiqueResult)
+        critic_chain = llm.with_structured_output(CritiqueResult, method="json_mode")
 
         try:
             result_raw = critic_chain.invoke(critic_prompt)

@@ -15,7 +15,7 @@ def create_llm() -> ChatOpenAI:
         model=model_config["name"],
         base_url=model_config["api_base"],
         temperature=model_config["temperature"],
-        max_completion_tokens=model_config.get("max_tokens", 1024),
+        max_completion_tokens=model_config.get("max_tokens", 2048),
         timeout=model_config.get("timeout", 30),
         api_key=api_key_secret,
     )

@@ -8,7 +8,7 @@ from src.services.avro_serialization import ConfluentAvroService
 topics = get_kafka_topics()
 logger = logging.getLogger(__name__)
 
-SAVE_TASKS_EVENT_SUBJECT = "com.sleepkqq.sololeveling.avro.task.SaveTasksEvent"
+SAVE_TASKS_EVENT_SUBJECT = "com.soloist.avro.task.SaveTasksEvent"
 confluent_avro = ConfluentAvroService(schema_registry_url=get_schema_registry_url())
 
 
@@ -17,21 +17,21 @@ async def send_save_tasks_event(
 ) -> bool:
     try:
         response_bytes = confluent_avro.serialize(
-            save_event.to_dict(), SAVE_TASKS_EVENT_SUBJECT
+            save_event.model_dump(mode="json"), SAVE_TASKS_EVENT_SUBJECT
         )
         headers = ProducerLocaleInterceptor.inject_locale_header()
         await producer.send_and_wait(
             topics["task_responses"],
             value=response_bytes,
-            key=str(save_event.playerId).encode() if save_event.playerId else None,
+            key=str(save_event.txId).encode() if save_event.txId else None,
             headers=headers,
         )
 
-        logger.info(f"Published SaveTasksEvent for player {save_event.playerId}")
+        logger.info(f"Published SaveTasksEvent for player {save_event.userId}")
         return True
     except Exception as e:
         logger.error(
-            f"Failed to publish SaveTasksEvent for player {save_event.playerId}: {e}",
+            f"Failed to publish SaveTasksEvent for player {save_event.userId}: {e}",
             exc_info=True,
         )
         return False
