@@ -23,7 +23,7 @@ Critical rules:
    
 2.   Description MUST NOT exceed 50 words per language.
      Maximum 2 short sentences.
-     void detailed breakdowns.
+     Avoid detailed breakdowns.
 
 3. Metric type depends on topics:
    - TIME-based (physical activity, adventure, reading): mention duration

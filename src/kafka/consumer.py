@@ -127,7 +127,7 @@ def register_consumers(broker: KafkaBroker):
 
                     # Мапим сгенерированные задачи на исходные taskId
                     if len(generated_tasks) != len(group_tasks):
-                        logger.warning(
+                        raise ValueError(
                             f"Batch size mismatch: requested {len(group_tasks)}, "
                             f"got {len(generated_tasks)} from generate_tasks_batch"
                         )
