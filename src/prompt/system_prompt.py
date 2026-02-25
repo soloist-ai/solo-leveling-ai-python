@@ -34,7 +34,11 @@ Critical rules:
 
 5. Realism: Task should be achievable by average person
 
-Output ONLY valid JSON, no commentary."""
+**IMPORTANT:**
+- Return COMPLETE valid JSON only
+- Do NOT truncate or cut off the response
+- Close all brackets and quotes properly
+- If you start generating JSON, finish it completely"""
 
 
 BATCH_SYSTEM_PROMPT = """You are a task generator for a self-improvement game.

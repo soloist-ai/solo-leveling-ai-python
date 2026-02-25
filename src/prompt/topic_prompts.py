@@ -530,9 +530,9 @@ Do NOT use these words or concepts:
 - With SOCIAL: Explore together, share discoveries in real-time
 
 ### EXAMPLES (CORRECT — Study the Pattern)
-- "Explore 3 new streets in your area taking unfamiliar turns" (AGI high, INT mid, STR low)
-- "Take an unfamiliar route while noting unique details about buildings" (AGI high, INT mid, STR low)
-- "Discover a neighborhood section you've never walked mapping it mentally" (AGI high, INT mid, STR low)
+- "Explore 3 new streets in your area taking unfamiliar turns"
+- "Take an unfamiliar route while noting unique details about buildings"
+- "Discover a neighborhood section you've never walked mapping it mentally"
 
 ### EXAMPLES (WRONG — DO NOT USE)
 - "Visit the town square" → Specific landmark
@@ -585,9 +585,9 @@ Do NOT use these words or concepts:
 - With SOCIAL: Group exploration with shared discovery goals
 
 ### EXAMPLES (CORRECT — Study the Pattern)
-- "Explore an entirely new neighborhood section taking multiple paths" (AGI high, INT mid, STR low)
-- "Take 5+ unfamiliar routes while observing architectural details" (AGI high, INT mid, STR low)
-- "Discover multiple new paths in your area creating mental map" (AGI high, INT mid, STR low)
+- "Explore an entirely new neighborhood section taking multiple paths"
+- "Take 5+ unfamiliar routes while observing architectural details"
+- "Discover multiple new paths in your area creating mental map"
 
 ### EXAMPLES (WRONG — DO NOT USE)
 - "Visit the historic district" → Specific area (may not exist everywhere)
@@ -641,9 +641,9 @@ Do NOT use these words or concepts:
 - With SOCIAL: Half-day group adventure with shared exploration goals
 
 ### EXAMPLES (CORRECT — Study the Pattern)
-- "Explore the far side of your city you've never visited taking new routes" (AGI very high, INT mid, STR low)
-- "Discover 10+ new areas across your settlement mapping connections" (AGI very high, INT mid, STR low)
-- "Deep exploration of unfamiliar neighborhood sections creating full mental map" (AGI very high, INT mid, STR low)
+- "Explore the far side of your city you've never visited taking new routes"
+- "Discover 10+ new areas across your settlement mapping connections"
+- "Deep exploration of unfamiliar neighborhood sections creating full mental map"
 
 ### EXAMPLES (WRONG — DO NOT USE)
 - "Travel to neighboring city" → Requires travel outside settlement
@@ -697,9 +697,9 @@ Do NOT use these words or concepts:
 - With CREATIVITY: Collect inspiration during walk, create comprehensive work after
 
 ### EXAMPLES (CORRECT — Study the Pattern)
-- "Travel to and explore an unfamiliar nearby village taking multiple routes" (AGI very high, INT mid, STR low)
-- "Full-day expedition: 3 new areas with different terrain creating mental map" (AGI very high, INT mid, STR low)
-- "Discover a region you've never visited through full-day exploration walk" (AGI very high, INT mid, STR low)
+- "Travel to and explore an unfamiliar nearby village taking multiple routes"
+- "Full-day expedition: 3 new areas with different terrain creating mental map"
+- "Discover a region you've never visited through full-day exploration walk"
 
 ### EXAMPLES (WRONG — DO NOT USE)
 - "Fly to another country" → Unrealistic travel requirement
@@ -2025,206 +2025,191 @@ Do NOT use these words or concepts:
         TaskTopic.MOTION,
         Rarity.COMMON,
     ): """
+    
+### PARAMETERS
+- **Rarity:** COMMON (Minimal effort, high accessibility)
+- **Duration:** 5 to 10 minutes (Exact integer)
+- **Intensity:** Very Light (Zone 1, conversational breathing)
+- **Core Action:** Walking or Strolling
+- AGI is the PRIMARY stat for MOTION (AGI ≥ STR ≥ INT).
+- INT must be 0 or 1 only (physical task, not mental).
 
-    ### PARAMETERS
-    - **Rarity:** COMMON (Minimal effort, high accessibility)
-    - **Duration:** 5 to 10 minutes (Exact integer)
-    - **Intensity:** Very Light (Zone 1, conversational breathing)
-    - **Core Action:** Walking or Strolling
-    - AGI is the PRIMARY stat for MOTION (AGI ≥ STR ≥ INT).
-    - INT must be 0 or 1 only (physical task, not mental).
+### DIVERSITY ENGINE (CRITICAL)
+For THIS generation, randomly select ONE focus dimension to include in the task:
+1. **Location:** (e.g., indoors, around block, near home)
+2. **Purpose:** (e.g., to clear mind, to relax, for fresh air)
+3. **Condition:** (e.g., while listening to music, at sunrise, after meal)
+Do NOT copy examples exactly. Use them as a style reference.
 
-    ### DIVERSITY ENGINE (CRITICAL)
-    For THIS generation, randomly select ONE focus dimension to include in the task:
-    1. **Location:** (e.g., indoors, around block, near home)
-    2. **Purpose:** (e.g., to clear mind, to relax, for fresh air)
-    3. **Condition:** (e.g., while listening to music, at sunrise, after meal)
-    Do NOT copy examples exactly. Use them as a style reference.
+### CONSTRAINTS
+- Use TIME only (minutes). No distance (km/miles).
+- Keep language encouraging and simple.
+- Single activity type only (no exercise combinations).
+- Pace must remain leisurely/relaxed.
 
-    ### CONSTRAINTS
-    - Use TIME only (minutes). No distance (km/miles).
-    - Keep language encouraging and simple.
-    - Single activity type only (no exercise combinations).
-    - Pace must remain leisurely/relaxed.
+### EXAMPLES (CORRECT — Note Structural Variety)
+- "Walk leisurely around your block for 8 minutes"
+- "Take a slow stroll to clear your mind for 7 minutes"
+- "Walk at a relaxed pace indoors while listening to music for 10 minutes"
+- "Gentle walking near your home for 6 minutes"
 
-    ### OUTPUT FORMAT
-    Return ONLY the task string: "{Action} {Focus} for {Duration} minutes"
-
-    ### EXAMPLES (CORRECT — Note Structural Variety)
-    - "Walk leisurely around your block for 8 minutes"
-    - "Take a slow 7-minute stroll to clear your mind"
-    - "Walk at a relaxed pace indoors while listening to music for 10 minutes"
-    - "Gentle walking near your home for 6 minutes"
-
-    ### EXAMPLES (WRONG — DO NOT USE)
-    - "Move around for 10 minutes" (Too vague)
-    - "Walk and do squats" (Mixes activity types)
-    - "Explore mysterious forest for 10 minutes" (Story-focused, not duration-focused)
-    """,
+### EXAMPLES (WRONG — DO NOT USE)
+- "Move around for 10 minutes" (Too vague)
+- "Walk and do squats" (Mixes activity types)
+- "Explore mysterious forest for 10 minutes" (Story-focused, not duration-focused)
+""",
     (
         TaskTopic.MOTION,
         Rarity.UNCOMMON,
     ): """
 
-    ### PARAMETERS
-    - **Rarity:** UNCOMMON (Moderate effort, light cardio)
-    - **Duration:** 20 to 30 minutes (Exact integer)
-    - **Intensity:** Light Cardio (Zone 2, purposeful pace)
-    - **Core Action:** Brisk Walking or Light Walk-Jog
-    - AGI is the PRIMARY stat for MOTION (AGI ≥ STR ≥ INT).
-    - INT must be 0 or 1 only (physical task, not mental).
+### PARAMETERS
+- **Rarity:** UNCOMMON (Moderate effort, light cardio)
+- **Duration:** 20 to 30 minutes (Exact integer)
+- **Intensity:** Light Cardio (Zone 2, purposeful pace)
+- **Core Action:** Brisk Walking or Light Walk-Jog
+- AGI is the PRIMARY stat for MOTION (AGI ≥ STR ≥ INT).
+- INT must be 0 or 1 only (physical task, not mental).
 
-    ### DIVERSITY ENGINE (CRITICAL)
-    For THIS generation, randomly select ONE pacing style:
-    1. **Steady:** Consistent brisk pace throughout
-    2. **Intervals:** Simple alternation (e.g., 3 min walk / 2 min jog)
-    3. **Terrain:** Include gentle hills or varied surfaces
-    4. **Purposeful:** "Power walking" with clear intent
-    Do NOT copy examples exactly. Use them as a style reference.
+### DIVERSITY ENGINE (CRITICAL)
+For THIS generation, randomly select ONE pacing style:
+1. **Steady:** Consistent brisk pace throughout
+2. **Intervals:** Simple alternation (e.g., 3 min walk / 2 min jog)
+3. **Terrain:** Include gentle hills or varied surfaces
+4. **Purposeful:** "Power walking" with clear intent
+Do NOT copy examples exactly. Use them as a style reference.
 
-    ### CONSTRAINTS
-    - Use TIME only. No distance metrics.
-    - Specify pace clearly (e.g., "brisk", "purposeful", "light jog").
-    - Prioritize brisk walking over running for accessibility.
-    - If intervals used, specify simple structure.
+### CONSTRAINTS
+- Use TIME only. No distance metrics.
+- Specify pace clearly (e.g., "brisk", "purposeful", "light jog").
+- Prioritize brisk walking over running for accessibility.
+- If intervals used, specify simple structure.
 
-    ### OUTPUT FORMAT
-    Return ONLY the task string: "{Action} at {Pace} for {Duration} minutes ({Style})"
+### EXAMPLES (CORRECT — Note Structural Variety)
+- "Brisk walk at a purposeful pace for 25 minutes (Steady)"
+- "Alternate 3 min walking and 2 min light jogging for 28 minutes (Intervals)"
+- "Power walk on a route with gentle hills for 22 minutes (Terrain)"
+- "Brisk walking at a purposeful pace for 30 minutes (Purposeful))"
 
-    ### EXAMPLES (CORRECT — Note Structural Variety)
-    - "Brisk walk at a purposeful pace for 25 minutes (Steady)"
-    - "Alternate 3 min walking and 2 min light jogging for 28 minutes (Intervals)"
-    - "Power walk on a route with gentle hills for 22 minutes (Terrain)"
-    - "Sustained brisk walking for 30 minutes to build endurance (Purposeful)"
-
-    ### EXAMPLES (WRONG — DO NOT USE)
-    - "Jog for 25 minutes" (Too intense without qualification)
-    - "Move at moderate intensity for 30 minutes" (Vague pacing)
-    - "Walk 3 km" (Distance-based metric forbidden)
-    """,
+### EXAMPLES (WRONG — DO NOT USE)
+- "Jog for 25 minutes" (Too intense without qualification)
+- "Move at moderate intensity for 30 minutes" (Vague pacing)
+- "Walk 3 km" (Distance-based metric forbidden)
+""",
     (
         TaskTopic.MOTION,
         Rarity.RARE,
     ): """
 
-    ### PARAMETERS
-    - **Rarity:** RARE (Significant effort, endurance focus)
-    - **Duration:** 45 to 60 minutes (Exact integer)
-    - **Intensity:** Moderate Cardio (Zone 3, sustainable jogging pace)
-    - **Core Action:** Jogging, Extended Brisk Walking, or Structured Intervals
-    - AGI is the PRIMARY stat for MOTION (AGI ≥ STR ≥ INT).
-    - INT must be 0 or 1 only (physical task, not mental).
+### PARAMETERS
+- **Rarity:** RARE (Significant effort, endurance focus)
+- **Duration:** 45 to 60 minutes (Exact integer)
+- **Intensity:** Moderate Cardio (Zone 3, sustainable jogging pace)
+- **Core Action:** Jogging, Extended Brisk Walking, or Structured Intervals
+- AGI is the PRIMARY stat for MOTION (AGI ≥ STR ≥ INT).
+- INT must be 0 or 1 only (physical task, not mental).
 
-    ### DIVERSITY ENGINE (CRITICAL)
-    For THIS generation, randomly select ONE engagement hook:
-    1. **Flow State:** Focus on rhythm, breathing, and consistency
-    2. **Exploration:** New route, trail, or natural environment
-    3. **Structure:** Defined work/rest or jog/walk ratios
-    4. **Resilience:** Pushing through mild fatigue comfortably
-    Do NOT copy examples exactly. Use them as a style reference.
+### DIVERSITY ENGINE (CRITICAL)
+For THIS generation, randomly select ONE engagement hook:
+1. **Flow State:** Focus on rhythm, breathing, and consistency
+2. **Exploration:** New route, trail, or natural environment
+3. **Structure:** Defined work/rest or jog/walk ratios
+4. **Resilience:** Pushing through mild fatigue comfortably
+Do NOT copy examples exactly. Use them as a style reference.
 
-    ### CONSTRAINTS
-    - Use TIME only. No distance metrics.
-    - Must specify structure if intervals are used (e.g., "5 min jog / 3 min walk").
-    - Pace must be sustainable (conversational jogging).
-    - Brief rest periods allowed but not counted as primary activity.
+### CONSTRAINTS
+- Use TIME only. No distance metrics.
+- Must specify structure if intervals are used (e.g., "5 min jog / 3 min walk").
+- Pace must be sustainable (conversational jogging).
+- Brief rest periods allowed but not counted as primary activity.
 
-    ### OUTPUT FORMAT
-    Return ONLY the task string: "{Action} for {Duration} minutes ({Hook})"
+### EXAMPLES (CORRECT — Note Structural Variety)
+- "Steady jogging at a conversational pace for 50 minutes (Flow State)"
+- "Trail walking on moderate terrain for 55 minutes (Exploration)"
+- "Cycle of 5 min jog / 3 min walk for 45 minutes total (Structure)"
+- "Extended brisk walk continuously for 60 minutes to build stamina (Resilience)"
 
-    ### EXAMPLES (CORRECT — Note Structural Variety)
-    - "Steady jogging at a conversational pace for 50 minutes (Flow State)"
-    - "Trail walking on moderate terrain for 55 minutes (Exploration)"
-    - "Cycle of 5 min jog / 3 min walk for 45 minutes total (Structure)"
-    - "Extended brisk walk continuously for 60 minutes to build stamina (Resilience)"
-
-    ### EXAMPLES (WRONG — DO NOT USE)
-    - "Run for an hour" (Vague pace — specify "jog" vs "run")
-    - "Walk 5 km on trails" (Distance-based metric forbidden)
-    - "Jog with exercise stops every 10 min" (Mixes activity types without context)
-    """,
+### EXAMPLES (WRONG — DO NOT USE)
+- "Run for an hour" (Vague pace — specify "jog" vs "run")
+- "Walk 5 km on trails" (Distance-based metric forbidden)
+- "Jog with exercise stops every 10 min" (Mixes activity types without context)
+""",
     (
         TaskTopic.MOTION,
         Rarity.EPIC,
     ): """
 
-    ### PARAMETERS
-    - **Rarity:** EPIC (High effort, planning required)
-    - **Duration:** 60 to 120 minutes (Exact integer or half-hours)
-    - **Intensity:** Moderate to High Sustained (Zone 3-4)
-    - **Core Action:** Long-distance Jogging, Fast Walking, or Mixed Phases
-    - AGI is the PRIMARY stat for MOTION (AGI ≥ STR ≥ INT).
-    - INT must be 0 or 1 only (physical task, not mental).
+### PARAMETERS
+- **Rarity:** EPIC (High effort, planning required)
+- **Duration:** 60 to 120 minutes (Exact integer or half-hours)
+- **Intensity:** Moderate to High Sustained (Zone 3-4)
+- **Core Action:** Long-distance Jogging, Fast Walking, or Mixed Phases
+- AGI is the PRIMARY stat for MOTION (AGI ≥ STR ≥ INT).
+- INT must be 0 or 1 only (physical task, not mental).
 
-    ### DIVERSITY ENGINE (CRITICAL)
-    For THIS generation, randomly select ONE strategic element:
-    1. **Phased:** Split session into distinct blocks (e.g., Urban + Trail)
-    2. **Pacing:** Negative split (start slow, finish strong)
-    3. **Environment:** Mixed terrain challenge
-    4. **Mental:** Focus on discipline and consistency over time
-    Do NOT copy examples exactly. Use them as a style reference.
+### DIVERSITY ENGINE (CRITICAL)
+For THIS generation, randomly select ONE strategic element:
+1. **Phased:** Split session into distinct blocks (e.g., Urban + Trail)
+2. **Pacing:** Negative split (start slow, finish strong)
+3. **Environment:** Mixed terrain challenge
+4. **Mental:** Focus on discipline and consistency over time
+Do NOT copy examples exactly. Use them as a style reference.
 
-    ### CONSTRAINTS
-    - Use TIME only. No distance metrics.
-    - Describe pacing strategy briefly in the task.
-    - Hydration breaks allowed but not counted as rest time.
-    - Total locomotion time must be 60-120 min.
+### CONSTRAINTS
+- Use TIME only. No distance metrics.
+- Describe pacing strategy briefly in the task.
+- Hydration breaks allowed but not counted as rest time.
+- Total locomotion time must be 60-120 min.
 
-    ### OUTPUT FORMAT
-    Return ONLY the task string: "{Action} with {Strategy} for {Duration} minutes ({Element})"
+### EXAMPLES (CORRECT — Note Structural Variety)
+- "Sustainable jogging with negative split pacing for 90 minutes (Pacing)"
+- "Mixed terrain: 40 min road + 40 min trail for 80 minutes total (Phased)"
+- "Fast walking continuously with focused discipline for 75 minutes (Mental)"
+- "Alternate 12 min jogging and 5 min walking for 100 minutes total (Environment)"
 
-    ### EXAMPLES (CORRECT — Note Structural Variety)
-    - "Sustainable jogging with negative split pacing for 90 minutes (Pacing)"
-    - "Mixed terrain: 40 min road + 40 min trail for 80 minutes total (Phased)"
-    - "Fast walking continuously with focused discipline for 75 minutes (Mental)"
-    - "Alternate 12 min jogging and 5 min walking for 100 minutes total (Environment)"
-
-    ### EXAMPLES (WRONG — DO NOT USE)
-    - "Run for 2 hours" (Vague — specify sustainable/jogging pace)
-    - "Cover as much distance as possible in 90 minutes" (Goal-oriented, not duration-focused)
-    - "Jog with random stops for exercises" (Unstructured activity mixing)
-    """,
+### EXAMPLES (WRONG — DO NOT USE)
+- "Run for 2 hours" (Vague — specify sustainable/jogging pace)
+- "Cover as much distance as possible in 90 minutes" (Goal-oriented, not duration-focused)
+- "Jog with random stops for exercises" (Unstructured activity mixing)
+""",
     (
         TaskTopic.MOTION,
         Rarity.LEGENDARY,
     ): """
 
-    ### PARAMETERS
-    - **Rarity:** LEGENDARY (Extreme effort, event-level achievement)
-    - **Duration:** 3 to 5 hours (Exact hours/minutes, e.g., "3 hours 20 minutes")
-    - **Intensity:** Ultra-Endurance (Sustainable over hours, Zone 2-3)
-    - **Core Action:** LSD Jogging, Ultra-Walking, or Multi-Phase Sessions
-    - AGI is the PRIMARY stat for MOTION (AGI ≥ STR ≥ INT).
-    - INT must be 0 or 1 only (physical task, not mental).
-    
-    ### DIVERSITY ENGINE (CRITICAL)
-    For THIS generation, randomly select ONE narrative theme:
-    1. **The Journey:** Point A to Point B exploration
-    2. **The Test:** Pure endurance and mental grit
-    3. **The Ritual:** Meditative long movement
-    4. **The Marathoner:** Structured race-pace simulation
-    Do NOT copy examples exactly. Use them as a style reference.
+### PARAMETERS
+- **Rarity:** LEGENDARY (Extreme effort, event-level achievement)
+- **Duration:** 3 to 5 hours (Exact hours/minutes, e.g., "3 hours 20 minutes")
+- **Intensity:** Ultra-Endurance (Sustainable over hours, Zone 2-3)
+- **Core Action:** LSD Jogging, Ultra-Walking, or Multi-Phase Sessions
+- AGI is the PRIMARY stat for MOTION (AGI ≥ STR ≥ INT).
+- INT must be 0 or 1 only (physical task, not mental).
 
-    ### CONSTRAINTS
-    - Use TIME only (e.g., "3 hours 15 minutes", "4.5 hours").
-    - Must include planned micro-breaks or phase changes in description.
-    - Tone should be inspiring and serious (achievement-focused).
-    - Total duration must be 3-5 hours (planned rests included in total).
+### DIVERSITY ENGINE (CRITICAL)
+For THIS generation, randomly select ONE narrative theme:
+1. **The Journey:** Point A to Point B exploration
+2. **The Test:** Pure endurance and mental grit
+3. **The Ritual:** Meditative long movement
+4. **The Marathoner:** Structured race-pace simulation
+Do NOT copy examples exactly. Use them as a style reference.
 
-    ### OUTPUT FORMAT
-    Return ONLY the task string: "{Theme}: {Action} for {Duration} ({Details})"
+### CONSTRAINTS
+- Use TIME only (e.g., "3 hours 15 minutes", "4.5 hours").
+- Must include planned micro-breaks or phase changes in description.
+- Tone should be inspiring and serious (achievement-focused).
+- Total duration must be 3-5 hours (planned rests included in total).
 
-    ### EXAMPLES (CORRECT — Note Structural Variety)
-    - "The Journey: Mixed terrain walking/jogging for 4 hours (Urban to Nature)"
-    - "The Test: LSD jogging at sustainable pace for 3 hours 30 minutes (Mental Grit)"
-    - "The Ritual: Mindful ultra-walking with brief hydration stops for 5 hours (Meditative)"
-    - "The Marathoner: Three 70-minute blocks with 10-min rests for 4 hours total (Structured)"
+### EXAMPLES (CORRECT — Note Structural Variety)
+- "The Journey: Mixed terrain walking/jogging for 4 hours (Urban to Nature)"
+- "The Test: LSD jogging at sustainable pace for 3 hours 30 minutes (Mental Grit)"
+- "The Ritual: Mindful ultra-walking with brief hydration stops for 5 hours (Meditative)"
+- "The Marathoner: Three 70-minute blocks with 10-min rests for 4 hours total (Structured)"
 
-    ### EXAMPLES (WRONG — DO NOT USE)
-    - "Walk all day" (No exact duration specified)
-    - "Run 5 hours straight without stopping" (Unrealistic, ignores necessary breaks)
-    - "Cover maximum distance in 4 hours" (Distance/goal-focused, not pure locomotion)
-    """,
+### EXAMPLES (WRONG — DO NOT USE)
+- "Walk all day" (No exact duration specified)
+- "Run 5 hours straight without stopping" (Unrealistic, ignores necessary breaks)
+- "Cover maximum distance in 4 hours" (Distance/goal-focused, not pure locomotion)
+""",
 }
 
 
