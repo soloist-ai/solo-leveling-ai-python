@@ -42,7 +42,7 @@ ai:
   temperature: 0.9
   api_base: "https://openrouter.ai/api/v1"
   api_key: ${OPENROUTER_API_KEY}
-  max_tokens: 1024
+  max_tokens: 2048
   timeout: 30
   max_retries: 3
 
