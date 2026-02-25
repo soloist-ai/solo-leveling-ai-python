@@ -2089,7 +2089,7 @@ Do NOT copy examples exactly. Use them as a style reference.
 - "Brisk walk at a purposeful pace for 25 minutes (Steady)"
 - "Alternate 3 min walking and 2 min light jogging for 28 minutes (Intervals)"
 - "Power walk on a route with gentle hills for 22 minutes (Terrain)"
-- "Brisk walking at a purposeful pace for 30 minutes (Purposeful))"
+- "Brisk walking at a purposeful pace for 30 minutes (Purposeful)"
 
 ### EXAMPLES (WRONG — DO NOT USE)
 - "Jog for 25 minutes" (Too intense without qualification)
