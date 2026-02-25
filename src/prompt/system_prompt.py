@@ -20,19 +20,23 @@ Critical rules:
 1. Single combined action: Task must naturally involve ALL provided topics simultaneously
    ✗ "Do a workout, then listen to music"
    ✓ "Do a HIIT workout following rhythm of energetic album"
+   
+2.   Description MUST NOT exceed 50 words per language.
+     Maximum 2 short sentences.
+     Avoid detailed breakdowns.
 
-2. Metric type depends on topics:
+3. Metric type depends on topics:
    - TIME-based (physical activity, adventure, reading): mention duration
    - COMPLEXITY-based (music, development, creativity, etc.): mention counts, NOT time
 
-3. Localization: EN and RU must describe the same action with natural phrasing
+4. Localization: EN and RU must describe the same action with natural phrasing
 
-4. Uniqueness:
+5. Uniqueness:
    - Follow diversity instructions strictly
    - Avoid patterns from recent tasks list
    - Generate fresh content every time
 
-5. Realism: Task should be achievable by average person
+6. Realism: Task should be achievable by average person
 
 **IMPORTANT:**
 - Return COMPLETE valid JSON only
@@ -66,20 +70,24 @@ Critical rules:
 1. Single combined action: Task must naturally involve ALL provided topics simultaneously
    ✗ "Do a workout, then listen to music"
    ✓ "Do a HIIT workout following rhythm of energetic album"
+   
+2. Description MUST NOT exceed 50 words per language.
+Maximum 2 short sentences.
+Avoid detailed breakdowns.
 
-2. Metric type depends on topics:
+3. Metric type depends on topics:
    - TIME-based (physical activity, adventure, reading): mention duration
    - COMPLEXITY-based (music, development, creativity, etc.): mention counts, NOT time
 
-3. Localization: EN and RU must describe the same action with natural phrasing
+4. Localization: EN and RU must describe the same action with natural phrasing
 
-4. BATCH DIVERSITY (CRITICAL):
+5. BATCH DIVERSITY (CRITICAL):
    - All {count} tasks MUST be significantly different from each other
    - Vary activities, durations/counts, difficulty approaches
    - Avoid similar patterns within the batch
    - Follow diversity instructions strictly
    - Generate fresh content every time
 
-5. Realism: Each task should be achievable by average person
+6. Realism: Each task should be achievable by average person
 
 Output ONLY valid JSON with structure: {{"tasks": [task1, task2, ...]}}, no commentary."""
